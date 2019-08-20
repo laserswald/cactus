@@ -1,0 +1,158 @@
+#include "env.h"
+#include "sexp.h"
+#include "sym.h"
+#include "eval.h"
+#include "globals.h"
+#include "debug.h"
+
+bool is_truthy(Sexp *x) {
+    if (!x)
+        return false;
+
+    if (is_int(x) && x->i == 0)
+        return false;
+
+    return true;
+}
+
+#define PROPAGATE_ERROR(err) if (is_error(err)) return (err);
+
+Sexp* builtin_if(Sexp *x, Env *e) {
+    Sexp* cond = car(x);
+    Sexp* cseq = cadr(x);
+    Sexp* alt = caddr(x);
+    Sexp* result = &undefined;
+
+    if (is_truthy(eval(cond, e))) {
+        result = eval(cseq, e);
+    } else {
+        result = eval(alt, e);
+    }
+
+    return result;
+}
+
+Sexp* builtin_car(Sexp *x, Env *e) {
+    Sexp* arg = eval(car(x), e);
+    PROPAGATE_ERROR(arg);
+
+    if (! arg) {
+        return make_error("Cannot take car of null", NULL);
+    }
+
+    return car(arg);
+}
+
+Sexp* builtin_cdr(Sexp *x, Env *e) {
+    Sexp* arg = eval(car(x), e);
+    PROPAGATE_ERROR(arg);
+
+    if (! arg) {
+        return make_error("Cannot take cdr of null", NULL);
+    }
+
+    return cdr(arg);
+}
+
+Sexp* builtin_cons(Sexp *x, Env *e) {
+    Sexp *fst = eval(car(x), e);
+    Sexp *snd = eval(cadr(x), e);
+    PROPAGATE_ERROR(fst);
+    PROPAGATE_ERROR(snd);
+    Sexp *p = cons(fst, snd);
+    return p;
+}
+
+Sexp* builtin_is_nil(Sexp *x, Env *e) {
+    Sexp *arg = eval(car(x), e);
+    PROPAGATE_ERROR(arg);
+    if (! arg) {
+        return make_integer(1);
+    }
+    return make_integer(0);
+}
+
+Sexp* builtin_is_pair(Sexp *x, Env *e) {
+    Sexp *arg = eval(car(x), e);
+    PROPAGATE_ERROR(arg);
+    if (is_pair(arg))
+        return make_integer(1);
+    else
+        return make_integer(0);
+}
+
+Sexp* builtin_eq(Sexp *x, Env *e) {
+    Sexp *fst = eval(car(x), e);
+    Sexp *snd = eval(cadr(x), e);
+    PROPAGATE_ERROR(fst);
+    PROPAGATE_ERROR(snd);
+    return make_integer(equals(fst, snd));
+}
+
+Sexp* builtin_display(Sexp *x, Env *e) {
+    print_sexp(eval(car(x), e));
+    return &undefined;
+}
+
+Sexp* builtin_newline(Sexp *x, Env *unused) {
+    puts("");
+    return &undefined;
+}
+
+Sexp* builtin_progn(Sexp *x, Env *e) {
+    Sexp *result = &undefined;
+
+    if (is_pair(x)) {
+        LIST_FOR_EACH(x, pair) {
+            result = eval(car(pair), e);
+            PROPAGATE_ERROR(result);
+        }
+    } else {
+        result = eval(x, e);
+    }
+
+    return result;
+}
+
+Sexp* builtin_plus(Sexp *x, Env *e) {
+    int result = 0;
+
+    LIST_FOR_EACH(x, pair) {
+        Sexp* addend = eval(car(pair), e);
+        PROPAGATE_ERROR(addend);
+        int a = to_int(addend, "+");
+        result += a;
+    }
+
+    return make_integer(result);
+}
+
+void make_builtin(Env *e, Sexp *x, Sexp *(fn)(Sexp*, Env*)) {
+    Sexp *c = malloc(sizeof(*c));
+    c->t = TYPE_CLOSURE;
+    c->c = malloc(sizeof(Closure));
+    c->c->nativefn = fn;
+    envadd(e, x, c);
+}
+
+Env* make_builtins() {
+    Env *env = malloc(sizeof(Env));
+    envinit(env, NULL);
+
+    if_sym.sym = "if";
+    define_sym.sym = "define";
+    progn_sym.sym = "progn";
+    quote_sym.sym = "quote";
+    lambda_sym.sym = "lambda";
+
+    make_builtin(env, make_symbol("null?"), &builtin_is_nil);
+    make_builtin(env, make_symbol("pair?"), &builtin_is_pair);
+    make_builtin(env, make_symbol("car"), &builtin_car);
+    make_builtin(env, make_symbol("cdr"), &builtin_cdr);
+    make_builtin(env, make_symbol("cons"), &builtin_cons);
+    make_builtin(env, make_symbol("eq?"), &builtin_eq);
+    make_builtin(env, make_symbol("display"), &builtin_display);
+    make_builtin(env, make_symbol("newline"), &builtin_newline);
+    make_builtin(env, make_symbol("+"), &builtin_plus);
+    return env;
+}
