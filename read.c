@@ -174,14 +174,13 @@ int readsexp(struct lexer* l, Sexp** ret)
 		status = readlist(l, ret);
 		break;
 	case TOKEN_IDENTIFIER:
-		*ret = lexeme_to_symbol(nextlex(l));
+		*ret = lexeme_to_symbol(lx);
 		break;
 	case TOKEN_INTEGER:
-		*ret = lexeme_to_int(nextlex(l));
+		*ret = lexeme_to_int(lx);
 		break;
 	case TOKEN_SINGLE_QUOTE:
 		DBG("Dispatching on quote\n");
-		nextlex(l);
 
 		Sexp* quoted;
 		status = readsexp(l, &quoted);
@@ -190,14 +189,14 @@ int readsexp(struct lexer* l, Sexp** ret)
 		*ret = cons(q, quoted);
 		break;
 	case TOKEN_STRING:
-		*ret = lexeme_to_string(nextlex(l));
+		*ret = lexeme_to_string(lx);
 		break;
 	case TOKEN_END:
 		status = READSEXP_END_OF_FILE;
 		break;
 	case TOKEN_ERROR:
 	default:
-        status = READSEXP_OTHER_ERROR;
+		status = READSEXP_OTHER_ERROR;
 		break;
 	}
 

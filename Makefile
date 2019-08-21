@@ -1,13 +1,13 @@
 BINARY = cactus
 CFLAGS = -g -Wall -Wpedantic -Werror
-CC=clang 
+CC=gcc
 
 SOURCE_FILES := builtin.c env.c eval.c globals.c read.c sexp.c utils.c write.c xmalloc.c 
 OBJECT_FILES := $(SOURCE_FILES:.c=.o)
 
 all: $(BINARY)
 
-$(BINARY): $(SOURCE_FILES) slisp.c
+$(BINARY): $(SOURCE_FILES) main.c
 	$(CC) $(CFLAGS) -DNDEBUG -o $@ $^
 
 fulltest: $(SOURCE_FILES) tests/fulltest.c
@@ -20,9 +20,7 @@ tags: $(SOURCE_FILES)
 	ctags -R .
 
 clean:
-	rm *.o
-	rm slisp slisp-dbg
-	rm core*
+	rm $(BINARY) core* fulltest
 
 .PHONY: clean test
 
