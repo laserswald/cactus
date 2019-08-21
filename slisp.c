@@ -39,13 +39,16 @@ runfile(FILE *in, Env *e)
 
 	char *s = slurp(in);
 
+	struct lexer l;
+	lexer_init(&l, s);
+
 	Sexp *x;
 	while (*s != '\0') {
 		int status = 0;
 
 		DBG("Reading new sexp. \n");
 
-		status = readsexp(&s, &x);
+		status = readsexp(&l, &x);
 
 		if (status != READSEXP_OK) {
 			switch (status) {
@@ -79,11 +82,13 @@ repl(FILE *f, Env *e)
 	char line[256];
 	Sexp *x;
 	int status;
+	struct lexer l;
 
 	printf("slisp> ");
 	while (fgets(line, sizeof line, f) != NULL) {
 		char *lp = line;
-		status = readsexp(&lp, &x);
+		lexer_init(&l, lp);
+		status = readsexp(&l, &x);
 		if (status != 0) {
 			fprintf(stderr, "Could not read sexp");
 			abort();
@@ -103,12 +108,6 @@ main(int argc, char *argv[])
 	DBG("Starting.\n");
 	Env *e = make_builtins();
 	FILE *infile = NULL;
-
-	quote_sym.sym = "quote";
-	lambda_sym.sym = "lambda";
-	if_sym.sym = "if";
-	define_sym.sym = "define";
-	progn_sym.sym = "progn";
 
 	if (argc == 2) {
 		DBG("Reading file.\n");

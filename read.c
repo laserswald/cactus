@@ -7,37 +7,6 @@
 #include "utils.h"
 #include "sym.h"
 
-enum token {
-	TOKEN_ERROR = -2,
-	TOKEN_END = -1,
-	TOKEN_NOTHING = 0,
-	TOKEN_WHITESPACE,
-	TOKEN_IDENTIFIER,
-	TOKEN_BOOLEAN,
-	TOKEN_CHARACTER,
-	TOKEN_INTEGER,
-	TOKEN_FLOAT,
-	TOKEN_STRING,
-	TOKEN_OPEN_PAREN,
-	TOKEN_CLOSE_PAREN,
-	TOKEN_SINGLE_QUOTE,
-	LEN_TOKENS,
-};
-
-struct lexeme {
-	enum token t;
-	char *st;
-	size_t sz;
-	int lno;
-};
-
-struct lexer {
-	const char *st;
-	char *cur;
-	int lno;
-	struct lexeme buf;
-};
-
 /* Is this int allowable as an identifier character? */
 int is_ident(int i) {
 	return isalpha(i) || i == '?' || i == '-' || i == '!' || i == '+' || i == '*';
@@ -66,13 +35,15 @@ void lexer_init(struct lexer* l, const char* s) {
 
 struct lexeme nextlex(struct lexer* l) {
     struct lexeme le = {
-	    .st = (char*)l->st,
+	    .st = l->cur,
 	    .lno = l->lno,
 	};
 
 	char *p = l->cur;
 
-    if (isspace(*p)) {
+    if (! p || ! l->st) {
+	    le.t = TOKEN_ERROR;
+    } else if (isspace(*p)) {
 	    le.t = TOKEN_WHITESPACE;
 		while (*p && isspace(*p)){
 			if (*p == '\n') l->lno++;
@@ -140,14 +111,18 @@ int expecttok(struct lexer *l, enum token t) {
 }
 
 Sexp* lexeme_to_symbol(struct lexeme lx) {
-
+	char* sym = strslice(lx.st, &lx.st[lx.sz]);
+    return make_symbol(sym);
 }
 
-Sexp* read_integer(char **str) {
-	char *end = *str;
-	long i = strtol(*str, &end, 10);
-	*str = end;
+Sexp* lexeme_to_int(struct lexeme lx) {
+	char *end = lx.st;
+	long i = strtol(lx.st, &end, 10);
 	return make_integer(i);
+}
+
+Sexp* lexeme_to_string(struct lexeme lx) {
+	return make_string(strslice(lx.st, &lx.st[lx.sz]));
 }
 
 int readlist(struct lexer *l, Sexp **r) {
@@ -159,12 +134,6 @@ int readlist(struct lexer *l, Sexp **r) {
 	if (! expecttok(l, TOKEN_OPEN_PAREN)) {
 		*r = make_error("readlist: somehow didn't get open paren", NULL);
 		return READSEXP_OTHER_ERROR;
-	}
-
-	expecttok(l, TOKEN_WHITESPACE);
-
-	if (peektok(l, TOKEN_CLOSE_PAREN)) {
-		return READSEXP_OK;
 	}
 
 	while (! peektok(l, TOKEN_CLOSE_PAREN)) {
@@ -193,37 +162,45 @@ int readlist(struct lexer *l, Sexp **r) {
 	return READSEXP_OK;
 }
 
-int read_sexp(struct lexer* l, Sexp** ret) 
+int readsexp(struct lexer* l, Sexp** ret) 
 {
 	int status = READSEXP_OK;
 	*ret = (Sexp*) NULL;
 
+	struct lexeme lx = nextlex(l);
 
-	if (peektok(l, TOKEN_OPEN_PAREN)) {
-		DBG("Dispatching on (\n");
+	switch (lx.t) {
+	case TOKEN_OPEN_PAREN:
 		status = readlist(l, ret);
-	} else if (peektok(l, TOKEN_IDENTIFIER)) {
-        struct lexeme* lxme = peeklex(l);
-		*ret = lexeme_to_symbol(lxme);
-	} else if (isdigit(**str)) {
-		*ret = read_integer(str);
-	} else if (**str == '\'') {
+		break;
+	case TOKEN_IDENTIFIER:
+		*ret = lexeme_to_symbol(nextlex(l));
+		break;
+	case TOKEN_INTEGER:
+		*ret = lexeme_to_int(nextlex(l));
+		break;
+	case TOKEN_SINGLE_QUOTE:
 		DBG("Dispatching on quote\n");
-		(*str)++;
+		nextlex(l);
 
 		Sexp* quoted;
-		status = readsexp(str, &quoted);
+		status = readsexp(l, &quoted);
 
 		Sexp* q = make_symbol("quote");
 		*ret = cons(q, quoted);
-	} else if (**str == '"') {
-		*ret = read_string(str);
-	} else if (! **str) {
-		DBG("Found end of string\n");
-		return READSEXP_END_OF_FILE;
+		break;
+	case TOKEN_STRING:
+		*ret = lexeme_to_string(nextlex(l));
+		break;
+	case TOKEN_END:
+		status = READSEXP_END_OF_FILE;
+		break;
+	case TOKEN_ERROR:
+	default:
+        status = READSEXP_OTHER_ERROR;
+		break;
 	}
 
-	DBG("Rest of string: %s\n", *str);
 	return status;
 }
 

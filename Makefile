@@ -13,10 +13,8 @@ $(BINARY): $(SOURCE_FILES) slisp.c
 fulltest: $(SOURCE_FILES) tests/fulltest.c
 	$(CC) $(CFLAGS) -o $@ $^
 
-test: fulltest slisp-dbg
+test: fulltest
 	./fulltest
-	./slisp-dbg t/test.l
-	./slisp-dbg t/map.l
 
 tags: $(SOURCE_FILES)
 	ctags -R .

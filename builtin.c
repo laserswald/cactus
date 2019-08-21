@@ -5,6 +5,8 @@
 #include "globals.h"
 #include "debug.h"
 
+#define LENGTH(arr) (sizeof(arr[0]) / sizeof(arr))
+
 bool is_truthy(Sexp *x) {
     if (!x)
         return false;
@@ -145,14 +147,25 @@ Env* make_builtins() {
     quote_sym.sym = "quote";
     lambda_sym.sym = "lambda";
 
-    make_builtin(env, make_symbol("null?"), &builtin_is_nil);
-    make_builtin(env, make_symbol("pair?"), &builtin_is_pair);
-    make_builtin(env, make_symbol("car"), &builtin_car);
-    make_builtin(env, make_symbol("cdr"), &builtin_cdr);
-    make_builtin(env, make_symbol("cons"), &builtin_cons);
-    make_builtin(env, make_symbol("eq?"), &builtin_eq);
-    make_builtin(env, make_symbol("display"), &builtin_display);
-    make_builtin(env, make_symbol("newline"), &builtin_newline);
-    make_builtin(env, make_symbol("+"), &builtin_plus);
+    struct {
+        char* name;
+        Sexp* (*fn)(Sexp*, Env*);
+    } builtins[] = {
+		{"null?", &builtin_is_nil},
+		{"pair?", &builtin_is_pair},
+		{"car", &builtin_car},
+		{"cdr", &builtin_cdr},
+		{"cons", &builtin_cons},
+		{"eq?", &builtin_eq},
+		{"display", &builtin_display},
+		{"newline", &builtin_newline},
+		{"+", &builtin_plus},
+    };
+
+    int i;
+    for (i = 0; i < LENGTH(builtins); i++) {
+        make_builtin(env, make_symbol(builtins[i].name), builtins[i].fn);
+    }
+
     return env;
 }
