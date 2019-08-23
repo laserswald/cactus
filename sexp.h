@@ -128,6 +128,8 @@ for (Sexp *(current) = list;\
      current && is_pair(current); \
      current = cdr(current))
 
+#define PROPAGATE_ERROR(err) if (is_error(err)) return (err);
+
 extern Sexp undefined;
 
 #endif // sexp_h_INCLUDED

@@ -3,7 +3,7 @@
 
 #include "sexp.h"
 
-enum {
+enum read_status {
 	READSEXP_OK,
 	READSEXP_END_OF_FILE,
 	READSEXP_OTHER_ERROR,
@@ -13,6 +13,7 @@ enum token {
 	TOKEN_ERROR = -2,
 	TOKEN_END = -1,
 	TOKEN_NOTHING = 0,
+	TOKEN_COMMENT,
 	TOKEN_WHITESPACE,
 	TOKEN_IDENTIFIER,
 	TOKEN_BOOLEAN,
@@ -43,7 +44,7 @@ struct lexer {
 struct lexer;
 
 void lexer_init(struct lexer *l, const char* data);
-
+void printtokstream(struct lexer *l);
 int readsexp(struct lexer *l, Sexp **s);
 
 #endif // read_h_INCLUDED

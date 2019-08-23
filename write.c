@@ -1,62 +1,70 @@
 #include "write.h"
 
 void 
-print_list(Sexp *x)
+fprint_list(FILE *f, Sexp *x)
 {
-	printf("(");
+	fprintf(f, "(");
 	Sexp *p = x;
 	while (p != NULL) {
 		if (is_pair(p)) {
-			print_sexp(car(p));
-			printf(" ");
+			fprint_sexp(f, car(p));
+			fprintf(f, " ");
 			p = cdr(p);
 		} else {
-			printf(". ");
-			print_sexp(p);
+			fprintf(f, ". ");
+			fprint_sexp(f, p);
 			break;
 		}
 	}
-	printf(")");
+	fprintf(f, ")");
+}
+
+void print_list(Sexp *x) {
+	fprint_list(stdout, x);
 }
 
 void
-print_sexp(Sexp *x)
+fprint_sexp(FILE *f, Sexp *x)
 {
 	if (!x) {
-		printf("()");
+		fprintf(f, "()");
 		return;
 	}
 
 	switch (x->t) {
 		case TYPE_INT:
-			printf("%i", x->i);
+			fprintf(f, "%i", x->i);
 			break;
 		case TYPE_DOUBLE:
-			printf("%f", x->f);
+			fprintf(f, "%f", x->f);
 			break;
 		case TYPE_STRING:
-			printf("%s", x->s.str);
+			fprintf(f, "%s", x->s.str);
 			break;
 		case TYPE_SYMBOL:
-			printf("#<symbol: '%s'>", x->a.sym);
+			fprintf(f, "#<symbol: '%s'>", x->a.sym);
 			break;
 		case TYPE_PAIR:
 			print_list(x);
 			break;
 		case TYPE_CLOSURE:
-			printf("#<closure: %p>", (void*)x->c);
+			fprintf(f, "#<closure: %p>", (void*)x->c);
 			break;
 		case TYPE_ENVIRONMENT:
-			printf("#<environment: %p>", (void*)x->e);
+			fprintf(f, "#<environment: %p>", (void*)x->e);
 			break;
 		case TYPE_PORT:
 			break;
 		case TYPE_ERROR:
-			printf("; error '%s' : ", x->x.msg);
+			fprintf(f, "; error '%s' : ", x->x.msg);
 			print_sexp(x->x.ctx);
 			break;
 		case TYPE_UNDEF:
-			printf("UNDEFINED");
+			fprintf(f, "UNDEFINED");
 			break;
 	}
+}
+
+void print_sexp(Sexp *x) {
+	fprint_sexp(stdout, x);
 }

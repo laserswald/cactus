@@ -5,7 +5,7 @@ CC=gcc
 SOURCE_FILES := builtin.c env.c eval.c globals.c read.c sexp.c utils.c write.c xmalloc.c 
 OBJECT_FILES := $(SOURCE_FILES:.c=.o)
 
-all: $(BINARY)
+all: $(BINARY) fulltest
 
 $(BINARY): $(SOURCE_FILES) main.c
 	$(CC) $(CFLAGS) -DNDEBUG -o $@ $^

@@ -4,7 +4,7 @@
 #include "sym.h"
 
 /* globals */
-extern Symbol progn_sym;
+extern Symbol begin_sym;
 extern Symbol quote_sym;
 extern Symbol define_sym;
 extern Symbol if_sym;

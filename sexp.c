@@ -74,6 +74,14 @@ equals(Sexp *l, Sexp *r)
 	return false;
 }
 
+unsigned int length(Sexp *l) {
+	unsigned int len = 0;
+	LIST_FOR_EACH(l, p) {
+		len++;
+	}
+	return len;
+}
+
 /* Create a new integer. */
 Sexp *
 make_integer(int i)
@@ -223,6 +231,7 @@ append(Sexp *l, Sexp *x)
 	e->p.cdr = cons(x, NULL);
 	return l;
 }
+
 
 Sexp *
 lookup(Env *e, Sexp *key)

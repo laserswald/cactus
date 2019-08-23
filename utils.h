@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 
+#define LENGTH(arr) (sizeof(arr) / sizeof(arr[0]))
+
 void die(const char* fmt, ...);
 
 /* Read an entire file into a string. */

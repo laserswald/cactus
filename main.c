@@ -14,6 +14,7 @@
 #include "utils.h"
 #include "xmalloc.h"
 #include "read.h"
+#include "write.h"
 #include "env.h"
 #include "sym.h"
 #include "eval.h"
@@ -89,8 +90,9 @@ repl(FILE *f, Env *e)
 		char *lp = line;
 		lexer_init(&l, lp);
 		status = readsexp(&l, &x);
-		if (status != 0) {
-			fprintf(stderr, "Could not read sexp");
+		if (status != READSEXP_OK) {
+			fprintf(stderr, "Could not finish reading sexp!\n");
+			fprint_sexp(stderr, x);
 			abort();
 		}
 		x = eval(x, e);

@@ -6,5 +6,5 @@ Symbol quote_sym;
 Symbol lambda_sym;
 Symbol if_sym;
 Symbol define_sym;
-Symbol progn_sym;
+Symbol begin_sym;
 

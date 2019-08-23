@@ -18,26 +18,93 @@ apply(Closure *clo, Sexp *args, Env *e)
 		envinit(&params_env, clo->env);
 		Sexp *current_arg = args;
 		LIST_FOR_EACH(clo->argl, param) {
-            envadd(&params_env, car(param), eval(car(current_arg), e));
-            current_arg = cdr(current_arg);
+			if (! current_arg) {
+                                fprintf(stderr, "Not enough arguments");
+                                abort();
+			}
+			envadd(&params_env, car(param), eval(car(current_arg), e));
+			current_arg = cdr(current_arg);
 		}
 		return builtin_progn(clo->body, &params_env);
 	}
 }
 
-void special_define(Sexp* args, Env* e) {
+Sexp* special_quote(Sexp* args, Env* e) {
+	return args;
+}
+
+bool is_truthy(Sexp *x) {
+	if (!x)
+		return false;
+
+	if (is_int(x) && x->i == 0)
+		return false;
+
+	return true;
+}
+
+Sexp* special_if(Sexp* args, Env* e) {
+	Sexp* cond = car(args);
+	Sexp* cseq = cadr(args);
+	Sexp* alt = caddr(args);
+	Sexp* result = &undefined;
+
+	if (is_truthy(eval(cond, e))) {
+		result = eval(cseq, e);
+	} else {
+		result = eval(alt, e);
+	}
+
+	return result;
+}
+
+Sexp* special_define(Sexp* args, Env* e) {
 	Sexp *term = car(args);
 	Sexp *defn = cdr(args);
 
-    if (is_sym(term)) {
-		envadd(e, term, eval(cdr(args), e));
-    } else if (is_pair(term)) {
-	    Sexp* name = car(term);
-	    Sexp* params = cdr(term);
-	    Sexp* proc = make_closure(e, params, defn);
+	if (is_sym(term)) {
+		envadd(e, term, eval(defn, e));
+	} else if (is_pair(term)) {
+		Sexp* name = car(term);
+		Sexp* params = cdr(term);
+		Sexp* proc = make_closure(e, params, defn);
 		envadd(e, name, proc);
-    }
+	}
+
+	return &undefined;
 }
+
+Sexp* special_lambda(Sexp* operands, Env* e) {
+	Sexp *args = car(operands);
+	Sexp *body = cdr(operands);
+	return make_closure(e, args, body);
+}
+
+Sexp* special_begin(Sexp* args, Env* e) {
+	Sexp *result = &undefined;
+
+	if (is_pair(args)) {
+		LIST_FOR_EACH(args, pair) {
+			result = eval(car(pair), e);
+			PROPAGATE_ERROR(result);
+		}
+	} else {
+		result = eval(args, e);
+	}
+
+	return result;
+}
+
+struct specials_table {
+        Symbol *sym;
+        Sexp* (*fn)(Sexp*, Env*);
+} specials[] = {
+	{&quote_sym,  special_quote},
+	{&if_sym,     special_if},
+	{&define_sym, special_define},
+	{&lambda_sym, special_lambda},
+	{&begin_sym,  special_begin}
+};
 
 /* Evaluate an expression according to an environment. */
 Sexp *
@@ -57,48 +124,45 @@ eval(Sexp *x, Env *e)
 		case TYPE_SYMBOL: {
 			Sexp *found = envlookup(e, x);
 			if (!found) {
+                                print_env(e);
 				return make_error("No such symbol", x);
 			}
 			return cdr(found);
 		}
 
 		case TYPE_PAIR: {
-			Sexp *op = car(x);
+			Sexp *operator = car(x);
+			Sexp *operands = cdr(x);
 
-			if (! op) {
+			if (! operator) {
 				return make_error("Cannot evaluate null as operation", x);
 			}
-			if (! is_sym(op)) {
-				return make_error("Non symbol as operator", car(x));
-			}
 
-			Symbol sym = to_sym(op, "eval");
-
-			Sexp *arglist = cdr(x);
-
-			if (symcmp(&quote_sym, &sym) == 0) {
-				return cdr(x);
-			} else if (symcmp(&if_sym, &sym) == 0) {
-				Sexp* ret = builtin_if(cdr(x), e);
-				return ret;
-			} else if (symcmp(&define_sym, &sym) == 0) {
-				special_define(arglist, e);
-				return &undefined;
-			} else if (symcmp(&lambda_sym, &sym) == 0) {
-				Sexp *args = car(arglist);
-				Sexp *body = cdr(arglist);
-				return make_closure(e, args, body);
-			} else if (symcmp(&progn_sym, &sym) == 0) {
-				return builtin_progn(cdr(x), e);
-			} else {
-				Sexp *maybe_closure = eval(op, e);
-				if (! is_closure(maybe_closure)) {
-					fprintf(stdout, "Cannot apply non-operation %s:\n", show_type(maybe_closure->t));
-					print_sexp(maybe_closure);
-					abort();
+                        // If it's a symbol, check if it's special and do the thing
+			if (is_sym(operator)) {
+				Symbol sym = to_sym(operator, "eval");
+				int i;
+				for (i = 0; i < LENGTH(specials); i++) {
+                                        if (symcmp(specials[i].sym, &sym) == 0) {
+	                                        return specials[i].fn(operands, e);
+                                        }
 				}
-				return apply(maybe_closure->c, arglist, e);
+				// fallthrough when not a special form
 			}
+
+			Sexp *maybe_closure = eval(operator, e);
+
+			if (is_error(maybe_closure)) {
+				return maybe_closure;
+			}
+
+			if (! is_closure(maybe_closure)) {
+				fprintf(stdout, "Cannot apply non-operation %s:\n", show_type(maybe_closure->t));
+				print_sexp(maybe_closure);
+				abort();
+			}
+
+			return apply(maybe_closure->c, operands, e);
 		}
 
 		case TYPE_ERROR: {

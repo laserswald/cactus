@@ -14,6 +14,7 @@ struct env {
 void envinit(Env *e, Env *parent);
 void envadd(Env *e, Sexp *k, Sexp *v);
 Sexp *envlookup(Env *e, Sexp *k);
+void print_env(Env *e);
 
 #endif // env_h_INCLUDED
 
