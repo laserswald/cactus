@@ -113,13 +113,12 @@ Env* make_builtins() {
 	Env *env = malloc(sizeof(Env));
 	envinit(env, NULL);
 
-        puts("Making builtins");
-
 	if_sym.sym = "if";
 	define_sym.sym = "define";
 	begin_sym.sym = "begin";
 	quote_sym.sym = "quote";
 	lambda_sym.sym = "lambda";
+	set_sym.sym = "set!";
 
 	struct {
 		char* name;
@@ -139,9 +138,7 @@ Env* make_builtins() {
 	int i;
 	for (i = 0; i < LENGTH(builtins); i++) {
 		make_builtin(env, make_symbol(builtins[i].name), builtins[i].fn);
-		print_env(env);
 	}
-	print_env(env);
 
 	return env;
 }

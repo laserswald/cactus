@@ -266,16 +266,3 @@ define(Env *e, Sexp *key, Sexp *val)
 	}
 }
 
-void
-print_env(Env *e)
-{
-	if (!e)
-		return;
-
-	printf("Environment:");
-	print_list(e->list);
-	puts("");
-	puts("Parent:");
-	print_env(e->parent);
-}
-

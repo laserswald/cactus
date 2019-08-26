@@ -9,6 +9,7 @@ extern Symbol quote_sym;
 extern Symbol define_sym;
 extern Symbol if_sym;
 extern Symbol lambda_sym;
+extern Symbol set_sym;
 
 #endif // globals_h_INCLUDED
 
