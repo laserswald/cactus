@@ -77,6 +77,7 @@ static char *readsexp_string_test() {
 	status = readsexp(&l, &x);
 	mu_assert("readsexp not ok when reading string", status == READSEXP_OK);
 	mu_assert("readsexp did not read a string", x && is_str(x));
+	mu_assert("readsexp included quotes", x->s.str[0] == 'i');
 
 	return 0;
 }
@@ -119,7 +120,6 @@ static char *readsexp_list_test() {
 	// printtokstream(&l);
 
 	status = readsexp(&l, &x);
-	print_sexp(x);
 	mu_assert("readsexp not ok when reading list", status == READSEXP_OK);
 	return 0;
 }

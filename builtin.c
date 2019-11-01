@@ -6,6 +6,8 @@
 #include "debug.h"
 #include "utils.h"
 #include "config.h"
+#include "load.h"
+#include "read.h"
 
 Sexp* builtin_car(Sexp *x, Env *e) {
 	Sexp* arg = eval(car(x), e);
@@ -169,6 +171,27 @@ Sexp* builtin_exit(Sexp *x, Env *e)
     // Invoke any ending things from dynamic-wind
     // Exit   
     exit(0);
+}
+
+Sexp* builtin_load(Sexp *x, Env *e)
+{
+	Sexp *fname = car(x);
+	if (! is_str(fname)) {
+		return make_error("`load` expects a string", x);
+	}
+
+	printf("LOADING: %s\n", fname->s.str);
+	FILE *f = fopen(fname->s.str, "r");
+	if (! f) {
+		return make_error("load: no file found", fname);
+	}
+
+	int result = runfile(f, e);
+	if (result != READSEXP_OK) {
+		return make_error("load: could not read file", fname);
+	}
+
+	return &undefined;
 }
 
 void make_builtin(Env *e, Sexp *x, Sexp *(fn)(Sexp*, Env*)) {

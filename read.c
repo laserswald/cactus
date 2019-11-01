@@ -1,6 +1,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "debug.h"
 #include "sexp.h"
 #include "read.h"
@@ -9,7 +10,7 @@
 
 /* Is this int allowable as an identifier character? */
 int is_ident(int i) {
-	return isalpha(i) || strchr("!$%&*+-./:<=>?@^_~", i) != NULL;
+	return i != 0 && (isalpha(i) || strchr("!$%&*+-./:<=>?@^_~", i) != NULL);
 }
 
 int charspan(const char* s, int (*fn)(int)) {
@@ -137,10 +138,10 @@ struct lexeme nextlex(struct lexer* l) {
 			le.t = TOKEN_ERROR;
 		}
 	} else if (*p == ';') { 
-                le.t = TOKEN_COMMENT;
+        le.t = TOKEN_COMMENT;
 		p += charspan(p, notnl);
 		l->lno++;
-	        p++;
+        p++;
 	} else if (! *p) {
 		le.t = TOKEN_END;
 	}
@@ -196,7 +197,7 @@ Sexp* lexeme_to_int(struct lexeme lx) {
 }
 
 Sexp* lexeme_to_string(struct lexeme lx) {
-	return make_string(strslice(lx.st, &lx.st[lx.sz]));
+	return make_string(strslice(lx.st + 1, &lx.st[lx.sz - 1]));
 }
 
 int readlist(struct lexer *l, Sexp **r) {
