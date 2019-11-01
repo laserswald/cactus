@@ -5,6 +5,7 @@
 #include "globals.h"
 #include "debug.h"
 #include "utils.h"
+#include "config.h"
 
 Sexp* builtin_car(Sexp *x, Env *e) {
 	Sexp* arg = eval(car(x), e);
@@ -55,6 +56,16 @@ Sexp* builtin_is_pair(Sexp *x, Env *e) {
 		return make_integer(0);
 }
 
+Sexp* builtin_is_number(Sexp *x, Env *e) 
+{
+	Sexp *arg = eval(car(x), e);
+	PROPAGATE_ERROR(arg);
+	if (is_int(arg) || is_float(arg))
+		return make_integer(1);
+	else
+		return make_integer(0);
+}
+
 Sexp* builtin_eq(Sexp *x, Env *e) {
 	Sexp *fst = eval(car(x), e);
 	Sexp *snd = eval(cadr(x), e);
@@ -88,7 +99,8 @@ Sexp* builtin_progn(Sexp *x, Env *e) {
 	return result;
 }
 
-Sexp* builtin_plus(Sexp *x, Env *e) {
+Sexp* builtin_plus(Sexp *x, Env *e) 
+{
 	int result = 0;
 
 	LIST_FOR_EACH(x, pair) {
@@ -96,6 +108,57 @@ Sexp* builtin_plus(Sexp *x, Env *e) {
 		PROPAGATE_ERROR(addend);
 		int a = to_int(addend, "+");
 		result += a;
+	}
+
+	return make_integer(result);
+}
+
+Sexp* builtin_times(Sexp *x, Env *e) 
+{
+	int result = 1;
+
+	LIST_FOR_EACH(x, pair) {
+		Sexp* factor = eval(car(pair), e);
+		PROPAGATE_ERROR(factor);
+		int a = to_int(factor, "*");
+		result *= a;
+	}
+
+	return make_integer(result);
+}
+
+Sexp* builtin_minus(Sexp *x, Env *e) 
+{
+	int result = to_int(car(x), "-");
+
+	Sexp *rest = cdr(x);
+
+	LIST_FOR_EACH(rest, pair) {
+		// Fancy word.
+		Sexp* subtrahend = eval(car(pair), e);
+		PROPAGATE_ERROR(subtrahend);
+		int a = to_int(subtrahend, "-");
+		result -= a;
+	}
+
+	return make_integer(result);
+}
+
+Sexp* builtin_divide(Sexp *x, Env *e) 
+{
+	int result = to_int(car(x), "/");
+
+	Sexp *rest = cdr(x);
+
+	LIST_FOR_EACH(rest, pair) {
+		// Fancy word.
+		Sexp* divisor= eval(car(pair), e);
+		PROPAGATE_ERROR(divisor);
+		int a = to_int(divisor, "/");
+		if (a == 0) {
+			return make_error("Division by zero", NULL);
+		}
+		result /= a;
 	}
 
 	return make_integer(result);
@@ -119,21 +182,6 @@ Env* make_builtins() {
 	quote_sym.sym = "quote";
 	lambda_sym.sym = "lambda";
 	set_sym.sym = "set!";
-
-	struct {
-		char* name;
-		Sexp* (*fn)(Sexp*, Env*);
-	} builtins[] = {
-		{"null?", &builtin_is_nil},
-		{"pair?", &builtin_is_pair},
-		{"car", &builtin_car},
-		{"cdr", &builtin_cdr},
-		{"cons", &builtin_cons},
-		{"eq?", &builtin_eq},
-		{"display", &builtin_display},
-		{"newline", &builtin_newline},
-		{"+", &builtin_plus},
-	};
 
 	int i;
 	for (i = 0; i < LENGTH(builtins); i++) {
