@@ -9,7 +9,7 @@
 
 /* Is this int allowable as an identifier character? */
 int is_ident(int i) {
-	return isalpha(i) || i == '?' || i == '-' || i == '!' || i == '+' || i == '*' || i == '/';
+	return isalpha(i) || strchr("!$%&*+-./:<=>?@^_~", i) != NULL;
 }
 
 int charspan(const char* s, int (*fn)(int)) {
