@@ -17,6 +17,7 @@ Sexp* builtin_eq(Sexp *x, Env *unused);
 Sexp* builtin_display(Sexp *x, Env *e);
 Sexp* builtin_newline(Sexp *x, Env *unused);
 Sexp* builtin_progn(Sexp *x, Env *e);
+Sexp* builtin_exit(Sexp *x, Env *e);
 
 Sexp* builtin_plus(Sexp *x, Env *e);
 Sexp* builtin_minus(Sexp *x, Env *e);

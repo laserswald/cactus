@@ -164,6 +164,13 @@ Sexp* builtin_divide(Sexp *x, Env *e)
 	return make_integer(result);
 }
 
+Sexp* builtin_exit(Sexp *x, Env *e)
+{
+    // Invoke any ending things from dynamic-wind
+    // Exit   
+    exit(0);
+}
+
 void make_builtin(Env *e, Sexp *x, Sexp *(fn)(Sexp*, Env*)) {
 	Sexp *c = malloc(sizeof(*c));
 	c->t = TYPE_CLOSURE;
