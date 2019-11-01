@@ -25,12 +25,12 @@ int verbosity = 0;
 
 /* macros */
 
-void 
+void
 dbg(Sexp *x)
 {
-	printf("; debug: ");
-	print_sexp(x);
-	puts("");
+    printf("; debug: ");
+    print_sexp(x);
+    puts("");
 }
 
 
@@ -38,47 +38,47 @@ dbg(Sexp *x)
 int
 repl(FILE *f, Env *e)
 {
-	char line[256];
-	Sexp *x;
-	int status;
-	struct lexer l;
+    char line[256];
+    Sexp *x;
+    int status;
+    struct lexer l;
 
-	printf("slisp> ");
-	while (fgets(line, sizeof line, f) != NULL) {
-		char *lp = line;
-		lexer_init(&l, lp);
-		status = readsexp(&l, &x);
-		if (status != READSEXP_OK) {
-			fprintf(stderr, "Could not finish reading sexp!\n");
-			fprint_sexp(stderr, x);
-			abort();
-		}
-		x = eval(x, e);
+    printf("slisp> ");
+    while (fgets(line, sizeof line, f) != NULL) {
+        char *lp = line;
+        lexer_init(&l, lp);
+        status = readsexp(&l, &x);
+        if (status != READSEXP_OK) {
+            fprintf(stderr, "Could not finish reading sexp!\n");
+            fprint_sexp(stderr, x);
+            abort();
+        }
+        x = eval(x, e);
 
-		print_sexp(x);
-		printf("\nslisp> ");
-	}
+        print_sexp(x);
+        printf("\nslisp> ");
+    }
 
-	return 0;
+    return 0;
 }
 
 int
 main(int argc, char *argv[])
 {
-	DBG("Starting.\n");
-	Env *e = make_builtins();
-	FILE *infile = NULL;
+    DBG("Starting.\n");
+    Env *e = make_builtins();
+    FILE *infile = NULL;
 
-	if (argc == 2) {
-		DBG("Reading file.\n");
-		infile = fopen(argv[1], "r");
-		if (! infile) {
-			perror("Could not run file");
-			exit(1);
-		}
-		return runfile(infile, e);
-	}
+    if (argc == 2) {
+        DBG("Reading file.\n");
+        infile = fopen(argv[1], "r");
+        if (! infile) {
+            perror("Could not run file");
+            exit(1);
+        }
+        return runfile(infile, e);
+    }
 
-	DBG("Starting REPL.\n");
-	return repl(stdin, e);
+    DBG("Starting REPL.\n");
+    return repl(stdin, e);
 }

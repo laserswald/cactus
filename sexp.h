@@ -10,57 +10,57 @@
 typedef struct sexp Sexp;
 
 typedef enum {
-	TYPE_UNDEF,
-	TYPE_INT,
-	TYPE_DOUBLE,
-	TYPE_BOOLEAN,
-	TYPE_STRING,
-	TYPE_SYMBOL,
-	TYPE_PAIR,
-	TYPE_CLOSURE,
-	TYPE_ENVIRONMENT,
-	TYPE_PORT,
-	TYPE_ERROR,
+    TYPE_UNDEF,
+    TYPE_INT,
+    TYPE_DOUBLE,
+    TYPE_BOOLEAN,
+    TYPE_STRING,
+    TYPE_SYMBOL,
+    TYPE_PAIR,
+    TYPE_CLOSURE,
+    TYPE_ENVIRONMENT,
+    TYPE_PORT,
+    TYPE_ERROR,
 } Type;
 
 typedef struct {
-	char *str;
+    char *str;
 } String;
 
 typedef struct {
-	char* sym;
+    char* sym;
 } Symbol;
 
 typedef struct {
-	Sexp *car;
-	Sexp *cdr;
+    Sexp *car;
+    Sexp *cdr;
 } Pair;
 
 typedef struct {
-	Env *env;
-	Sexp *argl;
-	Sexp *body;
-	Sexp *(*nativefn)(Sexp *args, Env *e);
+    Env *env;
+    Sexp *argl;
+    Sexp *body;
+    Sexp *(*nativefn)(Sexp *args, Env *e);
 } Closure;
 
 typedef struct {
-	char *msg;
-	Sexp *ctx;
+    char *msg;
+    Sexp *ctx;
 } Error;
 
 struct sexp {
-	Type t;
-	union {
-		int i;
-		double f;
-		bool b;
-		String s;
-		Symbol a; // atom
-		Pair p;
-		Closure *c;
-		Env *e;
-		Error x;
-	};
+    Type t;
+    union {
+        int i;
+        double f;
+        bool b;
+        String s;
+        Symbol a; // atom
+        Pair p;
+        Closure *c;
+        Env *e;
+        Error x;
+    };
 };
 
 Sexp* cons(Sexp* a, Sexp* d);

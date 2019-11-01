@@ -7,8 +7,8 @@ typedef struct sexp Sexp;
 #include "sexp.h"
 
 struct env {
-	Env *parent;
-	Sexp *list;
+    Env *parent;
+    Sexp *list;
 };
 
 void envinit(Env *e, Env *parent);

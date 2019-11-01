@@ -2,8 +2,8 @@
 #define builtin_h_INCLUDED
 
 typedef struct builtin_table {
-	char* name;
-	Sexp* (*fn)(Sexp*, Env*);
+    char* name;
+    Sexp* (*fn)(Sexp*, Env*);
 } BuiltinTable;
 
 Sexp* builtin_if(Sexp *x, Env *e);
