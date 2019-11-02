@@ -130,6 +130,7 @@ Sexp *make_integer(int i);
 Sexp *make_closure(Env *e, Sexp *args, Sexp *body);
 Sexp *make_error(char *msg, Sexp *irr);
 Sexp *make_string(char *str);
+Sexp *make_boolean(bool b);
 
 #define LIST_FOR_EACH(list, current) \
 for (Sexp *(current) = list;\
