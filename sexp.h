@@ -10,55 +10,57 @@
 typedef struct sexp Sexp;
 
 typedef enum {
-	TYPE_UNDEF,
-	TYPE_INT,
-	TYPE_DOUBLE,
-	TYPE_STRING,
-	TYPE_SYMBOL,
-	TYPE_PAIR,
-	TYPE_CLOSURE,
-	TYPE_ENVIRONMENT,
-	TYPE_PORT,
-	TYPE_ERROR,
+    TYPE_UNDEF,
+    TYPE_INT,
+    TYPE_DOUBLE,
+    TYPE_BOOLEAN,
+    TYPE_STRING,
+    TYPE_SYMBOL,
+    TYPE_PAIR,
+    TYPE_CLOSURE,
+    TYPE_ENVIRONMENT,
+    TYPE_PORT,
+    TYPE_ERROR,
 } Type;
 
 typedef struct {
-	char *str;
+    char *str;
 } String;
 
 typedef struct {
-	char* sym;
+    char* sym;
 } Symbol;
 
 typedef struct {
-	Sexp *car;
-	Sexp *cdr;
+    Sexp *car;
+    Sexp *cdr;
 } Pair;
 
 typedef struct {
-	Env *env;
-	Sexp *argl;
-	Sexp *body;
-	Sexp *(*nativefn)(Sexp *args, Env *e);
+    Env *env;
+    Sexp *argl;
+    Sexp *body;
+    Sexp *(*nativefn)(Sexp *args, Env *e);
 } Closure;
 
 typedef struct {
-	char *msg;
-	Sexp *ctx;
+    char *msg;
+    Sexp *ctx;
 } Error;
 
 struct sexp {
-	Type t;
-	union {
-		int i;
-		double f;
-		String s;
-		Symbol a; // atom
-		Pair p;
-		Closure *c;
-		Env *e;
-		Error x;
-	};
+    Type t;
+    union {
+        int i;
+        double f;
+        bool b;
+        String s;
+        Symbol a; // atom
+        Pair p;
+        Closure *c;
+        Env *e;
+        Error x;
+    };
 };
 
 Sexp* cons(Sexp* a, Sexp* d);
@@ -97,13 +99,16 @@ funcname(Sexp *x) { \
 
 /* generated functions */
 GENERATE_TYPECONV(TYPE_CLOSURE, Closure*, to_closure, c)
+GENERATE_TYPECONV(TYPE_BOOLEAN, bool, to_bool, b)
 GENERATE_TYPECONV(TYPE_DOUBLE, double, to_float, f)
 GENERATE_TYPECONV(TYPE_ENVIRONMENT, Env*, to_env, e)
 GENERATE_TYPECONV(TYPE_INT, int, to_int, i)
 GENERATE_TYPECONV(TYPE_PAIR, Pair, to_pair, p)
 GENERATE_TYPECONV(TYPE_STRING, String, to_str, s)
 GENERATE_TYPECONV(TYPE_SYMBOL, Symbol, to_sym, a)
+
 GENERATE_TYPECHECK(is_closure, TYPE_CLOSURE)
+GENERATE_TYPECHECK(is_bool, TYPE_BOOLEAN)
 GENERATE_TYPECHECK(is_env, TYPE_ENVIRONMENT)
 GENERATE_TYPECHECK(is_float, TYPE_DOUBLE)
 GENERATE_TYPECHECK(is_int, TYPE_INT)
@@ -111,6 +116,9 @@ GENERATE_TYPECHECK(is_pair, TYPE_PAIR)
 GENERATE_TYPECHECK(is_str, TYPE_STRING)
 GENERATE_TYPECHECK(is_sym, TYPE_SYMBOL)
 GENERATE_TYPECHECK(is_error, TYPE_ERROR)
+
+bool is_nil(Sexp *);
+bool is_truthy(Sexp *);
 
 bool equals(Sexp *l, Sexp *r);
 
