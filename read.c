@@ -9,15 +9,15 @@
 #include "sym.h"
 
 /* Is this int allowable as an identifier character? */
-int 
-is_ident(int i) 
+int
+is_ident(int i)
 {
     return i != 0 && (isalpha(i) || strchr("!$%&*+-./:<=>?@^_~", i) != NULL);
 }
 
 /* Consume characters from the string until the function returns 0. */
-int 
-charspan(const char* s, int (*fn)(int)) 
+int
+charspan(const char* s, int (*fn)(int))
 {
     int l = 0;
     while (*s && fn(*s)) {
@@ -28,8 +28,8 @@ charspan(const char* s, int (*fn)(int))
 }
 
 /* Return 0 if the character is double quote, 1 otherwise. */
-int 
-notdblq(int c) 
+int
+notdblq(int c)
 {
     return c != '"';
 }
@@ -40,8 +40,8 @@ int notnl(int c) {
 }
 
 /* Initialize a lexer with a string to parse. */
-void 
-lexer_init(struct lexer* l, const char* s) 
+void
+lexer_init(struct lexer* l, const char* s)
 {
     l->st = s;
     l->cur = (char*) s;
@@ -50,7 +50,7 @@ lexer_init(struct lexer* l, const char* s)
 }
 
 /* Print a lexeme to stdout. */
-void 
+void
 printlex(struct lexeme lx)
 {
     switch (lx.t) {
@@ -106,8 +106,8 @@ printlex(struct lexeme lx)
 }
 
 /* Return the next lexeme available from the lexer. */
-struct lexeme 
-nextlex(struct lexer* l) 
+struct lexeme
+nextlex(struct lexer* l)
 {
     struct lexeme le = {
         .st = l->cur,
@@ -171,8 +171,8 @@ nextlex(struct lexer* l)
 }
 
 /* Peek at the current lexeme. */
-struct lexeme 
-peeklex(struct lexer *l) 
+struct lexeme
+peeklex(struct lexer *l)
 {
     if (l->buf.t == TOKEN_NOTHING) {
         nextlex(l);
@@ -180,11 +180,11 @@ peeklex(struct lexer *l)
     return l->buf;
 }
 
-/* 
- * Peek at the current lexeme and return 1 if it is the specified 
+/*
+ * Peek at the current lexeme and return 1 if it is the specified
  * token, or 0 otherwise.
  */
-int 
+int
 peekistok(struct lexer *l, enum token t)
 {
     struct lexeme e = peeklex(l);
@@ -192,8 +192,8 @@ peekistok(struct lexer *l, enum token t)
 }
 
 /* If the current lexeme is of the specified token, consume it. */
-int 
-expecttok(struct lexer *l, enum token t) 
+int
+expecttok(struct lexer *l, enum token t)
 {
     int istok = peekistok(l, t);
     if (istok) {
@@ -203,8 +203,8 @@ expecttok(struct lexer *l, enum token t)
 }
 
 /* Print the entire stream of tokens from the lexer. */
-void 
-printtokstream(struct lexer *l) 
+void
+printtokstream(struct lexer *l)
 {
     while (! peekistok(l, TOKEN_END)) {
         printlex(peeklex(l));
@@ -214,16 +214,16 @@ printtokstream(struct lexer *l)
 }
 
 /* Convert a lexeme to a symbol. */
-Sexp* 
-lexeme_to_symbol(struct lexeme lx) 
+Sexp*
+lexeme_to_symbol(struct lexeme lx)
 {
     char* sym = strslice(lx.st, &lx.st[lx.sz]);
     return make_symbol(sym);
 }
 
 /* Convert a lexeme to an integer. */
-Sexp* 
-lexeme_to_int(struct lexeme lx) 
+Sexp*
+lexeme_to_int(struct lexeme lx)
 {
     char *end = lx.st;
     long i = strtol(lx.st, &end, 10);
@@ -231,15 +231,15 @@ lexeme_to_int(struct lexeme lx)
 }
 
 /* Convert a lexeme to a string. */
-Sexp* 
-lexeme_to_string(struct lexeme lx) 
+Sexp*
+lexeme_to_string(struct lexeme lx)
 {
     return make_string(strslice(lx.st + 1, &lx.st[lx.sz - 1]));
 }
 
 /* Read a list from the given lexer and fill the Sexp with it. */
-int 
-readlist(struct lexer *l, Sexp **r) 
+int
+readlist(struct lexer *l, Sexp **r)
 {
     int status;
     *r = NULL;
@@ -268,7 +268,7 @@ readlist(struct lexer *l, Sexp **r)
 }
 
 /* Read the next valid s-expression from the lexer. */
-int 
+int
 readsexp(struct lexer* l, Sexp** ret)
 {
     int status = READSEXP_OK;
