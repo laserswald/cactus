@@ -85,7 +85,7 @@ repl(FILE *f, Env *e)
 	int status;
 	struct lexer l;
 
-	printf("slisp> ");
+	printf("cactus> ");
 	while (fgets(line, sizeof line, f) != NULL) {
 		char *lp = line;
 		lexer_init(&l, lp);
@@ -98,7 +98,7 @@ repl(FILE *f, Env *e)
 		x = eval(x, e);
 
 		print_sexp(x);
-		printf("\nslisp> ");
+		printf("\ncactus> ");
 	}
 
 	return 0;

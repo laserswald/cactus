@@ -87,7 +87,6 @@ void printlex(struct lexeme lx) {
         }
 	char* sym = strslice(lx.st, &lx.st[lx.sz]);
 	printf(":\t'%s'\n", sym);
-
 }
 
 struct lexeme nextlex(struct lexer* l) {
