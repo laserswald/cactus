@@ -119,6 +119,7 @@ GENERATE_TYPECHECK(is_error, TYPE_ERROR)
 
 bool is_nil(Sexp *);
 bool is_truthy(Sexp *);
+Sexp *sexp_not(Sexp *x);
 
 bool equals(Sexp *l, Sexp *r);
 

@@ -9,13 +9,18 @@ BuiltinTable builtins[] = {
     {"cons", builtin_cons},
     {"null?", builtin_is_nil},
     {"pair?", builtin_is_pair},
-    {"number?", builtin_is_number},
+
+    {"boolean?", builtin_is_boolean},
+    {"not", builtin_not},
+
     {"eq?", builtin_eq},
     {"display", builtin_display},
     {"newline", builtin_newline},
     {"begin", builtin_progn},
     {"exit", builtin_exit},
     {"load", builtin_load},
+
+    {"number?", builtin_is_number},
     {"+", builtin_plus},
     {"-", builtin_minus},
     {"*", builtin_times},

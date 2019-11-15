@@ -292,6 +292,10 @@ define(Env *e, Sexp *key, Sexp *val)
 }
 
 Sexp *
-sexp_not(Sexp *x) {
-    
+sexp_not(Sexp *x) 
+{
+    if (is_bool(x) && x->b == false) {
+	    return make_boolean(true);
+    }
+    return make_boolean(false);
 }

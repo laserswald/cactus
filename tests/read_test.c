@@ -154,6 +154,7 @@ char *read_tests() {
 	mu_run_test(readsexp_blank_test);
 	mu_run_test(readsexp_ident_test);
 	mu_run_test(readsexp_int_test);
+	mu_run_test(readsexp_boolean_test);
 	mu_run_test(readsexp_string_test);
 	mu_run_test(readsexp_list_test);
 	return 0;

@@ -13,6 +13,10 @@ Sexp* builtin_cons(Sexp *x, Env *unused);
 Sexp* builtin_is_nil(Sexp *x, Env *unused);
 Sexp* builtin_is_pair(Sexp *x, Env *unused);
 Sexp* builtin_is_number(Sexp *x, Env *e);
+
+Sexp* builtin_is_boolean(Sexp *x, Env *e);
+Sexp* builtin_not(Sexp *x, Env *e);
+
 Sexp* builtin_eq(Sexp *x, Env *unused);
 Sexp* builtin_display(Sexp *x, Env *e);
 Sexp* builtin_newline(Sexp *x, Env *unused);

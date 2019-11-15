@@ -194,6 +194,20 @@ Sexp* builtin_load(Sexp *x, Env *e)
     return &undefined;
 }
 
+Sexp* builtin_is_boolean(Sexp *x, Env *e)
+{   
+	Sexp *maybe_bool = eval(car(x), e);
+    PROPAGATE_ERROR(maybe_bool);
+	return make_boolean(is_bool(maybe_bool));
+}
+
+Sexp* builtin_not(Sexp *x, Env *e)
+{ 
+	Sexp *arg = eval(car(x), e);
+    PROPAGATE_ERROR(arg);
+	return sexp_not(arg);
+}
+
 void make_builtin(Env *e, Sexp *x, Sexp *(fn)(Sexp*, Env*)) {
     Sexp *c = malloc(sizeof(*c));
     c->t = TYPE_CLOSURE;

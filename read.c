@@ -200,7 +200,12 @@ Sexp* lexeme_to_string(struct lexeme lx) {
 }
 
 Sexp* lexeme_to_boolean(struct lexeme lx) {
-	return make_boolean();
+    if (strncmp(lx.st, "#t", 2) == 0 || strncmp(lx.st, "#true", 5) == 0) {
+		return make_boolean(true);
+    } else if (strncmp(lx.st, "#f", 2) == 0 || strncmp(lx.st, "#false", 6) == 0) {
+		return make_boolean(false);
+    }
+    return make_error("Improperly formatted boolean.", NULL);
 }
 
 int readlist(struct lexer *l, Sexp **r) {
@@ -243,6 +248,10 @@ int readsexp(struct lexer* l, Sexp** ret)
 		break;
 	case TOKEN_IDENTIFIER:
 		*ret = lexeme_to_symbol(lx);
+		nextlex(l);
+		break;
+	case TOKEN_BOOLEAN:
+		*ret = lexeme_to_boolean(lx);
 		nextlex(l);
 		break;
 	case TOKEN_INTEGER:
