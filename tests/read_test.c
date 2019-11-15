@@ -49,6 +49,31 @@ static char *readsexp_ident_test() {
 	return 0;
 }
 
+static char *readsexp_boolean_test() {
+	int status = READSEXP_OK;
+	Sexp *x = NULL;
+	char* string = NULL;
+	struct lexer l;
+
+	/* True */
+	string = "#t";
+	lexer_init(&l, string);
+	status = readsexp(&l, &x);
+	mu_assert("readsexp not ok when reading boolean true", status == READSEXP_OK);
+	mu_assert("readsexp did not read a boolean", is_bool(x) == true);
+	mu_assert("readsexp did not read true", x->b == true);
+
+	string = "#f";
+	lexer_init(&l, string);
+	status = readsexp(&l, &x);
+	mu_assert("readsexp not ok when reading boolean false", status == READSEXP_OK);
+	mu_assert("readsexp did not read a boolean", is_bool(x) == true);
+	mu_assert("readsexp did not read false", x->b == false);
+
+	return 0;
+}
+
+
 static char *readsexp_int_test() {
 	int status = READSEXP_OK;
 	Sexp *x = NULL;

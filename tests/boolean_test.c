@@ -39,13 +39,14 @@ is_boolean_test()
     } cases[] = {
         {NULL, false},
         {make_boolean(false), true},
+        {make_boolean(true), true},
         {make_integer(0), false},
     };
 
     size_t len_cases = LENGTH(cases);
     int i;
     for (i = 0; i < len_cases; i++) {
-	    mu_assert("`not` failed", is_bool(cases[i].thing) == cases[i].expected);
+	    mu_assert("`is_bool` failed", is_bool(cases[i].thing) == cases[i].expected);
     }
 
 	return 0;
