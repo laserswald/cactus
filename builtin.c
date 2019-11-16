@@ -9,7 +9,9 @@
 #include "load.h"
 #include "read.h"
 
-Sexp* builtin_car(Sexp *x, Env *e) {
+
+Sexp* builtin_car(Sexp *x, Env *e) 
+{
     Sexp* arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
 
@@ -171,11 +173,12 @@ Sexp* builtin_exit(Sexp *x, Env *e)
     // Invoke any ending things from dynamic-wind
     // Exit
     exit(0);
+    return NULL;
 }
 
 Sexp* builtin_load(Sexp *x, Env *e)
 {
-    Sexp *fname = car(x);
+    Sexp *fname = eval(car(x), e);
     if (! is_str(fname)) {
         return make_error("`load` expects a string", x);
     }

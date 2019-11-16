@@ -119,6 +119,9 @@ struct lexeme nextlex(struct lexer* l) {
 	} else if (*p == ')') {
 		le.t = TOKEN_CLOSE_PAREN;
 		p++;
+	} else if (*p == '\'') {
+		le.t = TOKEN_SINGLE_QUOTE;
+		p++;
 	} else if (*p == '"') {
 		le.t = TOKEN_STRING;
 		p++;
@@ -259,11 +262,9 @@ int readsexp(struct lexer* l, Sexp** ret)
 		nextlex(l);
 		break;
 	case TOKEN_SINGLE_QUOTE:
-		DBG("Dispatching on quote\n");
-
+		nextlex(l);
 		Sexp* quoted;
 		status = readsexp(l, &quoted);
-
 		Sexp* q = make_symbol("quote");
 		*ret = cons(q, quoted);
 		nextlex(l);

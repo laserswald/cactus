@@ -1,6 +1,6 @@
 BINARY = cactus
-CFLAGS = -g -Wall -Wpedantic -Werror
-CC=tcc
+CFLAGS = -g -Wall -Wpedantic
+CC=gcc
 
 SOURCE_FILES := builtin.c env.c eval.c globals.c load.c read.c sexp.c utils.c write.c xmalloc.c
 OBJECT_FILES := $(SOURCE_FILES:.c=.o)
