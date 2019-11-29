@@ -49,6 +49,31 @@ static char *readsexp_ident_test() {
 	return 0;
 }
 
+static char *readsexp_boolean_test() {
+	int status = READSEXP_OK;
+	Sexp *x = NULL;
+	char* string = NULL;
+	struct lexer l;
+
+	/* True */
+	string = "#t";
+	lexer_init(&l, string);
+	status = readsexp(&l, &x);
+	mu_assert("readsexp not ok when reading boolean true", status == READSEXP_OK);
+	mu_assert("readsexp did not read a boolean", is_bool(x) == true);
+	mu_assert("readsexp did not read true", x->b == true);
+
+	string = "#f";
+	lexer_init(&l, string);
+	status = readsexp(&l, &x);
+	mu_assert("readsexp not ok when reading boolean false", status == READSEXP_OK);
+	mu_assert("readsexp did not read a boolean", is_bool(x) == true);
+	mu_assert("readsexp did not read false", x->b == false);
+
+	return 0;
+}
+
+
 static char *readsexp_int_test() {
 	int status = READSEXP_OK;
 	Sexp *x = NULL;
@@ -111,9 +136,9 @@ static char *readsexp_list_test() {
 	mu_assert("readsexp not ok when reading list", status == READSEXP_OK);
 	mu_assert("readsexp did not read a list", x && is_pair(x));
 
-        LIST_FOR_EACH(x, p) {
-	        mu_assert("readsexp misread a symbol", car(p)->t == TYPE_SYMBOL);
-        }
+    LIST_FOR_EACH(x, p) {
+        mu_assert("readsexp misread a symbol", car(p)->t == TYPE_SYMBOL);
+    }
 
 	string = "(define double (lambda (x) (+ x x)))";
 	lexer_init(&l, string);
@@ -124,13 +149,31 @@ static char *readsexp_list_test() {
 	return 0;
 }
 
+static char*
+readsexp_quote_test()
+{
+	int status = READSEXP_OK;
+	Sexp *x = NULL;
+	char* string = NULL;
+	struct lexer l;
+
+    string = "'a";
+	lexer_init(&l, string);
+	status = readsexp(&l, &x);
+	mu_assert("readsexp not ok when reading quoted symbol", status == READSEXP_OK);
+
+	return 0;
+}
+
 char *read_tests() {
 	mu_run_test(readsexp_null_test);
 	mu_run_test(readsexp_blank_test);
 	mu_run_test(readsexp_ident_test);
 	mu_run_test(readsexp_int_test);
+	mu_run_test(readsexp_boolean_test);
 	mu_run_test(readsexp_string_test);
 	mu_run_test(readsexp_list_test);
+	mu_run_test(readsexp_quote_test);
 	return 0;
 }
 

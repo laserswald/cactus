@@ -32,6 +32,9 @@ fprint_sexp(FILE *f, Sexp *x)
     }
 
     switch (x->t) {
+    case TYPE_BOOLEAN:
+        fprintf(f, "%s", x->b ? "#t" : "#f");
+        break;
     case TYPE_INT:
         fprintf(f, "%i", x->i);
         break;

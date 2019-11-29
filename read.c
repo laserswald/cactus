@@ -28,15 +28,15 @@ charspan(const char* s, int (*fn)(int))
 }
 
 /* Return 0 if the character is double quote, 1 otherwise. */
-int
-notdblq(int c)
+int 
+notdblq(int c) 
 {
-    return c != '"';
+	return c != '"';
 }
 
 /* Return 0 if the character is newline, 1 otherwise. */
 int notnl(int c) {
-    return c != '\n';
+	return c != '\n';
 }
 
 /* Initialize a lexer with a string to parse. */
@@ -114,60 +114,63 @@ nextlex(struct lexer* l)
         .lno = l->lno,
     };
 
-    char *p = l->cur;
+	char *p = l->cur;
 
-    if (! p || ! l->st) {
-        le.t = TOKEN_ERROR;
-    } else if (isspace(*p)) {
-        le.t = TOKEN_WHITESPACE;
-        while (*p && isspace(*p)) {
-            if (*p == '\n') l->lno++;
-            p++;
-        }
-    } else if (is_ident(*p)) {
-        le.t = TOKEN_IDENTIFIER;
-        p += charspan(p, is_ident);
-    } else if (isdigit(*p)) {
-        le.t = TOKEN_INTEGER;
-        p += charspan(p, isdigit);
-    } else if (*p == '(') {
-        le.t = TOKEN_OPEN_PAREN;
-        p++;
-    } else if (*p == ')') {
-        le.t = TOKEN_CLOSE_PAREN;
-        p++;
-    } else if (*p == '"') {
-        le.t = TOKEN_STRING;
-        p++;
-        p += charspan(p, notdblq);
-        p++;
-    } else if (*p == '#') {
-        /* boolean and character */
-        p++;
-        if (*p == 't' || *p == 'f') {
-            p++;
-            le.t = TOKEN_BOOLEAN;
-        } else if (*p == '\\') {
-            p++;
-            le.t = TOKEN_CHARACTER;
-            p += charspan(p, isalpha);
-        } else {
-            le.t = TOKEN_ERROR;
-        }
-    } else if (*p == ';') {
+	if (! p || ! l->st) {
+		le.t = TOKEN_ERROR;
+	} else if (isspace(*p)) {
+		le.t = TOKEN_WHITESPACE;
+		while (*p && isspace(*p)){
+			if (*p == '\n') l->lno++;
+			p++;
+		}
+	} else if (is_ident(*p)) {
+		le.t = TOKEN_IDENTIFIER;
+		p += charspan(p, is_ident);
+	} else if (isdigit(*p)) {
+		le.t = TOKEN_INTEGER;
+		p += charspan(p, isdigit);
+	} else if (*p == '(') {
+		le.t = TOKEN_OPEN_PAREN;
+		p++;
+	} else if (*p == ')') {
+		le.t = TOKEN_CLOSE_PAREN;
+		p++;
+	} else if (*p == '\'') {
+		le.t = TOKEN_SINGLE_QUOTE;
+		p++;
+	} else if (*p == '"') {
+		le.t = TOKEN_STRING;
+		p++;
+		p += charspan(p, notdblq);
+		p++;
+	} else if (*p == '#') { 
+		/* boolean and character */
+		p++;
+		if (*p == 't' || *p == 'f') {
+			p++;
+			le.t = TOKEN_BOOLEAN;
+		} else if (*p == '\\') {
+			p++;
+			le.t = TOKEN_CHARACTER;
+			p += charspan(p, isalpha);
+		} else {
+			le.t = TOKEN_ERROR;
+		}
+	} else if (*p == ';') { 
         le.t = TOKEN_COMMENT;
-        p += charspan(p, notnl);
-        l->lno++;
+		p += charspan(p, notnl);
+		l->lno++;
         p++;
-    } else if (! *p) {
-        le.t = TOKEN_END;
-    }
+	} else if (! *p) {
+		le.t = TOKEN_END;
+	}
 
-    le.sz = p - l->cur;
-    l->cur = p;
-    l->buf = le;
+	le.sz = p - l->cur;
+	l->cur = p;
+	l->buf = le;
 
-    return le;
+	return le;
 }
 
 /* Peek at the current lexeme. */
@@ -215,7 +218,7 @@ printtokstream(struct lexer *l)
 
 /* Convert a lexeme to a symbol. */
 Sexp*
-lexeme_to_symbol(struct lexeme lx)
+lextosym(struct lexeme lx)
 {
     char* sym = strslice(lx.st, &lx.st[lx.sz]);
     return make_symbol(sym);
@@ -223,7 +226,7 @@ lexeme_to_symbol(struct lexeme lx)
 
 /* Convert a lexeme to an integer. */
 Sexp*
-lexeme_to_int(struct lexeme lx)
+lextoint(struct lexeme lx)
 {
     char *end = lx.st;
     long i = strtol(lx.st, &end, 10);
@@ -232,89 +235,103 @@ lexeme_to_int(struct lexeme lx)
 
 /* Convert a lexeme to a string. */
 Sexp*
-lexeme_to_string(struct lexeme lx)
+lextostr(struct lexeme lx)
 {
     return make_string(strslice(lx.st + 1, &lx.st[lx.sz - 1]));
 }
 
-/* Read a list from the given lexer and fill the Sexp with it. */
-int
-readlist(struct lexer *l, Sexp **r)
+/* Convert a lexeme to a boolean. */
+Sexp* 
+lextobool(struct lexeme lx) 
 {
-    int status;
-    *r = NULL;
-    if (! expecttok(l, TOKEN_OPEN_PAREN)) {
-        *r = make_error("readlist: somehow didn't get open paren", NULL);
-        return READSEXP_OTHER_ERROR;
+    if (strncmp(lx.st, "#t", 2) == 0 || strncmp(lx.st, "#true", 5) == 0) {
+		return make_boolean(true);
+    } else if (strncmp(lx.st, "#f", 2) == 0 || strncmp(lx.st, "#false", 6) == 0) {
+		return make_boolean(false);
     }
-    while (! peekistok(l, TOKEN_CLOSE_PAREN) && peeklex(l).t > 0) {
-        Sexp *e = NULL;
-        status = readsexp(l, &e);
-        if (status != READSEXP_OK) {
-            return status;
-        }
-        if (e == &undefined) {
-            *r = make_error("Unexpected ending", NULL);
-            return READSEXP_OTHER_ERROR;
-        }
-        *r = append(*r, e);
-        expecttok(l, TOKEN_WHITESPACE);
-    }
-    if (! expecttok(l, TOKEN_CLOSE_PAREN)) {
-        *r = make_error("readlist: somehow didn't get close paren", NULL);
-        return READSEXP_OTHER_ERROR;
-    }
-    return READSEXP_OK;
+    return make_error("Improperly formatted boolean.", NULL);
+}
+
+/* Read a list from the given lexer and fill the Sexp with it. */
+int 
+readlist(struct lexer *l, Sexp **r) 
+{
+	int status;
+	*r = NULL;
+	if (! expecttok(l, TOKEN_OPEN_PAREN)) {
+		*r = make_error("readlist: somehow didn't get open paren", NULL);
+		return READSEXP_OTHER_ERROR;
+	}
+	while (! peekistok(l, TOKEN_CLOSE_PAREN) && peeklex(l).t > 0) {
+		Sexp *e = NULL;
+		status = readsexp(l, &e);
+		if (status != READSEXP_OK) {
+			return status;
+		}
+		if (e == &undefined) {
+			*r = make_error("Unexpected ending", NULL);
+			return READSEXP_OTHER_ERROR;
+		}
+		*r = append(*r, e);
+		expecttok(l, TOKEN_WHITESPACE);
+	}
+	if (! expecttok(l, TOKEN_CLOSE_PAREN)) {
+		*r = make_error("readlist: somehow didn't get close paren", NULL);
+		return READSEXP_OTHER_ERROR;
+	}
+	return READSEXP_OK;
 }
 
 /* Read the next valid s-expression from the lexer. */
-int
-readsexp(struct lexer* l, Sexp** ret)
+int 
+readsexp(struct lexer* l, Sexp** ret) 
 {
-    int status = READSEXP_OK;
-    *ret = (Sexp*) NULL;
+	int status = READSEXP_OK;
+	*ret = (Sexp*) NULL;
 
-    struct lexeme lx = peeklex(l);
+	struct lexeme lx = peeklex(l);
 
-    switch (lx.t) {
-    case TOKEN_OPEN_PAREN:
-        status = readlist(l, ret);
-        break;
-    case TOKEN_IDENTIFIER:
-        *ret = lexeme_to_symbol(lx);
-        nextlex(l);
-        break;
-    case TOKEN_INTEGER:
-        *ret = lexeme_to_int(lx);
-        nextlex(l);
-        break;
-    case TOKEN_SINGLE_QUOTE:
-        DBG("Dispatching on quote\n");
+	switch (lx.t) {
+	case TOKEN_OPEN_PAREN:
+		status = readlist(l, ret);
+		break;
+	case TOKEN_IDENTIFIER:
+		*ret = lextosym(lx);
+		nextlex(l);
+		break;
+	case TOKEN_BOOLEAN:
+		*ret = lextobool(lx);
+		nextlex(l);
+		break;
+	case TOKEN_INTEGER:
+		*ret = lextoint(lx);
+		nextlex(l);
+		break;
+	case TOKEN_SINGLE_QUOTE:
+		nextlex(l);
+		Sexp* quoted;
+		status = readsexp(l, &quoted);
+		Sexp* q = make_symbol("quote");
+		*ret = cons(q, quoted);
+		nextlex(l);
+		break;
+	case TOKEN_STRING:
+		*ret = lextostr(lx);
+		nextlex(l);
+		break;
+	case TOKEN_END:
+		status = READSEXP_END_OF_FILE;
+		break;
+        case TOKEN_COMMENT:
+	        nextlex(l);
+	        status = readsexp(l, ret);
+	        break;
+	case TOKEN_ERROR:
+	default:
+		status = READSEXP_OTHER_ERROR;
+		break;
+	}
 
-        Sexp* quoted;
-        status = readsexp(l, &quoted);
-
-        Sexp* q = make_symbol("quote");
-        *ret = cons(q, quoted);
-        nextlex(l);
-        break;
-    case TOKEN_STRING:
-        *ret = lexeme_to_string(lx);
-        nextlex(l);
-        break;
-    case TOKEN_END:
-        status = READSEXP_END_OF_FILE;
-        break;
-    case TOKEN_COMMENT:
-        nextlex(l);
-        status = readsexp(l, ret);
-        break;
-    case TOKEN_ERROR:
-    default:
-        status = READSEXP_OTHER_ERROR;
-        break;
-    }
-
-    return status;
+	return status;
 }
 

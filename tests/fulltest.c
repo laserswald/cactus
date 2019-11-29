@@ -10,10 +10,12 @@ int tests_run = 0;
 
 static char *read_tests();
 static char *sexp_tests();
+static char *boolean_tests();
 
 static char *all_tests() {
 	mu_run_test(read_tests);
 	mu_run_test(sexp_tests);
+	mu_run_test(boolean_tests);
 	return 0;
 }
 

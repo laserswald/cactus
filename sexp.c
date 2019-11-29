@@ -13,6 +13,8 @@ show_type(Type t) {
         return "int";
     case TYPE_DOUBLE:
         return "float";
+    case TYPE_BOOLEAN:
+        return "boolean";
     case TYPE_CLOSURE:
         return "closure";
     case TYPE_ENVIRONMENT:
@@ -57,6 +59,9 @@ equals(Sexp *l, Sexp *r)
         break;
     case TYPE_DOUBLE:
         return l->f == r->f;
+        break;
+    case TYPE_BOOLEAN:
+        return l->b == r->b;
         break;
     case TYPE_STRING:
         return strcmp(l->s.str, r->s.str) == 0;
@@ -154,6 +159,16 @@ make_error(char *msg, Sexp *irr)
     x->t = TYPE_ERROR;
     x->x.msg = strdup(msg);
     x->x.ctx = irr;
+    return x;
+}
+
+/* Create an error value. */
+Sexp *
+make_boolean(bool b)
+{
+    Sexp *x = calloc(1, sizeof(Sexp));
+    x->t = TYPE_BOOLEAN;
+    x->b = b;
     return x;
 }
 
@@ -276,3 +291,11 @@ define(Env *e, Sexp *key, Sexp *val)
     }
 }
 
+Sexp *
+sexp_not(Sexp *x) 
+{
+    if (is_bool(x) && x->b == false) {
+	    return make_boolean(true);
+    }
+    return make_boolean(false);
+}

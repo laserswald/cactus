@@ -119,6 +119,7 @@ GENERATE_TYPECHECK(is_error, TYPE_ERROR)
 
 bool is_nil(Sexp *);
 bool is_truthy(Sexp *);
+Sexp *sexp_not(Sexp *x);
 
 bool equals(Sexp *l, Sexp *r);
 
@@ -130,6 +131,7 @@ Sexp *make_integer(int i);
 Sexp *make_closure(Env *e, Sexp *args, Sexp *body);
 Sexp *make_error(char *msg, Sexp *irr);
 Sexp *make_string(char *str);
+Sexp *make_boolean(bool b);
 
 #define LIST_FOR_EACH(list, current) \
 for (Sexp *(current) = list;\

@@ -38,11 +38,7 @@ Sexp* special_quote(Sexp* args, Env* e)
 
 bool is_truthy(Sexp *x)
 {
-    if (!x) {
-        return false;
-    }
-
-    if (is_int(x) && x->i == 0) {
+    if (is_bool(x) && x->b == false) {
         return false;
     }
 
@@ -145,6 +141,7 @@ eval(Sexp *x, Env *e)
 
     switch (x->t) {
     case TYPE_INT:
+    case TYPE_BOOLEAN:
     case TYPE_DOUBLE:
     case TYPE_STRING:
     case TYPE_CLOSURE:
