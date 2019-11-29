@@ -9,8 +9,9 @@
 #include "load.h"
 #include "read.h"
 
-
-Sexp* builtin_car(Sexp *x, Env *e) 
+/* Unpack arguments, and take the car of the list at the first argument */
+Sexp* 
+builtin_car(Sexp *x, Env *e) 
 {
     Sexp* arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
@@ -22,7 +23,9 @@ Sexp* builtin_car(Sexp *x, Env *e)
     return car(arg);
 }
 
-Sexp* builtin_cdr(Sexp *x, Env *e) {
+Sexp* 
+builtin_cdr(Sexp *x, Env *e) 
+{
     Sexp* arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
 
@@ -33,7 +36,9 @@ Sexp* builtin_cdr(Sexp *x, Env *e) {
     return cdr(arg);
 }
 
-Sexp* builtin_cons(Sexp *x, Env *e) {
+Sexp* 
+builtin_cons(Sexp *x, Env *e) 
+{
     Sexp *fst = eval(car(x), e);
     Sexp *snd = eval(cadr(x), e);
     PROPAGATE_ERROR(fst);
@@ -42,7 +47,9 @@ Sexp* builtin_cons(Sexp *x, Env *e) {
     return p;
 }
 
-Sexp* builtin_is_nil(Sexp *x, Env *e) {
+Sexp* 
+builtin_is_nil(Sexp *x, Env *e) 
+{
     Sexp *arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
     if (! arg) {
@@ -51,7 +58,9 @@ Sexp* builtin_is_nil(Sexp *x, Env *e) {
     return make_integer(0);
 }
 
-Sexp* builtin_is_pair(Sexp *x, Env *e) {
+Sexp* 
+builtin_is_pair(Sexp *x, Env *e) 
+{
     Sexp *arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
     if (is_pair(arg))
@@ -60,7 +69,8 @@ Sexp* builtin_is_pair(Sexp *x, Env *e) {
         return make_integer(0);
 }
 
-Sexp* builtin_is_number(Sexp *x, Env *e)
+Sexp* 
+builtin_is_number(Sexp *x, Env *e)
 {
     Sexp *arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
@@ -70,7 +80,9 @@ Sexp* builtin_is_number(Sexp *x, Env *e)
         return make_integer(0);
 }
 
-Sexp* builtin_eq(Sexp *x, Env *e) {
+Sexp* 
+builtin_eq(Sexp *x, Env *e) 
+{
     Sexp *fst = eval(car(x), e);
     Sexp *snd = eval(cadr(x), e);
     PROPAGATE_ERROR(fst);
@@ -78,17 +90,23 @@ Sexp* builtin_eq(Sexp *x, Env *e) {
     return make_integer(equals(fst, snd));
 }
 
-Sexp* builtin_display(Sexp *x, Env *e) {
+Sexp* 
+builtin_display(Sexp *x, Env *e) 
+{
     print_sexp(eval(car(x), e));
     return &undefined;
 }
 
-Sexp* builtin_newline(Sexp *x, Env *unused) {
+Sexp* 
+builtin_newline(Sexp *x, Env *unused) 
+{
     puts("");
     return &undefined;
 }
 
-Sexp* builtin_progn(Sexp *x, Env *e) {
+Sexp* 
+builtin_progn(Sexp *x, Env *e) 
+{
     Sexp *result = &undefined;
 
     if (is_pair(x)) {
@@ -103,7 +121,8 @@ Sexp* builtin_progn(Sexp *x, Env *e) {
     return result;
 }
 
-Sexp* builtin_plus(Sexp *x, Env *e)
+Sexp* 
+builtin_plus(Sexp *x, Env *e)
 {
     int result = 0;
 
@@ -117,7 +136,8 @@ Sexp* builtin_plus(Sexp *x, Env *e)
     return make_integer(result);
 }
 
-Sexp* builtin_times(Sexp *x, Env *e)
+Sexp* 
+builtin_times(Sexp *x, Env *e)
 {
     int result = 1;
 
@@ -131,7 +151,8 @@ Sexp* builtin_times(Sexp *x, Env *e)
     return make_integer(result);
 }
 
-Sexp* builtin_minus(Sexp *x, Env *e)
+Sexp* 
+builtin_minus(Sexp *x, Env *e)
 {
     int result = to_int(car(x), "-");
 
@@ -148,7 +169,8 @@ Sexp* builtin_minus(Sexp *x, Env *e)
     return make_integer(result);
 }
 
-Sexp* builtin_divide(Sexp *x, Env *e)
+Sexp*
+builtin_divide(Sexp *x, Env *e)
 {
     int result = to_int(car(x), "/");
 
@@ -168,7 +190,8 @@ Sexp* builtin_divide(Sexp *x, Env *e)
     return make_integer(result);
 }
 
-Sexp* builtin_exit(Sexp *x, Env *e)
+Sexp* 
+builtin_exit(Sexp *x, Env *e)
 {
     // Invoke any ending things from dynamic-wind
     // Exit
@@ -176,7 +199,8 @@ Sexp* builtin_exit(Sexp *x, Env *e)
     return NULL;
 }
 
-Sexp* builtin_load(Sexp *x, Env *e)
+Sexp* 
+builtin_load(Sexp *x, Env *e)
 {
     Sexp *fname = eval(car(x), e);
     if (! is_str(fname)) {
@@ -197,21 +221,25 @@ Sexp* builtin_load(Sexp *x, Env *e)
     return &undefined;
 }
 
-Sexp* builtin_is_boolean(Sexp *x, Env *e)
+Sexp* 
+builtin_is_boolean(Sexp *x, Env *e)
 {   
 	Sexp *maybe_bool = eval(car(x), e);
     PROPAGATE_ERROR(maybe_bool);
 	return make_boolean(is_bool(maybe_bool));
 }
 
-Sexp* builtin_not(Sexp *x, Env *e)
+Sexp* 
+builtin_not(Sexp *x, Env *e)
 { 
 	Sexp *arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
 	return sexp_not(arg);
 }
 
-void make_builtin(Env *e, Sexp *x, Sexp *(fn)(Sexp*, Env*)) {
+void 
+make_builtin(Env *e, Sexp *x, Sexp *(fn)(Sexp*, Env*))
+{
     Sexp *c = malloc(sizeof(*c));
     c->t = TYPE_CLOSURE;
     c->c = malloc(sizeof(Closure));
@@ -219,7 +247,9 @@ void make_builtin(Env *e, Sexp *x, Sexp *(fn)(Sexp*, Env*)) {
     envadd(e, x, c);
 }
 
-Env* make_builtins() {
+Env* 
+make_builtins() 
+{
     Env *env = malloc(sizeof(Env));
     envinit(env, NULL);
 

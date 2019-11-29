@@ -8,6 +8,10 @@ envinit(Env *e, Env *parent)
     e->parent = parent;
 }
 
+/* 
+ * Look up the key in the environment and return the associated sexp
+ * or null. 
+ */
 Sexp *
 envlookup(Env *e, Sexp *key)
 {
@@ -30,7 +34,8 @@ envlookup(Env *e, Sexp *key)
  * Perform an environment definition, as opposed to an environment
  * assignment.
  */
-int envadd(Env *e, Sexp *key, Sexp *val)
+int 
+envadd(Env *e, Sexp *key, Sexp *val)
 {
     if (!e)
         return -1;
@@ -45,7 +50,9 @@ int envadd(Env *e, Sexp *key, Sexp *val)
     return 0;
 }
 
-int envset(Env *e, Sexp *key, Sexp *val)
+/* Assign the key to the value, ensuring the key already exists. */
+int 
+envset(Env *e, Sexp *key, Sexp *val)
 {
     if (!e)
         return -1;

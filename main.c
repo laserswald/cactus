@@ -55,7 +55,7 @@ repl(FILE *f, Env *e)
         }
         x = eval(x, e);
         print_sexp(x);
-        puts();
+        puts("");
         printf(PROMPT);
     }
 

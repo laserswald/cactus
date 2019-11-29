@@ -6,6 +6,7 @@
 enum read_status {
     READSEXP_OK,
     READSEXP_END_OF_FILE,
+    READSEXP_UNMATCHED_CHAR,
     READSEXP_OTHER_ERROR,
 };
 
