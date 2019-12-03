@@ -19,8 +19,6 @@ cact_gc_yield(struct cact_gc *, struct sexp *)
     SLIST_PUSH();
 }
 
-
-
 /* Allocate a new sexp. */
 struct sexp *
 cact_gc_alloc(struct cact_gc *)
