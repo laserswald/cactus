@@ -10,7 +10,7 @@
 
 /* Apply a closure given the arguments and the environment. */
 cact_val *
-apply(Closure *clo, cact_val *args, cact_env *e)
+apply(cact_proc *clo, cact_val *args, cact_env *e)
 {
     if (clo->nativefn) {
         return clo->nativefn(args, e);

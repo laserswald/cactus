@@ -242,7 +242,7 @@ make_builtin(cact_env *e, cact_val *x, cact_val *(fn)(cact_val*, cact_env*))
 {
     cact_val *c = malloc(sizeof(*c));
     c->t = TYPE_CLOSURE;
-    c->c = malloc(sizeof(Closure));
+    c->c = malloc(sizeof(cact_proc));
     c->c->nativefn = fn;
     envadd(e, x, c);
 }

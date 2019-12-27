@@ -41,7 +41,7 @@ typedef struct {
     cact_val *argl;
     cact_val *body;
     cact_val *(*nativefn)(cact_val *args, cact_env *e);
-} Closure;
+} cact_proc;
 
 typedef struct {
     char *msg;
@@ -57,7 +57,7 @@ struct sexp {
         cact_string s;
         cact_symbol a; // atom
         cact_pair p;
-        Closure *c;
+        cact_proc *c;
         cact_env *e;
         Error x;
     };
@@ -98,7 +98,7 @@ funcname(cact_val *x) { \
 }
 
 /* generated functions */
-GENERATE_TYPECONV(TYPE_CLOSURE, Closure*, to_closure, c)
+GENERATE_TYPECONV(TYPE_CLOSURE, cact_proc*, to_closure, c)
 GENERATE_TYPECONV(TYPE_BOOLEAN, bool, to_bool, b)
 GENERATE_TYPECONV(TYPE_DOUBLE, double, to_float, f)
 GENERATE_TYPECONV(TYPE_ENVIRONMENT, cact_env*, to_env, e)

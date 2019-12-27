@@ -133,7 +133,7 @@ make_closure(cact_env *e, cact_val *argl, cact_val *body)
 {
     cact_val *x = calloc(1, sizeof(cact_val));
     x->t = TYPE_CLOSURE;
-    x->c = calloc(1, sizeof(Closure));
+    x->c = calloc(1, sizeof(cact_proc));
     x->c->env = e;
     x->c->body = body;
     x->c->argl = argl;
