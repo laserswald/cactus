@@ -10,7 +10,7 @@ static char *is_nil_test()
 }
 
 /*
- * Pair testing
+ * cact_pair testing
  */
 
 static char *car_cdr_cons_test()

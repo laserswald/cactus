@@ -34,7 +34,7 @@ typedef struct {
 typedef struct {
     cact_val *car;
     cact_val *cdr;
-} Pair;
+} cact_pair;
 
 typedef struct {
     cact_env *env;
@@ -56,7 +56,7 @@ struct sexp {
         bool b;
         cact_string s;
         cact_symbol a; // atom
-        Pair p;
+        cact_pair p;
         Closure *c;
         cact_env *e;
         Error x;
@@ -103,7 +103,7 @@ GENERATE_TYPECONV(TYPE_BOOLEAN, bool, to_bool, b)
 GENERATE_TYPECONV(TYPE_DOUBLE, double, to_float, f)
 GENERATE_TYPECONV(TYPE_ENVIRONMENT, cact_env*, to_env, e)
 GENERATE_TYPECONV(TYPE_INT, int, to_int, i)
-GENERATE_TYPECONV(TYPE_PAIR, Pair, to_pair, p)
+GENERATE_TYPECONV(TYPE_PAIR, cact_pair, to_pair, p)
 GENERATE_TYPECONV(TYPE_STRING, cact_string, to_str, s)
 GENERATE_TYPECONV(TYPE_SYMBOL, cact_symbol, to_sym, a)
 

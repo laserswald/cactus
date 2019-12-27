@@ -190,7 +190,7 @@ car(cact_val *x)
     if (!x && !is_pair(x)) {
         return make_error("Not a pair: ", x);
     }
-    Pair p = x->p;
+    cact_pair p = x->p;
     return p.car;
 }
 
@@ -201,7 +201,7 @@ cdr(cact_val *x)
     if (!x || !is_pair(x)) {
         return make_error("Not a pair: ", x);
     }
-    Pair p = x->p;
+    cact_pair p = x->p;
     return p.cdr;
 }
 
@@ -226,7 +226,7 @@ assoc(cact_val *key, cact_val *alist)
         return fst;
     }
 
-    Pair kv = to_pair(fst, "assoc");
+    cact_pair kv = to_pair(fst, "assoc");
 
     if (equals(kv.car, key)) {
         return car(alist);
