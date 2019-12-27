@@ -13,7 +13,7 @@
 cact_val* 
 cact_builtin_car(cact_val *x, cact_env *e) 
 {
-    cact_val* arg = eval(car(x), e);
+    cact_val* arg = cact_eval(car(x), e);
     PROPAGATE_ERROR(arg);
 
     if (! arg) {
@@ -26,7 +26,7 @@ cact_builtin_car(cact_val *x, cact_env *e)
 cact_val* 
 cact_builtin_cdr(cact_val *x, cact_env *e) 
 {
-    cact_val* arg = eval(car(x), e);
+    cact_val* arg = cact_eval(car(x), e);
     PROPAGATE_ERROR(arg);
 
     if (! arg) {
@@ -39,8 +39,8 @@ cact_builtin_cdr(cact_val *x, cact_env *e)
 cact_val* 
 cact_builtin_cons(cact_val *x, cact_env *e) 
 {
-    cact_val *fst = eval(car(x), e);
-    cact_val *snd = eval(cadr(x), e);
+    cact_val *fst = cact_eval(car(x), e);
+    cact_val *snd = cact_eval(cadr(x), e);
     PROPAGATE_ERROR(fst);
     PROPAGATE_ERROR(snd);
     cact_val *p = cons(fst, snd);
@@ -50,7 +50,7 @@ cact_builtin_cons(cact_val *x, cact_env *e)
 cact_val* 
 cact_builtin_is_nil(cact_val *x, cact_env *e) 
 {
-    cact_val *arg = eval(car(x), e);
+    cact_val *arg = cact_eval(car(x), e);
     PROPAGATE_ERROR(arg);
     if (! arg) {
         return cact_make_integer(1);
@@ -61,7 +61,7 @@ cact_builtin_is_nil(cact_val *x, cact_env *e)
 cact_val* 
 cact_builtin_is_pair(cact_val *x, cact_env *e) 
 {
-    cact_val *arg = eval(car(x), e);
+    cact_val *arg = cact_eval(car(x), e);
     PROPAGATE_ERROR(arg);
     if (is_pair(arg))
         return cact_make_integer(1);
@@ -72,7 +72,7 @@ cact_builtin_is_pair(cact_val *x, cact_env *e)
 cact_val* 
 cact_builtin_is_number(cact_val *x, cact_env *e)
 {
-    cact_val *arg = eval(car(x), e);
+    cact_val *arg = cact_eval(car(x), e);
     PROPAGATE_ERROR(arg);
     if (is_int(arg) || is_float(arg))
         return cact_make_integer(1);
@@ -83,8 +83,8 @@ cact_builtin_is_number(cact_val *x, cact_env *e)
 cact_val* 
 cact_builtin_eq(cact_val *x, cact_env *e) 
 {
-    cact_val *fst = eval(car(x), e);
-    cact_val *snd = eval(cadr(x), e);
+    cact_val *fst = cact_eval(car(x), e);
+    cact_val *snd = cact_eval(cadr(x), e);
     PROPAGATE_ERROR(fst);
     PROPAGATE_ERROR(snd);
     return cact_make_integer(equals(fst, snd));
@@ -93,7 +93,7 @@ cact_builtin_eq(cact_val *x, cact_env *e)
 cact_val* 
 cact_builtin_display(cact_val *x, cact_env *e) 
 {
-    print_sexp(eval(car(x), e));
+    print_sexp(cact_eval(car(x), e));
     return &undefined;
 }
 
@@ -111,11 +111,11 @@ cact_builtin_progn(cact_val *x, cact_env *e)
 
     if (is_pair(x)) {
         LIST_FOR_EACH(x, pair) {
-            result = eval(car(pair), e);
+            result = cact_eval(car(pair), e);
             PROPAGATE_ERROR(result);
         }
     } else {
-        result = eval(x, e);
+        result = cact_eval(x, e);
     }
 
     return result;
@@ -127,7 +127,7 @@ cact_builtin_plus(cact_val *x, cact_env *e)
     int result = 0;
 
     LIST_FOR_EACH(x, pair) {
-        cact_val* addend = eval(car(pair), e);
+        cact_val* addend = cact_eval(car(pair), e);
         PROPAGATE_ERROR(addend);
         int a = to_int(addend, "+");
         result += a;
@@ -142,7 +142,7 @@ cact_builtin_times(cact_val *x, cact_env *e)
     int result = 1;
 
     LIST_FOR_EACH(x, pair) {
-        cact_val* factor = eval(car(pair), e);
+        cact_val* factor = cact_eval(car(pair), e);
         PROPAGATE_ERROR(factor);
         int a = to_int(factor, "*");
         result *= a;
@@ -160,7 +160,7 @@ cact_builtin_minus(cact_val *x, cact_env *e)
 
     LIST_FOR_EACH(rest, pair) {
         // Fancy word.
-        cact_val* subtrahend = eval(car(pair), e);
+        cact_val* subtrahend = cact_eval(car(pair), e);
         PROPAGATE_ERROR(subtrahend);
         int a = to_int(subtrahend, "-");
         result -= a;
@@ -178,7 +178,7 @@ cact_builtin_divide(cact_val *x, cact_env *e)
 
     LIST_FOR_EACH(rest, pair) {
         // Fancy word.
-        cact_val* divisor= eval(car(pair), e);
+        cact_val* divisor= cact_eval(car(pair), e);
         PROPAGATE_ERROR(divisor);
         int a = to_int(divisor, "/");
         if (a == 0) {
@@ -202,7 +202,7 @@ cact_builtin_exit(cact_val *x, cact_env *e)
 cact_val* 
 cact_builtin_load(cact_val *x, cact_env *e)
 {
-    cact_val *fname = eval(car(x), e);
+    cact_val *fname = cact_eval(car(x), e);
     if (! is_str(fname)) {
         return cact_make_error("`load` expects a string", x);
     }
@@ -224,7 +224,7 @@ cact_builtin_load(cact_val *x, cact_env *e)
 cact_val* 
 cact_builtin_is_boolean(cact_val *x, cact_env *e)
 {   
-	cact_val *maybe_bool = eval(car(x), e);
+	cact_val *maybe_bool = cact_eval(car(x), e);
     PROPAGATE_ERROR(maybe_bool);
 	return cact_make_boolean(is_bool(maybe_bool));
 }
@@ -232,7 +232,7 @@ cact_builtin_is_boolean(cact_val *x, cact_env *e)
 cact_val* 
 cact_builtin_not(cact_val *x, cact_env *e)
 { 
-	cact_val *arg = eval(car(x), e);
+	cact_val *arg = cact_eval(car(x), e);
     PROPAGATE_ERROR(arg);
 	return sexp_not(arg);
 }

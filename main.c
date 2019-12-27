@@ -53,7 +53,7 @@ repl(FILE *f, cact_env *e)
             fprint_sexp(stderr, x);
             abort();
         }
-        x = eval(x, e);
+        x = cact_eval(x, e);
         print_sexp(x);
         puts("");
         printf(PROMPT);

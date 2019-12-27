@@ -24,7 +24,7 @@ apply(cact_proc *clo, cact_val *args, cact_env *e)
                 fprint_sexp(stderr, args);
                 abort();
             }
-            envadd(&params_env, car(param), eval(car(current_arg), e));
+            envadd(&params_env, car(param), cact_eval(car(current_arg), e));
             current_arg = cdr(current_arg);
         }
         return cact_builtin_progn(clo->body, &params_env);
@@ -52,10 +52,10 @@ cact_val* special_if(cact_val* args, cact_env* e)
     cact_val* alt = caddr(args);
     cact_val* result = &undefined;
 
-    if (is_truthy(eval(cond, e))) {
-        result = eval(cseq, e);
+    if (is_truthy(cact_eval(cond, e))) {
+        result = cact_eval(cseq, e);
     } else {
-        result = eval(alt, e);
+        result = cact_eval(alt, e);
     }
 
     return result;
@@ -69,7 +69,7 @@ cact_val* special_define(cact_val* args, cact_env* e)
     cact_val *value;
 
     if (is_sym(term)) {
-        value = eval(defn, e);
+        value = cact_eval(defn, e);
     } else if (is_pair(term)) {
         cact_val* params = cdr(term);
         term = car(term);
@@ -96,11 +96,11 @@ cact_val* special_begin(cact_val* args, cact_env* e)
 
     if (is_pair(args)) {
         LIST_FOR_EACH(args, pair) {
-            result = eval(car(pair), e);
+            result = cact_eval(car(pair), e);
             PROPAGATE_ERROR(result);
         }
     } else {
-        result = eval(args, e);
+        result = cact_eval(args, e);
     }
 
     return result;
@@ -110,7 +110,7 @@ cact_val* special_set_bang(cact_val* args, cact_env* e)
 {
     cact_val *term = car(args);
     cact_val *defn = car(cdr(args));
-    cact_val *value = eval(defn, e);
+    cact_val *value = cact_eval(defn, e);
 
     if (envset(e, term, value) < 0) {
         return cact_make_error("Could not assign value: no such variable", term);
@@ -132,8 +132,7 @@ struct specials_table {
 };
 
 /* Evaluate an expression according to an environment. */
-cact_val *
-eval(cact_val *x, cact_env *e)
+cact_val *cact_eval(cact_val *x, cact_env *e)
 {
     if (!x) {
         return NULL;
@@ -146,7 +145,7 @@ eval(cact_val *x, cact_env *e)
     case CACT_TYPE_STRING:
     case CACT_TYPE_PROCEDURE:
     case CACT_TYPE_ENVIRONMENT:
-        DBG("Evaluating self-evaluating atom %s\n", show_type(x->t));
+        DBG("Evaluating self-cact_evaluating atom %s\n", show_type(x->t));
         return x;
 
     case CACT_TYPE_SYMBOL: {
@@ -163,12 +162,12 @@ eval(cact_val *x, cact_env *e)
         cact_val *operands = cdr(x);
 
         if (! operator) {
-            return cact_make_error("Cannot evaluate null as operation", x);
+            return cact_make_error("Cannot cact_evaluate null as operation", x);
         }
 
         // If it's a symbol, check if it's special and do the thing
         if (is_sym(operator)) {
-            cact_symbol sym = to_sym(operator, "eval");
+            cact_symbol sym = to_sym(operator, "cact_eval");
             int i;
             for (i = 0; i < LENGTH(specials); i++) {
                 if (symcmp(specials[i].sym, &sym) == 0) {
@@ -178,7 +177,7 @@ eval(cact_val *x, cact_env *e)
             // fallthrough when not a special form
         }
 
-        cact_val *maybe_procedure = eval(operator, e);
+        cact_val *maybe_procedure = cact_eval(operator, e);
 
         if (is_error(maybe_procedure)) {
             return maybe_procedure;
@@ -201,7 +200,7 @@ eval(cact_val *x, cact_env *e)
     }
 
     default:
-        fprintf(stderr, "Cannot evaluate, got type %s.\n", show_type(x->t));
+        fprintf(stderr, "Cannot cact_evaluate, got type %s.\n", show_type(x->t));
         abort();
     }
 }

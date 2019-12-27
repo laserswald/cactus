@@ -38,8 +38,8 @@ runfile(FILE *in, cact_env *e)
         DBG("Evaluating sexp: ");
         // print_sexp(x);
         DBG("\n");
-        eval(x, e);
-        DBG("Done evaluating sexp.\n");
+        cact_eval(x, e);
+        DBG("Done cact_evaluating sexp.\n");
     }
 
 STOP_RUNNING:
