@@ -50,8 +50,8 @@ fprint_sexp(FILE *f, cact_val *x)
     case TYPE_PAIR:
         print_list(x);
         break;
-    case TYPE_CLOSURE:
-        fprintf(f, "#<closure: %p>", (void*)x->c);
+    case TYPE_PROCEDURE:
+        fprintf(f, "#<procedure: %p>", (void*)x->c);
         break;
     case TYPE_ENVIRONMENT:
         fprintf(f, "#<environment: %p>", (void*)x->e);

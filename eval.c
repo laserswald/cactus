@@ -8,7 +8,7 @@
 #include "utils.h"
 #include "write.h"
 
-/* Apply a closure given the arguments and the environment. */
+/* Apply a procedure given the arguments and the environment. */
 cact_val *
 apply(cact_proc *clo, cact_val *args, cact_env *e)
 {
@@ -73,7 +73,7 @@ cact_val* special_define(cact_val* args, cact_env* e)
     } else if (is_pair(term)) {
         cact_val* params = cdr(term);
         term = car(term);
-        value = make_closure(e, params, defn);
+        value = make_procedure(e, params, defn);
     }
 
     if (envadd(e, term, value) < 0) {
@@ -87,7 +87,7 @@ cact_val* special_lambda(cact_val* operands, cact_env* e)
 {
     cact_val *args = car(operands);
     cact_val *body = cdr(operands);
-    return make_closure(e, args, body);
+    return make_procedure(e, args, body);
 }
 
 cact_val* special_begin(cact_val* args, cact_env* e)
@@ -144,7 +144,7 @@ eval(cact_val *x, cact_env *e)
     case TYPE_BOOLEAN:
     case TYPE_DOUBLE:
     case TYPE_STRING:
-    case TYPE_CLOSURE:
+    case TYPE_PROCEDURE:
     case TYPE_ENVIRONMENT:
         DBG("Evaluating self-evaluating atom %s\n", show_type(x->t));
         return x;
@@ -178,19 +178,19 @@ eval(cact_val *x, cact_env *e)
             // fallthrough when not a special form
         }
 
-        cact_val *maybe_closure = eval(operator, e);
+        cact_val *maybe_procedure = eval(operator, e);
 
-        if (is_error(maybe_closure)) {
-            return maybe_closure;
+        if (is_error(maybe_procedure)) {
+            return maybe_procedure;
         }
 
-        if (! is_closure(maybe_closure)) {
-            fprintf(stdout, "Cannot apply non-operation %s:\n", show_type(maybe_closure->t));
-            print_sexp(maybe_closure);
+        if (! is_procedure(maybe_procedure)) {
+            fprintf(stdout, "Cannot apply non-operation %s:\n", show_type(maybe_procedure->t));
+            print_sexp(maybe_procedure);
             abort();
         }
 
-        return apply(maybe_closure->c, operands, e);
+        return apply(maybe_procedure->c, operands, e);
     }
 
     case TYPE_ERROR: {

@@ -15,8 +15,8 @@ show_type(cact_type t) {
         return "float";
     case TYPE_BOOLEAN:
         return "boolean";
-    case TYPE_CLOSURE:
-        return "closure";
+    case TYPE_PROCEDURE:
+        return "procedure";
     case TYPE_ENVIRONMENT:
         return "environment";
     case TYPE_PAIR:
@@ -75,7 +75,7 @@ equals(cact_val *l, cact_val *r)
     case TYPE_PAIR:
         return (equals(car(l), car(r))) && (equals(cdr(l), cdr(r)));
         break;
-    case TYPE_CLOSURE:
+    case TYPE_PROCEDURE:
         break;
     case TYPE_ENVIRONMENT:
         break;
@@ -127,12 +127,12 @@ make_string(char *str)
     return x;
 }
 
-/* Create a closure. */
+/* Create a procedure. */
 cact_val *
-make_closure(cact_env *e, cact_val *argl, cact_val *body)
+make_procedure(cact_env *e, cact_val *argl, cact_val *body)
 {
     cact_val *x = calloc(1, sizeof(cact_val));
-    x->t = TYPE_CLOSURE;
+    x->t = TYPE_PROCEDURE;
     x->c = calloc(1, sizeof(cact_proc));
     x->c->env = e;
     x->c->body = body;

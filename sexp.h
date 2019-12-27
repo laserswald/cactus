@@ -17,7 +17,7 @@ typedef enum {
     TYPE_STRING,
     TYPE_SYMBOL,
     TYPE_PAIR,
-    TYPE_CLOSURE,
+    TYPE_PROCEDURE,
     TYPE_ENVIRONMENT,
     TYPE_PORT,
     TYPE_ERROR,
@@ -98,7 +98,7 @@ funcname(cact_val *x) { \
 }
 
 /* generated functions */
-GENERATE_TYPECONV(TYPE_CLOSURE, cact_proc*, to_closure, c)
+GENERATE_TYPECONV(TYPE_PROCEDURE, cact_proc*, to_procedure, c)
 GENERATE_TYPECONV(TYPE_BOOLEAN, bool, to_bool, b)
 GENERATE_TYPECONV(TYPE_DOUBLE, double, to_float, f)
 GENERATE_TYPECONV(TYPE_ENVIRONMENT, cact_env*, to_env, e)
@@ -107,7 +107,7 @@ GENERATE_TYPECONV(TYPE_PAIR, cact_pair, to_pair, p)
 GENERATE_TYPECONV(TYPE_STRING, cact_string, to_str, s)
 GENERATE_TYPECONV(TYPE_SYMBOL, cact_symbol, to_sym, a)
 
-GENERATE_TYPECHECK(is_closure, TYPE_CLOSURE)
+GENERATE_TYPECHECK(is_procedure, TYPE_PROCEDURE)
 GENERATE_TYPECHECK(is_bool, TYPE_BOOLEAN)
 GENERATE_TYPECHECK(is_env, TYPE_ENVIRONMENT)
 GENERATE_TYPECHECK(is_float, TYPE_DOUBLE)
@@ -128,7 +128,7 @@ void print_env(cact_env *e);
 void print_list(cact_val *x);
 
 cact_val *make_integer(int i);
-cact_val *make_closure(cact_env *e, cact_val *args, cact_val *body);
+cact_val *make_procedure(cact_env *e, cact_val *args, cact_val *body);
 cact_val *make_error(char *msg, cact_val *irr);
 cact_val *make_string(char *str);
 cact_val *make_boolean(bool b);
