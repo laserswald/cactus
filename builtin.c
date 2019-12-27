@@ -213,7 +213,7 @@ cact_builtin_load(cact_val *x, cact_env *e)
         return cact_make_error("load: no file found", fname);
     }
 
-    int result = runfile(f, e);
+    int result = cact_load(f, e);
     if (result != CACT_READ_OK) {
         return cact_make_error("load: could not read file", fname);
     }

@@ -1,11 +1,12 @@
 #include "read.h"
+#include "write.h"
 #include "sexp.h"
 #include "debug.h"
 #include "utils.h"
 #include "eval.h"
 
 int
-runfile(FILE *in, cact_env *e)
+cact_load(FILE *in, cact_env *e)
 {
     DBG("Running file. \n");
 
@@ -29,6 +30,7 @@ runfile(FILE *in, cact_env *e)
             }
             case CACT_READ_OTHER_ERROR: {
                 fprintf(stderr, "unknown error\n");
+                fprint_sexp(stderr, x);
                 abort();
                 break;
             }

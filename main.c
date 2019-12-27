@@ -76,7 +76,7 @@ main(int argc, char *argv[])
             perror("Could not run file");
             exit(1);
         }
-        return runfile(infile, e);
+        return cact_load(infile, e);
     }
 
     DBG("Starting REPL.\n");

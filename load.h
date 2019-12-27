@@ -1,7 +1,7 @@
-#ifndef load_h_INCLUDED
-#define load_h_INCLUDED
+#ifndef CACTUS_LOAD_H
+#define CACTUS_LOAD_H
 
-int runfile(FILE *f, cact_env *);
+int cact_load(FILE *f, cact_env *);
 
 #endif // load_h_INCLUDED
 
