@@ -67,8 +67,8 @@ equals(cact_val *l, cact_val *r)
         return strcmp(l->s.str, r->s.str) == 0;
         break;
     case TYPE_SYMBOL: {
-        Symbol lsym = to_sym(l, "equals");
-        Symbol rsym = to_sym(r, "equals");
+        cact_symbol lsym = to_sym(l, "equals");
+        cact_symbol rsym = to_sym(r, "equals");
         return symcmp(&lsym, &rsym) == 0;
         break;
     }
@@ -237,7 +237,7 @@ assoc(cact_val *key, cact_val *alist)
 
 /* Compare two symbols for equality/ordering. */
 int
-symcmp(Symbol *a, Symbol *b)
+symcmp(cact_symbol *a, cact_symbol *b)
 {
     return strcmp(a->sym, b->sym);
 }

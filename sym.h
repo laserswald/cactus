@@ -4,7 +4,7 @@
 #include "sexp.h"
 
 cact_val *make_symbol(char *symname);
-int symcmp(Symbol *a, Symbol *b);
+int symcmp(cact_symbol *a, cact_symbol *b);
 
 #endif // sym_h_INCLUDED
 

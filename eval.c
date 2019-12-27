@@ -120,7 +120,7 @@ cact_val* special_set_bang(cact_val* args, cact_env* e)
 }
 
 struct specials_table {
-    Symbol *sym;
+    cact_symbol *sym;
     cact_val* (*fn)(cact_val*, cact_env*);
 } specials[] = {
     {&quote_sym,  special_quote},
@@ -168,7 +168,7 @@ eval(cact_val *x, cact_env *e)
 
         // If it's a symbol, check if it's special and do the thing
         if (is_sym(operator)) {
-            Symbol sym = to_sym(operator, "eval");
+            cact_symbol sym = to_sym(operator, "eval");
             int i;
             for (i = 0; i < LENGTH(specials); i++) {
                 if (symcmp(specials[i].sym, &sym) == 0) {
