@@ -25,7 +25,7 @@ typedef enum {
 
 typedef struct {
     char *str;
-} String;
+} cact_string;
 
 typedef struct {
     char* sym;
@@ -54,7 +54,7 @@ struct sexp {
         int i;
         double f;
         bool b;
-        String s;
+        cact_string s;
         Symbol a; // atom
         Pair p;
         Closure *c;
@@ -104,7 +104,7 @@ GENERATE_TYPECONV(TYPE_DOUBLE, double, to_float, f)
 GENERATE_TYPECONV(TYPE_ENVIRONMENT, cact_env*, to_env, e)
 GENERATE_TYPECONV(TYPE_INT, int, to_int, i)
 GENERATE_TYPECONV(TYPE_PAIR, Pair, to_pair, p)
-GENERATE_TYPECONV(TYPE_STRING, String, to_str, s)
+GENERATE_TYPECONV(TYPE_STRING, cact_string, to_str, s)
 GENERATE_TYPECONV(TYPE_SYMBOL, Symbol, to_sym, a)
 
 GENERATE_TYPECHECK(is_closure, TYPE_CLOSURE)

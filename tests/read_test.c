@@ -96,7 +96,7 @@ static char *cact_read_string_test() {
 	char* string = NULL;
 	struct lexer l;
 
-	// String 
+	// cact_string 
 	string = "\"identifier\"";
 	lexer_init(&l, string);
 	status = cact_read(&l, &x);
