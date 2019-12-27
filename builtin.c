@@ -214,7 +214,7 @@ builtin_load(Sexp *x, Env *e)
     }
 
     int result = runfile(f, e);
-    if (result != READSEXP_OK) {
+    if (result != CACT_READ_OK) {
         return make_error("load: could not read file", fname);
     }
 

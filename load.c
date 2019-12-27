@@ -20,14 +20,14 @@ runfile(FILE *in, Env *e)
 
         DBG("Reading new sexp. \n");
 
-        status = readsexp(&l, &x);
+        status = cact_read(&l, &x);
 
-        if (status != READSEXP_OK) {
+        if (status != CACT_READ_OK) {
             switch (status) {
-            case READSEXP_END_OF_FILE: {
+            case CACT_READ_END_OF_FILE: {
                 goto STOP_RUNNING;
             }
-            case READSEXP_OTHER_ERROR: {
+            case CACT_READ_OTHER_ERROR: {
                 fprintf(stderr, "unknown error\n");
                 abort();
                 break;

@@ -1,13 +1,13 @@
-#ifndef read_h_INCLUDED
-#define read_h_INCLUDED
+#ifndef CACT_READ_H
+#define CACT_READ_H
 
 #include "sexp.h"
 
 enum read_status {
-    READSEXP_OK,
-    READSEXP_END_OF_FILE,
-    READSEXP_UNMATCHED_CHAR,
-    READSEXP_OTHER_ERROR,
+    CACT_READ_OK,
+    CACT_READ_END_OF_FILE,
+    CACT_READ_UNMATCHED_CHAR,
+    CACT_READ_OTHER_ERROR,
 };
 
 enum token {
@@ -52,7 +52,7 @@ struct lexer;
 
 void lexer_init(struct lexer *l, const char* data);
 void printtokstream(struct lexer *l);
-int readsexp(struct lexer *l, Sexp **s);
+int cact_read(struct lexer *l, Sexp **s);
 
-#endif // read_h_INCLUDED
+#endif // CACT_READ_H
 

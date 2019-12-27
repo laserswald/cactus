@@ -47,8 +47,8 @@ repl(FILE *f, Env *e)
     while (fgets(line, sizeof line, f) != NULL) {
         char *lp = line;
         lexer_init(&l, lp);
-        status = readsexp(&l, &x);
-        if (status != READSEXP_OK) {
+        status = cact_read(&l, &x);
+        if (status != CACT_READ_OK) {
             fprintf(stderr, "Could not finish reading sexp!\n");
             fprint_sexp(stderr, x);
             abort();

@@ -260,33 +260,33 @@ readlist(struct lexer *l, Sexp **r)
 	*r = NULL;
 	if (! expecttok(l, TOKEN_OPEN_PAREN)) {
 		*r = make_error("readlist: somehow didn't get open paren", NULL);
-		return READSEXP_OTHER_ERROR;
+		return CACT_READ_OTHER_ERROR;
 	}
 	while (! peekistok(l, TOKEN_CLOSE_PAREN) && peeklex(l).t > 0) {
 		Sexp *e = NULL;
-		status = readsexp(l, &e);
-		if (status != READSEXP_OK) {
+		status = cact_read(l, &e);
+		if (status != CACT_READ_OK) {
 			return status;
 		}
 		if (e == &undefined) {
 			*r = make_error("Unexpected ending", NULL);
-			return READSEXP_OTHER_ERROR;
+			return CACT_READ_OTHER_ERROR;
 		}
 		*r = append(*r, e);
 		expecttok(l, TOKEN_WHITESPACE);
 	}
 	if (! expecttok(l, TOKEN_CLOSE_PAREN)) {
 		*r = make_error("readlist: somehow didn't get close paren", NULL);
-		return READSEXP_OTHER_ERROR;
+		return CACT_READ_OTHER_ERROR;
 	}
-	return READSEXP_OK;
+	return CACT_READ_OK;
 }
 
 /* Read the next valid s-expression from the lexer. */
 int 
-readsexp(struct lexer* l, Sexp** ret) 
+cact_read(struct lexer* l, Sexp** ret) 
 {
-	int status = READSEXP_OK;
+	int status = CACT_READ_OK;
 	*ret = (Sexp*) NULL;
 
 	struct lexeme lx = peeklex(l);
@@ -310,7 +310,7 @@ readsexp(struct lexer* l, Sexp** ret)
 	case TOKEN_SINGLE_QUOTE:
 		nextlex(l);
 		Sexp* quoted;
-		status = readsexp(l, &quoted);
+		status = cact_read(l, &quoted);
 		Sexp* q = make_symbol("quote");
 		*ret = cons(q, quoted);
 		nextlex(l);
@@ -320,15 +320,15 @@ readsexp(struct lexer* l, Sexp** ret)
 		nextlex(l);
 		break;
 	case TOKEN_END:
-		status = READSEXP_END_OF_FILE;
+		status = CACT_READ_END_OF_FILE;
 		break;
         case TOKEN_COMMENT:
 	        nextlex(l);
-	        status = readsexp(l, ret);
+	        status = cact_read(l, ret);
 	        break;
 	case TOKEN_ERROR:
 	default:
-		status = READSEXP_OTHER_ERROR;
+		status = CACT_READ_OTHER_ERROR;
 		break;
 	}
 
