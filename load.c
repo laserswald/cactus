@@ -12,8 +12,8 @@ cact_load(FILE *in, cact_env *e)
 
     char *s = slurp(in);
 
-    struct lexer l;
-    lexer_init(&l, s);
+    struct cact_lexer l;
+    cact_lexer_init(&l, s);
 
     cact_val *x;
     while (*s != '\0') {

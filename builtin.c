@@ -105,7 +105,7 @@ cact_builtin_newline(cact_val *x, cact_env *unused)
 }
 
 cact_val* 
-cact_builtin_progn(cact_val *x, cact_env *e) 
+cact_builtin_begin(cact_val *x, cact_env *e) 
 {
     cact_val *result = &undefined;
 

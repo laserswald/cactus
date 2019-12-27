@@ -3,33 +3,11 @@
 #include "sym.h"
 #include "env.h"
 #include "eval.h"
+#include "proc.h"
 #include "builtin.h"
 #include "globals.h"
 #include "utils.h"
 #include "write.h"
-
-/* Apply a procedure given the arguments and the environment. */
-cact_val *
-apply(cact_proc *clo, cact_val *args, cact_env *e)
-{
-    if (clo->nativefn) {
-        return clo->nativefn(args, e);
-    } else {
-        cact_env params_env = {0};
-        envinit(&params_env, clo->env);
-        cact_val *current_arg = args;
-        LIST_FOR_EACH(clo->argl, param) {
-            if (! current_arg) {
-                fprintf(stderr, "Not enough arguments!");
-                fprint_sexp(stderr, args);
-                abort();
-            }
-            envadd(&params_env, car(param), cact_eval(car(current_arg), e));
-            current_arg = cdr(current_arg);
-        }
-        return cact_builtin_progn(clo->body, &params_env);
-    }
-}
 
 cact_val* special_quote(cact_val* args, cact_env* e)
 {
@@ -189,7 +167,7 @@ cact_val *cact_eval(cact_val *x, cact_env *e)
             abort();
         }
 
-        return apply(maybe_procedure->c, operands, e);
+        return cact_proc_apply(maybe_procedure->c, operands, e);
     }
 
     case CACT_TYPE_ERROR: {

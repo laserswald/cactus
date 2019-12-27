@@ -41,12 +41,12 @@ repl(FILE *f, cact_env *e)
     char line[256];
     cact_val *x;
     int status;
-    struct lexer l;
+    struct cact_lexer l;
 
     printf(PROMPT);
     while (fgets(line, sizeof line, f) != NULL) {
         char *lp = line;
-        lexer_init(&l, lp);
+        cact_lexer_init(&l, lp);
         status = cact_read(&l, &x);
         if (status != CACT_READ_OK) {
             fprintf(stderr, "Could not finish reading sexp!\n");

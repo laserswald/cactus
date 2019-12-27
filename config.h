@@ -16,7 +16,7 @@ BuiltinTable builtins[] = {
     {"eq?", cact_builtin_eq},
     {"display", cact_builtin_display},
     {"newline", cact_builtin_newline},
-    {"begin", cact_builtin_progn},
+    {"begin", cact_builtin_begin},
     {"exit", cact_builtin_exit},
     {"load", cact_builtin_load},
 
