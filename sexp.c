@@ -7,7 +7,7 @@
 #include "sym.h"
 
 const char *
-show_type(Type t) {
+show_type(cact_type t) {
     switch (t) {
     case TYPE_INT:
         return "int";

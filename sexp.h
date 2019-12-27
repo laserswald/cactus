@@ -21,7 +21,7 @@ typedef enum {
     TYPE_ENVIRONMENT,
     TYPE_PORT,
     TYPE_ERROR,
-} Type;
+} cact_type;
 
 typedef struct {
     char *str;
@@ -49,7 +49,7 @@ typedef struct {
 } Error;
 
 struct sexp {
-    Type t;
+    cact_type t;
     union {
         int i;
         double f;
@@ -73,7 +73,7 @@ cact_val* append(cact_val *l, cact_val *x);
 cact_val* acons(cact_val* k, cact_val* v, cact_val* alist);
 cact_val* assoc(cact_val* k, cact_val* alist);
 
-const char *show_type(Type t);
+const char *show_type(cact_type t);
 const char *show_sexp(cact_val *x);
 
 #define GENERATE_TYPECONV(typemarker, returntype, funcname, membername) \
