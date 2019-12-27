@@ -66,7 +66,7 @@ int
 main(int argc, char *argv[])
 {
     DBG("Starting.\n");
-    cact_env *e = make_builtins();
+    cact_env *e = cact_make_builtins();
     FILE *infile = NULL;
 
     if (argc == 2) {

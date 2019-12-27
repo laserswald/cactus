@@ -99,7 +99,7 @@ unsigned int length(cact_val *l) {
 
 /* Create a new integer. */
 cact_val *
-make_integer(int i)
+cact_make_integer(int i)
 {
     cact_val *x = malloc(sizeof(cact_val));
     x->t = CACT_TYPE_INT;
@@ -109,7 +109,7 @@ make_integer(int i)
 
 /* Create a new symbol. */
 cact_val *
-make_symbol(char *str)
+cact_make_symbol(char *str)
 {
     cact_val *sym = malloc(sizeof(cact_val));
     sym->t = CACT_TYPE_SYMBOL;
@@ -119,7 +119,7 @@ make_symbol(char *str)
 
 /* Create a string. */
 cact_val *
-make_string(char *str)
+cact_make_string(char *str)
 {
     cact_val *x = malloc(sizeof(cact_val));
     x->t = CACT_TYPE_STRING;
@@ -129,7 +129,7 @@ make_string(char *str)
 
 /* Create a procedure. */
 cact_val *
-make_procedure(cact_env *e, cact_val *argl, cact_val *body)
+cact_make_procedure(cact_env *e, cact_val *argl, cact_val *body)
 {
     cact_val *x = calloc(1, sizeof(cact_val));
     x->t = CACT_TYPE_PROCEDURE;
@@ -142,7 +142,7 @@ make_procedure(cact_env *e, cact_val *argl, cact_val *body)
 
 /* Create an environment. */
 cact_val *
-make_env(cact_env *parent)
+cact_make_env(cact_env *parent)
 {
     cact_val *x = calloc(1, sizeof(cact_val));
     x->t = CACT_TYPE_ENVIRONMENT;
@@ -153,7 +153,7 @@ make_env(cact_env *parent)
 
 /* Create an error value. */
 cact_val *
-make_error(char *msg, cact_val *irr)
+cact_make_error(char *msg, cact_val *irr)
 {
     cact_val *x = calloc(1, sizeof(cact_val));
     x->t = CACT_TYPE_ERROR;
@@ -164,7 +164,7 @@ make_error(char *msg, cact_val *irr)
 
 /* Create an error value. */
 cact_val *
-make_boolean(bool b)
+cact_make_boolean(bool b)
 {
     cact_val *x = calloc(1, sizeof(cact_val));
     x->t = CACT_TYPE_BOOLEAN;
@@ -188,7 +188,7 @@ cact_val *
 car(cact_val *x)
 {
     if (!x && !is_pair(x)) {
-        return make_error("Not a pair: ", x);
+        return cact_make_error("Not a pair: ", x);
     }
     cact_pair p = x->p;
     return p.car;
@@ -199,7 +199,7 @@ cact_val *
 cdr(cact_val *x)
 {
     if (!x || !is_pair(x)) {
-        return make_error("Not a pair: ", x);
+        return cact_make_error("Not a pair: ", x);
     }
     cact_pair p = x->p;
     return p.cdr;
@@ -295,7 +295,7 @@ cact_val *
 sexp_not(cact_val *x) 
 {
     if (is_bool(x) && x->b == false) {
-	    return make_boolean(true);
+	    return cact_make_boolean(true);
     }
-    return make_boolean(false);
+    return cact_make_boolean(false);
 }

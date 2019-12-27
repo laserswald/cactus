@@ -27,7 +27,7 @@ apply(cact_proc *clo, cact_val *args, cact_env *e)
             envadd(&params_env, car(param), eval(car(current_arg), e));
             current_arg = cdr(current_arg);
         }
-        return builtin_progn(clo->body, &params_env);
+        return cact_builtin_progn(clo->body, &params_env);
     }
 }
 
@@ -73,11 +73,11 @@ cact_val* special_define(cact_val* args, cact_env* e)
     } else if (is_pair(term)) {
         cact_val* params = cdr(term);
         term = car(term);
-        value = make_procedure(e, params, defn);
+        value = cact_make_procedure(e, params, defn);
     }
 
     if (envadd(e, term, value) < 0) {
-        return make_error("Could not create definition: definition already exists", term);
+        return cact_make_error("Could not create definition: definition already exists", term);
     }
 
     return &undefined;
@@ -87,7 +87,7 @@ cact_val* special_lambda(cact_val* operands, cact_env* e)
 {
     cact_val *args = car(operands);
     cact_val *body = cdr(operands);
-    return make_procedure(e, args, body);
+    return cact_make_procedure(e, args, body);
 }
 
 cact_val* special_begin(cact_val* args, cact_env* e)
@@ -113,7 +113,7 @@ cact_val* special_set_bang(cact_val* args, cact_env* e)
     cact_val *value = eval(defn, e);
 
     if (envset(e, term, value) < 0) {
-        return make_error("Could not assign value: no such variable", term);
+        return cact_make_error("Could not assign value: no such variable", term);
     }
 
     return &undefined;
@@ -153,7 +153,7 @@ eval(cact_val *x, cact_env *e)
         cact_val *found = envlookup(e, x);
         if (!found) {
             print_env(e);
-            return make_error("No such symbol", x);
+            return cact_make_error("No such symbol", x);
         }
         return cdr(found);
     }
@@ -163,7 +163,7 @@ eval(cact_val *x, cact_env *e)
         cact_val *operands = cdr(x);
 
         if (! operator) {
-            return make_error("Cannot evaluate null as operation", x);
+            return cact_make_error("Cannot evaluate null as operation", x);
         }
 
         // If it's a symbol, check if it's special and do the thing

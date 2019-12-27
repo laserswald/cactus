@@ -14,11 +14,11 @@ not_test()
 	    bool expected;
     } cases[] = {
         {NULL, false},
-        {make_boolean(true), false},
-        {make_integer(3), false},
-        {cons(make_integer(3), NULL), false},
-        {make_boolean(false), true},
-        {make_symbol("nil"), false},
+        {cact_make_boolean(true), false},
+        {cact_make_integer(3), false},
+        {cons(cact_make_integer(3), NULL), false},
+        {cact_make_boolean(false), true},
+        {cact_make_symbol("nil"), false},
     };
 
     size_t len_cases = LENGTH(cases);
@@ -38,9 +38,9 @@ is_boolean_test()
 	    bool expected;
     } cases[] = {
         {NULL, false},
-        {make_boolean(false), true},
-        {make_boolean(true), true},
-        {make_integer(0), false},
+        {cact_make_boolean(false), true},
+        {cact_make_boolean(true), true},
+        {cact_make_integer(0), false},
     };
 
     size_t len_cases = LENGTH(cases);

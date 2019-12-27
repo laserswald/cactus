@@ -221,7 +221,7 @@ cact_val*
 lextosym(struct lexeme lx)
 {
     char* sym = strslice(lx.st, &lx.st[lx.sz]);
-    return make_symbol(sym);
+    return cact_make_symbol(sym);
 }
 
 /* Convert a lexeme to an integer. */
@@ -230,14 +230,14 @@ lextoint(struct lexeme lx)
 {
     char *end = lx.st;
     long i = strtol(lx.st, &end, 10);
-    return make_integer(i);
+    return cact_make_integer(i);
 }
 
 /* Convert a lexeme to a string. */
 cact_val*
 lextostr(struct lexeme lx)
 {
-    return make_string(strslice(lx.st + 1, &lx.st[lx.sz - 1]));
+    return cact_make_string(strslice(lx.st + 1, &lx.st[lx.sz - 1]));
 }
 
 /* Convert a lexeme to a boolean. */
@@ -245,11 +245,11 @@ cact_val*
 lextobool(struct lexeme lx) 
 {
     if (strncmp(lx.st, "#t", 2) == 0 || strncmp(lx.st, "#true", 5) == 0) {
-		return make_boolean(true);
+		return cact_make_boolean(true);
     } else if (strncmp(lx.st, "#f", 2) == 0 || strncmp(lx.st, "#false", 6) == 0) {
-		return make_boolean(false);
+		return cact_make_boolean(false);
     }
-    return make_error("Improperly formatted boolean.", NULL);
+    return cact_make_error("Improperly formatted boolean.", NULL);
 }
 
 /* Read a list from the given lexer and fill the cact_val with it. */
@@ -259,7 +259,7 @@ readlist(struct lexer *l, cact_val **r)
 	int status;
 	*r = NULL;
 	if (! expecttok(l, TOKEN_OPEN_PAREN)) {
-		*r = make_error("readlist: somehow didn't get open paren", NULL);
+		*r = cact_make_error("readlist: somehow didn't get open paren", NULL);
 		return CACT_READ_OTHER_ERROR;
 	}
 	while (! peekistok(l, TOKEN_CLOSE_PAREN) && peeklex(l).t > 0) {
@@ -269,14 +269,14 @@ readlist(struct lexer *l, cact_val **r)
 			return status;
 		}
 		if (e == &undefined) {
-			*r = make_error("Unexpected ending", NULL);
+			*r = cact_make_error("Unexpected ending", NULL);
 			return CACT_READ_OTHER_ERROR;
 		}
 		*r = append(*r, e);
 		expecttok(l, TOKEN_WHITESPACE);
 	}
 	if (! expecttok(l, TOKEN_CLOSE_PAREN)) {
-		*r = make_error("readlist: somehow didn't get close paren", NULL);
+		*r = cact_make_error("readlist: somehow didn't get close paren", NULL);
 		return CACT_READ_OTHER_ERROR;
 	}
 	return CACT_READ_OK;
@@ -311,7 +311,7 @@ cact_read(struct lexer* l, cact_val** ret)
 		nextlex(l);
 		cact_val* quoted;
 		status = cact_read(l, &quoted);
-		cact_val* q = make_symbol("quote");
+		cact_val* q = cact_make_symbol("quote");
 		*ret = cons(q, quoted);
 		nextlex(l);
 		break;

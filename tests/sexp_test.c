@@ -3,7 +3,7 @@
 
 static char *is_nil_test()
 {
-    cact_val *i = make_integer(1);
+    cact_val *i = cact_make_integer(1);
     mu_assert("1 is nil", ! is_nil(i));
     mu_assert("null pointer is not nil", is_nil(NULL));
     return NULL;
@@ -16,9 +16,9 @@ static char *is_nil_test()
 static char *car_cdr_cons_test()
 {
     int li = rand();
-    cact_val *l = make_integer(li);
+    cact_val *l = cact_make_integer(li);
     int ri = rand();
-    cact_val *r = make_integer(ri);
+    cact_val *r = cact_make_integer(ri);
     cact_val *pair = cons(l, r);
 
     mu_assert("cons did not create a new pair", is_pair(pair));
@@ -34,7 +34,7 @@ static char *append_test()
 
     // 0 case
     int first = rand();
-    cact_val *fst = make_integer(first);
+    cact_val *fst = cact_make_integer(first);
 
     pair = append(pair, fst);
 
@@ -44,7 +44,7 @@ static char *append_test()
 
     // 1 case
     int second = rand();
-    cact_val *snd = make_integer(second);
+    cact_val *snd = cact_make_integer(second);
 
     pair = append(pair, snd);
 
@@ -55,7 +55,7 @@ static char *append_test()
 
     // N case
     int third = rand();
-    cact_val *thd = make_integer(third);
+    cact_val *thd = cact_make_integer(third);
 
     pair = append(pair, thd);
 

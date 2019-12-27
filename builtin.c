@@ -11,33 +11,33 @@
 
 /* Unpack arguments, and take the car of the list at the first argument */
 cact_val* 
-builtin_car(cact_val *x, cact_env *e) 
+cact_builtin_car(cact_val *x, cact_env *e) 
 {
     cact_val* arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
 
     if (! arg) {
-        return make_error("Cannot take car of null", NULL);
+        return cact_make_error("Cannot take car of null", NULL);
     }
 
     return car(arg);
 }
 
 cact_val* 
-builtin_cdr(cact_val *x, cact_env *e) 
+cact_builtin_cdr(cact_val *x, cact_env *e) 
 {
     cact_val* arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
 
     if (! arg) {
-        return make_error("Cannot take cdr of null", NULL);
+        return cact_make_error("Cannot take cdr of null", NULL);
     }
 
     return cdr(arg);
 }
 
 cact_val* 
-builtin_cons(cact_val *x, cact_env *e) 
+cact_builtin_cons(cact_val *x, cact_env *e) 
 {
     cact_val *fst = eval(car(x), e);
     cact_val *snd = eval(cadr(x), e);
@@ -48,64 +48,64 @@ builtin_cons(cact_val *x, cact_env *e)
 }
 
 cact_val* 
-builtin_is_nil(cact_val *x, cact_env *e) 
+cact_builtin_is_nil(cact_val *x, cact_env *e) 
 {
     cact_val *arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
     if (! arg) {
-        return make_integer(1);
+        return cact_make_integer(1);
     }
-    return make_integer(0);
+    return cact_make_integer(0);
 }
 
 cact_val* 
-builtin_is_pair(cact_val *x, cact_env *e) 
+cact_builtin_is_pair(cact_val *x, cact_env *e) 
 {
     cact_val *arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
     if (is_pair(arg))
-        return make_integer(1);
+        return cact_make_integer(1);
     else
-        return make_integer(0);
+        return cact_make_integer(0);
 }
 
 cact_val* 
-builtin_is_number(cact_val *x, cact_env *e)
+cact_builtin_is_number(cact_val *x, cact_env *e)
 {
     cact_val *arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
     if (is_int(arg) || is_float(arg))
-        return make_integer(1);
+        return cact_make_integer(1);
     else
-        return make_integer(0);
+        return cact_make_integer(0);
 }
 
 cact_val* 
-builtin_eq(cact_val *x, cact_env *e) 
+cact_builtin_eq(cact_val *x, cact_env *e) 
 {
     cact_val *fst = eval(car(x), e);
     cact_val *snd = eval(cadr(x), e);
     PROPAGATE_ERROR(fst);
     PROPAGATE_ERROR(snd);
-    return make_integer(equals(fst, snd));
+    return cact_make_integer(equals(fst, snd));
 }
 
 cact_val* 
-builtin_display(cact_val *x, cact_env *e) 
+cact_builtin_display(cact_val *x, cact_env *e) 
 {
     print_sexp(eval(car(x), e));
     return &undefined;
 }
 
 cact_val* 
-builtin_newline(cact_val *x, cact_env *unused) 
+cact_builtin_newline(cact_val *x, cact_env *unused) 
 {
     puts("");
     return &undefined;
 }
 
 cact_val* 
-builtin_progn(cact_val *x, cact_env *e) 
+cact_builtin_progn(cact_val *x, cact_env *e) 
 {
     cact_val *result = &undefined;
 
@@ -122,7 +122,7 @@ builtin_progn(cact_val *x, cact_env *e)
 }
 
 cact_val* 
-builtin_plus(cact_val *x, cact_env *e)
+cact_builtin_plus(cact_val *x, cact_env *e)
 {
     int result = 0;
 
@@ -133,11 +133,11 @@ builtin_plus(cact_val *x, cact_env *e)
         result += a;
     }
 
-    return make_integer(result);
+    return cact_make_integer(result);
 }
 
 cact_val* 
-builtin_times(cact_val *x, cact_env *e)
+cact_builtin_times(cact_val *x, cact_env *e)
 {
     int result = 1;
 
@@ -148,11 +148,11 @@ builtin_times(cact_val *x, cact_env *e)
         result *= a;
     }
 
-    return make_integer(result);
+    return cact_make_integer(result);
 }
 
 cact_val* 
-builtin_minus(cact_val *x, cact_env *e)
+cact_builtin_minus(cact_val *x, cact_env *e)
 {
     int result = to_int(car(x), "-");
 
@@ -166,11 +166,11 @@ builtin_minus(cact_val *x, cact_env *e)
         result -= a;
     }
 
-    return make_integer(result);
+    return cact_make_integer(result);
 }
 
 cact_val*
-builtin_divide(cact_val *x, cact_env *e)
+cact_builtin_divide(cact_val *x, cact_env *e)
 {
     int result = to_int(car(x), "/");
 
@@ -182,16 +182,16 @@ builtin_divide(cact_val *x, cact_env *e)
         PROPAGATE_ERROR(divisor);
         int a = to_int(divisor, "/");
         if (a == 0) {
-            return make_error("Division by zero", NULL);
+            return cact_make_error("Division by zero", NULL);
         }
         result /= a;
     }
 
-    return make_integer(result);
+    return cact_make_integer(result);
 }
 
 cact_val* 
-builtin_exit(cact_val *x, cact_env *e)
+cact_builtin_exit(cact_val *x, cact_env *e)
 {
     // Invoke any ending things from dynamic-wind
     // Exit
@@ -200,37 +200,37 @@ builtin_exit(cact_val *x, cact_env *e)
 }
 
 cact_val* 
-builtin_load(cact_val *x, cact_env *e)
+cact_builtin_load(cact_val *x, cact_env *e)
 {
     cact_val *fname = eval(car(x), e);
     if (! is_str(fname)) {
-        return make_error("`load` expects a string", x);
+        return cact_make_error("`load` expects a string", x);
     }
 
     printf("LOADING: %s\n", fname->s.str);
     FILE *f = fopen(fname->s.str, "r");
     if (! f) {
-        return make_error("load: no file found", fname);
+        return cact_make_error("load: no file found", fname);
     }
 
     int result = runfile(f, e);
     if (result != CACT_READ_OK) {
-        return make_error("load: could not read file", fname);
+        return cact_make_error("load: could not read file", fname);
     }
 
     return &undefined;
 }
 
 cact_val* 
-builtin_is_boolean(cact_val *x, cact_env *e)
+cact_builtin_is_boolean(cact_val *x, cact_env *e)
 {   
 	cact_val *maybe_bool = eval(car(x), e);
     PROPAGATE_ERROR(maybe_bool);
-	return make_boolean(is_bool(maybe_bool));
+	return cact_make_boolean(is_bool(maybe_bool));
 }
 
 cact_val* 
-builtin_not(cact_val *x, cact_env *e)
+cact_builtin_not(cact_val *x, cact_env *e)
 { 
 	cact_val *arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
@@ -238,7 +238,7 @@ builtin_not(cact_val *x, cact_env *e)
 }
 
 void 
-make_builtin(cact_env *e, cact_val *x, cact_val *(fn)(cact_val*, cact_env*))
+cact_make_builtin(cact_env *e, cact_val *x, cact_val *(fn)(cact_val*, cact_env*))
 {
     cact_val *c = malloc(sizeof(*c));
     c->t = CACT_TYPE_PROCEDURE;
@@ -248,7 +248,7 @@ make_builtin(cact_env *e, cact_val *x, cact_val *(fn)(cact_val*, cact_env*))
 }
 
 cact_env* 
-make_builtins() 
+cact_make_builtins() 
 {
     cact_env *env = malloc(sizeof(cact_env));
     envinit(env, NULL);
@@ -262,7 +262,7 @@ make_builtins()
 
     int i;
     for (i = 0; i < LENGTH(builtins); i++) {
-        make_builtin(env, make_symbol(builtins[i].name), builtins[i].fn);
+        cact_make_builtin(env, cact_make_symbol(builtins[i].name), builtins[i].fn);
     }
 
     return env;

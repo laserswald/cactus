@@ -127,11 +127,11 @@ void print_sexp(cact_val *x);
 void print_env(cact_env *e);
 void print_list(cact_val *x);
 
-cact_val *make_integer(int i);
-cact_val *make_procedure(cact_env *e, cact_val *args, cact_val *body);
-cact_val *make_error(char *msg, cact_val *irr);
-cact_val *make_string(char *str);
-cact_val *make_boolean(bool b);
+cact_val *cact_make_integer(int i);
+cact_val *cact_make_procedure(cact_env *e, cact_val *args, cact_val *body);
+cact_val *cact_make_error(char *msg, cact_val *irr);
+cact_val *cact_make_string(char *str);
+cact_val *cact_make_boolean(bool b);
 
 #define LIST_FOR_EACH(list, current) \
 for (cact_val *(current) = list;\
