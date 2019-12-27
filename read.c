@@ -217,7 +217,7 @@ printtokstream(struct lexer *l)
 }
 
 /* Convert a lexeme to a symbol. */
-Sexp*
+cact_val*
 lextosym(struct lexeme lx)
 {
     char* sym = strslice(lx.st, &lx.st[lx.sz]);
@@ -225,7 +225,7 @@ lextosym(struct lexeme lx)
 }
 
 /* Convert a lexeme to an integer. */
-Sexp*
+cact_val*
 lextoint(struct lexeme lx)
 {
     char *end = lx.st;
@@ -234,14 +234,14 @@ lextoint(struct lexeme lx)
 }
 
 /* Convert a lexeme to a string. */
-Sexp*
+cact_val*
 lextostr(struct lexeme lx)
 {
     return make_string(strslice(lx.st + 1, &lx.st[lx.sz - 1]));
 }
 
 /* Convert a lexeme to a boolean. */
-Sexp* 
+cact_val* 
 lextobool(struct lexeme lx) 
 {
     if (strncmp(lx.st, "#t", 2) == 0 || strncmp(lx.st, "#true", 5) == 0) {
@@ -252,9 +252,9 @@ lextobool(struct lexeme lx)
     return make_error("Improperly formatted boolean.", NULL);
 }
 
-/* Read a list from the given lexer and fill the Sexp with it. */
+/* Read a list from the given lexer and fill the cact_val with it. */
 int 
-readlist(struct lexer *l, Sexp **r) 
+readlist(struct lexer *l, cact_val **r) 
 {
 	int status;
 	*r = NULL;
@@ -263,7 +263,7 @@ readlist(struct lexer *l, Sexp **r)
 		return CACT_READ_OTHER_ERROR;
 	}
 	while (! peekistok(l, TOKEN_CLOSE_PAREN) && peeklex(l).t > 0) {
-		Sexp *e = NULL;
+		cact_val *e = NULL;
 		status = cact_read(l, &e);
 		if (status != CACT_READ_OK) {
 			return status;
@@ -284,10 +284,10 @@ readlist(struct lexer *l, Sexp **r)
 
 /* Read the next valid s-expression from the lexer. */
 int 
-cact_read(struct lexer* l, Sexp** ret) 
+cact_read(struct lexer* l, cact_val** ret) 
 {
 	int status = CACT_READ_OK;
-	*ret = (Sexp*) NULL;
+	*ret = (cact_val*) NULL;
 
 	struct lexeme lx = peeklex(l);
 
@@ -309,9 +309,9 @@ cact_read(struct lexer* l, Sexp** ret)
 		break;
 	case TOKEN_SINGLE_QUOTE:
 		nextlex(l);
-		Sexp* quoted;
+		cact_val* quoted;
 		status = cact_read(l, &quoted);
-		Sexp* q = make_symbol("quote");
+		cact_val* q = make_symbol("quote");
 		*ret = cons(q, quoted);
 		nextlex(l);
 		break;

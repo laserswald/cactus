@@ -10,10 +10,10 @@
 #include "read.h"
 
 /* Unpack arguments, and take the car of the list at the first argument */
-Sexp* 
-builtin_car(Sexp *x, Env *e) 
+cact_val* 
+builtin_car(cact_val *x, cact_env *e) 
 {
-    Sexp* arg = eval(car(x), e);
+    cact_val* arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
 
     if (! arg) {
@@ -23,10 +23,10 @@ builtin_car(Sexp *x, Env *e)
     return car(arg);
 }
 
-Sexp* 
-builtin_cdr(Sexp *x, Env *e) 
+cact_val* 
+builtin_cdr(cact_val *x, cact_env *e) 
 {
-    Sexp* arg = eval(car(x), e);
+    cact_val* arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
 
     if (! arg) {
@@ -36,21 +36,21 @@ builtin_cdr(Sexp *x, Env *e)
     return cdr(arg);
 }
 
-Sexp* 
-builtin_cons(Sexp *x, Env *e) 
+cact_val* 
+builtin_cons(cact_val *x, cact_env *e) 
 {
-    Sexp *fst = eval(car(x), e);
-    Sexp *snd = eval(cadr(x), e);
+    cact_val *fst = eval(car(x), e);
+    cact_val *snd = eval(cadr(x), e);
     PROPAGATE_ERROR(fst);
     PROPAGATE_ERROR(snd);
-    Sexp *p = cons(fst, snd);
+    cact_val *p = cons(fst, snd);
     return p;
 }
 
-Sexp* 
-builtin_is_nil(Sexp *x, Env *e) 
+cact_val* 
+builtin_is_nil(cact_val *x, cact_env *e) 
 {
-    Sexp *arg = eval(car(x), e);
+    cact_val *arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
     if (! arg) {
         return make_integer(1);
@@ -58,10 +58,10 @@ builtin_is_nil(Sexp *x, Env *e)
     return make_integer(0);
 }
 
-Sexp* 
-builtin_is_pair(Sexp *x, Env *e) 
+cact_val* 
+builtin_is_pair(cact_val *x, cact_env *e) 
 {
-    Sexp *arg = eval(car(x), e);
+    cact_val *arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
     if (is_pair(arg))
         return make_integer(1);
@@ -69,10 +69,10 @@ builtin_is_pair(Sexp *x, Env *e)
         return make_integer(0);
 }
 
-Sexp* 
-builtin_is_number(Sexp *x, Env *e)
+cact_val* 
+builtin_is_number(cact_val *x, cact_env *e)
 {
-    Sexp *arg = eval(car(x), e);
+    cact_val *arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
     if (is_int(arg) || is_float(arg))
         return make_integer(1);
@@ -80,34 +80,34 @@ builtin_is_number(Sexp *x, Env *e)
         return make_integer(0);
 }
 
-Sexp* 
-builtin_eq(Sexp *x, Env *e) 
+cact_val* 
+builtin_eq(cact_val *x, cact_env *e) 
 {
-    Sexp *fst = eval(car(x), e);
-    Sexp *snd = eval(cadr(x), e);
+    cact_val *fst = eval(car(x), e);
+    cact_val *snd = eval(cadr(x), e);
     PROPAGATE_ERROR(fst);
     PROPAGATE_ERROR(snd);
     return make_integer(equals(fst, snd));
 }
 
-Sexp* 
-builtin_display(Sexp *x, Env *e) 
+cact_val* 
+builtin_display(cact_val *x, cact_env *e) 
 {
     print_sexp(eval(car(x), e));
     return &undefined;
 }
 
-Sexp* 
-builtin_newline(Sexp *x, Env *unused) 
+cact_val* 
+builtin_newline(cact_val *x, cact_env *unused) 
 {
     puts("");
     return &undefined;
 }
 
-Sexp* 
-builtin_progn(Sexp *x, Env *e) 
+cact_val* 
+builtin_progn(cact_val *x, cact_env *e) 
 {
-    Sexp *result = &undefined;
+    cact_val *result = &undefined;
 
     if (is_pair(x)) {
         LIST_FOR_EACH(x, pair) {
@@ -121,13 +121,13 @@ builtin_progn(Sexp *x, Env *e)
     return result;
 }
 
-Sexp* 
-builtin_plus(Sexp *x, Env *e)
+cact_val* 
+builtin_plus(cact_val *x, cact_env *e)
 {
     int result = 0;
 
     LIST_FOR_EACH(x, pair) {
-        Sexp* addend = eval(car(pair), e);
+        cact_val* addend = eval(car(pair), e);
         PROPAGATE_ERROR(addend);
         int a = to_int(addend, "+");
         result += a;
@@ -136,13 +136,13 @@ builtin_plus(Sexp *x, Env *e)
     return make_integer(result);
 }
 
-Sexp* 
-builtin_times(Sexp *x, Env *e)
+cact_val* 
+builtin_times(cact_val *x, cact_env *e)
 {
     int result = 1;
 
     LIST_FOR_EACH(x, pair) {
-        Sexp* factor = eval(car(pair), e);
+        cact_val* factor = eval(car(pair), e);
         PROPAGATE_ERROR(factor);
         int a = to_int(factor, "*");
         result *= a;
@@ -151,16 +151,16 @@ builtin_times(Sexp *x, Env *e)
     return make_integer(result);
 }
 
-Sexp* 
-builtin_minus(Sexp *x, Env *e)
+cact_val* 
+builtin_minus(cact_val *x, cact_env *e)
 {
     int result = to_int(car(x), "-");
 
-    Sexp *rest = cdr(x);
+    cact_val *rest = cdr(x);
 
     LIST_FOR_EACH(rest, pair) {
         // Fancy word.
-        Sexp* subtrahend = eval(car(pair), e);
+        cact_val* subtrahend = eval(car(pair), e);
         PROPAGATE_ERROR(subtrahend);
         int a = to_int(subtrahend, "-");
         result -= a;
@@ -169,16 +169,16 @@ builtin_minus(Sexp *x, Env *e)
     return make_integer(result);
 }
 
-Sexp*
-builtin_divide(Sexp *x, Env *e)
+cact_val*
+builtin_divide(cact_val *x, cact_env *e)
 {
     int result = to_int(car(x), "/");
 
-    Sexp *rest = cdr(x);
+    cact_val *rest = cdr(x);
 
     LIST_FOR_EACH(rest, pair) {
         // Fancy word.
-        Sexp* divisor= eval(car(pair), e);
+        cact_val* divisor= eval(car(pair), e);
         PROPAGATE_ERROR(divisor);
         int a = to_int(divisor, "/");
         if (a == 0) {
@@ -190,8 +190,8 @@ builtin_divide(Sexp *x, Env *e)
     return make_integer(result);
 }
 
-Sexp* 
-builtin_exit(Sexp *x, Env *e)
+cact_val* 
+builtin_exit(cact_val *x, cact_env *e)
 {
     // Invoke any ending things from dynamic-wind
     // Exit
@@ -199,10 +199,10 @@ builtin_exit(Sexp *x, Env *e)
     return NULL;
 }
 
-Sexp* 
-builtin_load(Sexp *x, Env *e)
+cact_val* 
+builtin_load(cact_val *x, cact_env *e)
 {
-    Sexp *fname = eval(car(x), e);
+    cact_val *fname = eval(car(x), e);
     if (! is_str(fname)) {
         return make_error("`load` expects a string", x);
     }
@@ -221,36 +221,36 @@ builtin_load(Sexp *x, Env *e)
     return &undefined;
 }
 
-Sexp* 
-builtin_is_boolean(Sexp *x, Env *e)
+cact_val* 
+builtin_is_boolean(cact_val *x, cact_env *e)
 {   
-	Sexp *maybe_bool = eval(car(x), e);
+	cact_val *maybe_bool = eval(car(x), e);
     PROPAGATE_ERROR(maybe_bool);
 	return make_boolean(is_bool(maybe_bool));
 }
 
-Sexp* 
-builtin_not(Sexp *x, Env *e)
+cact_val* 
+builtin_not(cact_val *x, cact_env *e)
 { 
-	Sexp *arg = eval(car(x), e);
+	cact_val *arg = eval(car(x), e);
     PROPAGATE_ERROR(arg);
 	return sexp_not(arg);
 }
 
 void 
-make_builtin(Env *e, Sexp *x, Sexp *(fn)(Sexp*, Env*))
+make_builtin(cact_env *e, cact_val *x, cact_val *(fn)(cact_val*, cact_env*))
 {
-    Sexp *c = malloc(sizeof(*c));
+    cact_val *c = malloc(sizeof(*c));
     c->t = TYPE_CLOSURE;
     c->c = malloc(sizeof(Closure));
     c->c->nativefn = fn;
     envadd(e, x, c);
 }
 
-Env* 
+cact_env* 
 make_builtins() 
 {
-    Env *env = malloc(sizeof(Env));
+    cact_env *env = malloc(sizeof(cact_env));
     envinit(env, NULL);
 
     if_sym.sym = "if";

@@ -1,10 +1,10 @@
 #include "write.h"
 
 void
-fprint_list(FILE *f, Sexp *x)
+fprint_list(FILE *f, cact_val *x)
 {
     fprintf(f, "(");
-    Sexp *p = x;
+    cact_val *p = x;
     while (p != NULL) {
         if (is_pair(p)) {
             fprint_sexp(f, car(p));
@@ -19,12 +19,12 @@ fprint_list(FILE *f, Sexp *x)
     fprintf(f, ")");
 }
 
-void print_list(Sexp *x) {
+void print_list(cact_val *x) {
     fprint_list(stdout, x);
 }
 
 void
-fprint_sexp(FILE *f, Sexp *x)
+fprint_sexp(FILE *f, cact_val *x)
 {
     if (!x) {
         fprintf(f, "()");
@@ -68,6 +68,6 @@ fprint_sexp(FILE *f, Sexp *x)
     }
 }
 
-void print_sexp(Sexp *x) {
+void print_sexp(cact_val *x) {
     fprint_sexp(stdout, x);
 }

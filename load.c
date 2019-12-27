@@ -5,7 +5,7 @@
 #include "eval.h"
 
 int
-runfile(FILE *in, Env *e)
+runfile(FILE *in, cact_env *e)
 {
     DBG("Running file. \n");
 
@@ -14,7 +14,7 @@ runfile(FILE *in, Env *e)
     struct lexer l;
     lexer_init(&l, s);
 
-    Sexp *x;
+    cact_val *x;
     while (*s != '\0') {
         int status = 0;
 

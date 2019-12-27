@@ -28,7 +28,7 @@ int verbosity = 0;
 #define PROMPT "cactus> "
 
 void
-dbg(Sexp *x)
+dbg(cact_val *x)
 {
     printf("; debug: ");
     print_sexp(x);
@@ -36,10 +36,10 @@ dbg(Sexp *x)
 }
 
 int
-repl(FILE *f, Env *e)
+repl(FILE *f, cact_env *e)
 {
     char line[256];
-    Sexp *x;
+    cact_val *x;
     int status;
     struct lexer l;
 
@@ -66,7 +66,7 @@ int
 main(int argc, char *argv[])
 {
     DBG("Starting.\n");
-    Env *e = make_builtins();
+    cact_env *e = make_builtins();
     FILE *infile = NULL;
 
     if (argc == 2) {

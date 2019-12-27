@@ -3,7 +3,7 @@
 
 static char *is_nil_test()
 {
-    Sexp *i = make_integer(1);
+    cact_val *i = make_integer(1);
     mu_assert("1 is nil", ! is_nil(i));
     mu_assert("null pointer is not nil", is_nil(NULL));
     return NULL;
@@ -16,10 +16,10 @@ static char *is_nil_test()
 static char *car_cdr_cons_test()
 {
     int li = rand();
-    Sexp *l = make_integer(li);
+    cact_val *l = make_integer(li);
     int ri = rand();
-    Sexp *r = make_integer(ri);
-    Sexp *pair = cons(l, r);
+    cact_val *r = make_integer(ri);
+    cact_val *pair = cons(l, r);
 
     mu_assert("cons did not create a new pair", is_pair(pair));
     mu_assert("car of pair was not generated number", car(pair)->i == li);
@@ -30,11 +30,11 @@ static char *car_cdr_cons_test()
 
 static char *append_test()
 {
-    Sexp *pair = NULL;
+    cact_val *pair = NULL;
 
     // 0 case
     int first = rand();
-    Sexp *fst = make_integer(first);
+    cact_val *fst = make_integer(first);
 
     pair = append(pair, fst);
 
@@ -44,7 +44,7 @@ static char *append_test()
 
     // 1 case
     int second = rand();
-    Sexp *snd = make_integer(second);
+    cact_val *snd = make_integer(second);
 
     pair = append(pair, snd);
 
@@ -55,7 +55,7 @@ static char *append_test()
 
     // N case
     int third = rand();
-    Sexp *thd = make_integer(third);
+    cact_val *thd = make_integer(third);
 
     pair = append(pair, thd);
 

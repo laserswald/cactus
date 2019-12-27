@@ -7,7 +7,7 @@
 
 #include "env.h"
 
-typedef struct sexp Sexp;
+typedef struct sexp cact_val;
 
 typedef enum {
     TYPE_UNDEF,
@@ -32,20 +32,20 @@ typedef struct {
 } Symbol;
 
 typedef struct {
-    Sexp *car;
-    Sexp *cdr;
+    cact_val *car;
+    cact_val *cdr;
 } Pair;
 
 typedef struct {
-    Env *env;
-    Sexp *argl;
-    Sexp *body;
-    Sexp *(*nativefn)(Sexp *args, Env *e);
+    cact_env *env;
+    cact_val *argl;
+    cact_val *body;
+    cact_val *(*nativefn)(cact_val *args, cact_env *e);
 } Closure;
 
 typedef struct {
     char *msg;
-    Sexp *ctx;
+    cact_val *ctx;
 } Error;
 
 struct sexp {
@@ -58,27 +58,27 @@ struct sexp {
         Symbol a; // atom
         Pair p;
         Closure *c;
-        Env *e;
+        cact_env *e;
         Error x;
     };
 };
 
-Sexp* cons(Sexp* a, Sexp* d);
-Sexp* car(Sexp* x);
-Sexp* cdr(Sexp* x);
+cact_val* cons(cact_val* a, cact_val* d);
+cact_val* car(cact_val* x);
+cact_val* cdr(cact_val* x);
 #define cadr(x) 		car(cdr(x))
 #define caddr(x) 		car(cdr(cdr(x)))
 
-Sexp* append(Sexp *l, Sexp *x);
-Sexp* acons(Sexp* k, Sexp* v, Sexp* alist);
-Sexp* assoc(Sexp* k, Sexp* alist);
+cact_val* append(cact_val *l, cact_val *x);
+cact_val* acons(cact_val* k, cact_val* v, cact_val* alist);
+cact_val* assoc(cact_val* k, cact_val* alist);
 
 const char *show_type(Type t);
-const char *show_sexp(Sexp *x);
+const char *show_sexp(cact_val *x);
 
 #define GENERATE_TYPECONV(typemarker, returntype, funcname, membername) \
 static inline returntype \
-funcname(Sexp *x, char *extras) \
+funcname(cact_val *x, char *extras) \
 { \
  	if (!x) { \
 		fprintf(stderr, "%s: Expected %s, but got nil.\n", extras, show_type(typemarker)); \
@@ -93,7 +93,7 @@ funcname(Sexp *x, char *extras) \
 
 #define GENERATE_TYPECHECK(funcname, typemarker) \
 static inline bool \
-funcname(Sexp *x) { \
+funcname(cact_val *x) { \
 	return x && x->t == typemarker; \
 }
 
@@ -101,7 +101,7 @@ funcname(Sexp *x) { \
 GENERATE_TYPECONV(TYPE_CLOSURE, Closure*, to_closure, c)
 GENERATE_TYPECONV(TYPE_BOOLEAN, bool, to_bool, b)
 GENERATE_TYPECONV(TYPE_DOUBLE, double, to_float, f)
-GENERATE_TYPECONV(TYPE_ENVIRONMENT, Env*, to_env, e)
+GENERATE_TYPECONV(TYPE_ENVIRONMENT, cact_env*, to_env, e)
 GENERATE_TYPECONV(TYPE_INT, int, to_int, i)
 GENERATE_TYPECONV(TYPE_PAIR, Pair, to_pair, p)
 GENERATE_TYPECONV(TYPE_STRING, String, to_str, s)
@@ -117,30 +117,30 @@ GENERATE_TYPECHECK(is_str, TYPE_STRING)
 GENERATE_TYPECHECK(is_sym, TYPE_SYMBOL)
 GENERATE_TYPECHECK(is_error, TYPE_ERROR)
 
-bool is_nil(Sexp *);
-bool is_truthy(Sexp *);
-Sexp *sexp_not(Sexp *x);
+bool is_nil(cact_val *);
+bool is_truthy(cact_val *);
+cact_val *sexp_not(cact_val *x);
 
-bool equals(Sexp *l, Sexp *r);
+bool equals(cact_val *l, cact_val *r);
 
-void print_sexp(Sexp *x);
-void print_env(Env *e);
-void print_list(Sexp *x);
+void print_sexp(cact_val *x);
+void print_env(cact_env *e);
+void print_list(cact_val *x);
 
-Sexp *make_integer(int i);
-Sexp *make_closure(Env *e, Sexp *args, Sexp *body);
-Sexp *make_error(char *msg, Sexp *irr);
-Sexp *make_string(char *str);
-Sexp *make_boolean(bool b);
+cact_val *make_integer(int i);
+cact_val *make_closure(cact_env *e, cact_val *args, cact_val *body);
+cact_val *make_error(char *msg, cact_val *irr);
+cact_val *make_string(char *str);
+cact_val *make_boolean(bool b);
 
 #define LIST_FOR_EACH(list, current) \
-for (Sexp *(current) = list;\
+for (cact_val *(current) = list;\
      current && is_pair(current); \
      current = cdr(current))
 
 #define PROPAGATE_ERROR(err) if (is_error(err)) return (err);
 
-extern Sexp undefined;
+extern cact_val undefined;
 
 #endif // sexp_h_INCLUDED
 

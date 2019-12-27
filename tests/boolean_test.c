@@ -10,7 +10,7 @@ static char*
 not_test()
 {
     struct {
-	    Sexp *thing;
+	    cact_val *thing;
 	    bool expected;
     } cases[] = {
         {NULL, false},
@@ -34,7 +34,7 @@ static char*
 is_boolean_test()
 {
     struct {
-	    Sexp *thing;
+	    cact_val *thing;
 	    bool expected;
     } cases[] = {
         {NULL, false},

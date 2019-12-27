@@ -3,7 +3,7 @@
 
 #include "sexp.h"
 
-Sexp *make_symbol(char *symname);
+cact_val *make_symbol(char *symname);
 int symcmp(Symbol *a, Symbol *b);
 
 #endif // sym_h_INCLUDED

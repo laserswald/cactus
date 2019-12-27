@@ -36,18 +36,18 @@ show_type(Type t) {
 }
 
 /* Defined constants. */
-Sexp undefined = {.t = TYPE_UNDEF};
+cact_val undefined = {.t = TYPE_UNDEF};
 
 /* Is this sexp nil? */
 bool
-is_nil(Sexp *x)
+is_nil(cact_val *x)
 {
     return x == NULL;
 }
 
 /* Deeply compare two values. */
 bool
-equals(Sexp *l, Sexp *r)
+equals(cact_val *l, cact_val *r)
 {
     if (l->t != r->t) {
         return false;
@@ -89,7 +89,7 @@ equals(Sexp *l, Sexp *r)
     return false;
 }
 
-unsigned int length(Sexp *l) {
+unsigned int length(cact_val *l) {
     unsigned int len = 0;
     LIST_FOR_EACH(l, p) {
         len++;
@@ -98,40 +98,40 @@ unsigned int length(Sexp *l) {
 }
 
 /* Create a new integer. */
-Sexp *
+cact_val *
 make_integer(int i)
 {
-    Sexp *x = malloc(sizeof(Sexp));
+    cact_val *x = malloc(sizeof(cact_val));
     x->t = TYPE_INT;
     x->i = i;
     return x;
 }
 
 /* Create a new symbol. */
-Sexp *
+cact_val *
 make_symbol(char *str)
 {
-    Sexp *sym = malloc(sizeof(Sexp));
+    cact_val *sym = malloc(sizeof(cact_val));
     sym->t = TYPE_SYMBOL;
     sym->a.sym = str;
     return sym;
 }
 
 /* Create a string. */
-Sexp *
+cact_val *
 make_string(char *str)
 {
-    Sexp *x = malloc(sizeof(Sexp));
+    cact_val *x = malloc(sizeof(cact_val));
     x->t = TYPE_STRING;
     x->s.str = str;
     return x;
 }
 
 /* Create a closure. */
-Sexp *
-make_closure(Env *e, Sexp *argl, Sexp *body)
+cact_val *
+make_closure(cact_env *e, cact_val *argl, cact_val *body)
 {
-    Sexp *x = calloc(1, sizeof(Sexp));
+    cact_val *x = calloc(1, sizeof(cact_val));
     x->t = TYPE_CLOSURE;
     x->c = calloc(1, sizeof(Closure));
     x->c->env = e;
@@ -141,21 +141,21 @@ make_closure(Env *e, Sexp *argl, Sexp *body)
 }
 
 /* Create an environment. */
-Sexp *
-make_env(Env *parent)
+cact_val *
+make_env(cact_env *parent)
 {
-    Sexp *x = calloc(1, sizeof(Sexp));
+    cact_val *x = calloc(1, sizeof(cact_val));
     x->t = TYPE_ENVIRONMENT;
-    x->e = calloc(1, sizeof(Env));
+    x->e = calloc(1, sizeof(cact_env));
     x->e->parent = parent;
     return x;
 }
 
 /* Create an error value. */
-Sexp *
-make_error(char *msg, Sexp *irr)
+cact_val *
+make_error(char *msg, cact_val *irr)
 {
-    Sexp *x = calloc(1, sizeof(Sexp));
+    cact_val *x = calloc(1, sizeof(cact_val));
     x->t = TYPE_ERROR;
     x->x.msg = strdup(msg);
     x->x.ctx = irr;
@@ -163,20 +163,20 @@ make_error(char *msg, Sexp *irr)
 }
 
 /* Create an error value. */
-Sexp *
+cact_val *
 make_boolean(bool b)
 {
-    Sexp *x = calloc(1, sizeof(Sexp));
+    cact_val *x = calloc(1, sizeof(cact_val));
     x->t = TYPE_BOOLEAN;
     x->b = b;
     return x;
 }
 
 /* Create a pair. */
-Sexp *
-cons(Sexp *a, Sexp *d)
+cact_val *
+cons(cact_val *a, cact_val *d)
 {
-    Sexp *pair = malloc(sizeof(Sexp));
+    cact_val *pair = malloc(sizeof(cact_val));
     pair->t = TYPE_PAIR;
     pair->p.car = a;
     pair->p.cdr = d;
@@ -184,8 +184,8 @@ cons(Sexp *a, Sexp *d)
 }
 
 /* Get the car of a pair. */
-Sexp *
-car(Sexp *x)
+cact_val *
+car(cact_val *x)
 {
     if (!x && !is_pair(x)) {
         return make_error("Not a pair: ", x);
@@ -195,8 +195,8 @@ car(Sexp *x)
 }
 
 /* Get the cdr of a pair. */
-Sexp *
-cdr(Sexp *x)
+cact_val *
+cdr(cact_val *x)
 {
     if (!x || !is_pair(x)) {
         return make_error("Not a pair: ", x);
@@ -206,22 +206,22 @@ cdr(Sexp *x)
 }
 
 /* Add a key and value to an association list. */
-Sexp *
-acons(Sexp *key, Sexp *val, Sexp *alist)
+cact_val *
+acons(cact_val *key, cact_val *val, cact_val *alist)
 {
-    Sexp *pair = cons(key, val);
+    cact_val *pair = cons(key, val);
     return cons(pair, alist);
 }
 
 /* Lookup the value associated with the key in the alist. */
-Sexp *
-assoc(Sexp *key, Sexp *alist)
+cact_val *
+assoc(cact_val *key, cact_val *alist)
 {
     if (! alist) {
         return NULL;
     }
 
-    Sexp* fst = car(alist);
+    cact_val* fst = car(alist);
     if (is_error(fst)) {
         return fst;
     }
@@ -242,13 +242,13 @@ symcmp(Symbol *a, Symbol *b)
     return strcmp(a->sym, b->sym);
 }
 
-Sexp *
-append(Sexp *l, Sexp *x)
+cact_val *
+append(cact_val *l, cact_val *x)
 {
     if (!l)
         return cons(x, NULL);
 
-    Sexp *e = l;
+    cact_val *e = l;
 
     while (cdr(e))
         e = cdr(e);
@@ -258,12 +258,12 @@ append(Sexp *l, Sexp *x)
 }
 
 
-Sexp *
-lookup(Env *e, Sexp *key)
+cact_val *
+lookup(cact_env *e, cact_val *key)
 {
     if (!e) return NULL;
 
-    Sexp *found_kv = assoc(key, e->list);
+    cact_val *found_kv = assoc(key, e->list);
 
     if (!found_kv && e->parent) {
         found_kv = lookup(e->parent, key);
@@ -277,12 +277,12 @@ lookup(Env *e, Sexp *key)
 }
 
 void
-define(Env *e, Sexp *key, Sexp *val)
+define(cact_env *e, cact_val *key, cact_val *val)
 {
     if (!e)
         return;
 
-    Sexp *found_kv = lookup(e, key);
+    cact_val *found_kv = lookup(e, key);
 
     if (found_kv) {
         found_kv->p.cdr = val;
@@ -291,8 +291,8 @@ define(Env *e, Sexp *key, Sexp *val)
     }
 }
 
-Sexp *
-sexp_not(Sexp *x) 
+cact_val *
+sexp_not(cact_val *x) 
 {
     if (is_bool(x) && x->b == false) {
 	    return make_boolean(true);

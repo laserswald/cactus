@@ -6,7 +6,7 @@
 
 static char *cact_read_null_test() {
 	int status = CACT_READ_OK;
-	Sexp *x = NULL;
+	cact_val *x = NULL;
 	char* string = NULL;
 
 	struct lexer l;
@@ -20,7 +20,7 @@ static char *cact_read_null_test() {
 
 static char *cact_read_blank_test() {
 	int status = CACT_READ_OK;
-	Sexp *x = NULL;
+	cact_val *x = NULL;
 	char* string = NULL;
 	struct lexer l;
 
@@ -35,7 +35,7 @@ static char *cact_read_blank_test() {
 
 static char *cact_read_ident_test() {
 	int status = CACT_READ_OK;
-	Sexp *x = NULL;
+	cact_val *x = NULL;
 	char* string = NULL;
 	struct lexer l;
 
@@ -51,7 +51,7 @@ static char *cact_read_ident_test() {
 
 static char *cact_read_boolean_test() {
 	int status = CACT_READ_OK;
-	Sexp *x = NULL;
+	cact_val *x = NULL;
 	char* string = NULL;
 	struct lexer l;
 
@@ -76,7 +76,7 @@ static char *cact_read_boolean_test() {
 
 static char *cact_read_int_test() {
 	int status = CACT_READ_OK;
-	Sexp *x = NULL;
+	cact_val *x = NULL;
 	char* string = NULL;
 	struct lexer l;
 
@@ -92,7 +92,7 @@ static char *cact_read_int_test() {
 
 static char *cact_read_string_test() {
 	int status = CACT_READ_OK;
-	Sexp *x = NULL;
+	cact_val *x = NULL;
 	char* string = NULL;
 	struct lexer l;
 
@@ -109,7 +109,7 @@ static char *cact_read_string_test() {
 
 static char *cact_read_list_test() {
 	int status = CACT_READ_OK;
-	Sexp *x = NULL;
+	cact_val *x = NULL;
 	char* string = NULL;
 	struct lexer l;
 
@@ -153,7 +153,7 @@ static char*
 cact_read_quote_test()
 {
 	int status = CACT_READ_OK;
-	Sexp *x = NULL;
+	cact_val *x = NULL;
 	char* string = NULL;
 	struct lexer l;
 

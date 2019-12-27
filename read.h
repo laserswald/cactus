@@ -52,7 +52,7 @@ struct lexer;
 
 void lexer_init(struct lexer *l, const char* data);
 void printtokstream(struct lexer *l);
-int cact_read(struct lexer *l, Sexp **s);
+int cact_read(struct lexer *l, cact_val **s);
 
 #endif // CACT_READ_H
 

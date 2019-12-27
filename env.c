@@ -3,7 +3,7 @@
 #include "env.h"
 
 void
-envinit(Env *e, Env *parent)
+envinit(cact_env *e, cact_env *parent)
 {
     e->parent = parent;
 }
@@ -12,12 +12,12 @@ envinit(Env *e, Env *parent)
  * Look up the key in the environment and return the associated sexp
  * or null. 
  */
-Sexp *
-envlookup(Env *e, Sexp *key)
+cact_val *
+envlookup(cact_env *e, cact_val *key)
 {
     if (!e) return NULL;
 
-    Sexp *found_kv = assoc(key, e->list);
+    cact_val *found_kv = assoc(key, e->list);
 
     if (!found_kv && e->parent) {
         found_kv = envlookup(e->parent, key);
@@ -35,12 +35,12 @@ envlookup(Env *e, Sexp *key)
  * assignment.
  */
 int 
-envadd(Env *e, Sexp *key, Sexp *val)
+envadd(cact_env *e, cact_val *key, cact_val *val)
 {
     if (!e)
         return -1;
 
-    Sexp *found_kv = assoc(key, e->list);
+    cact_val *found_kv = assoc(key, e->list);
 
     if (found_kv)
         return -2;
@@ -52,12 +52,12 @@ envadd(Env *e, Sexp *key, Sexp *val)
 
 /* Assign the key to the value, ensuring the key already exists. */
 int 
-envset(Env *e, Sexp *key, Sexp *val)
+envset(cact_env *e, cact_val *key, cact_val *val)
 {
     if (!e)
         return -1;
 
-    Sexp *found_kv = envlookup(e, key);
+    cact_val *found_kv = envlookup(e, key);
 
     if (! found_kv)
         return -2;
@@ -68,12 +68,12 @@ envset(Env *e, Sexp *key, Sexp *val)
 }
 
 void
-print_env(Env *e)
+print_env(cact_env *e)
 {
     if (!e)
         return;
 
-    printf("Environment:");
+    printf("cact_environment:");
     print_list(e->list);
     puts("");
     puts("Parent:");
