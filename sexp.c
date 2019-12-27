@@ -9,34 +9,34 @@
 const char *
 show_type(cact_type t) {
     switch (t) {
-    case TYPE_INT:
+    case CACT_TYPE_INT:
         return "int";
-    case TYPE_DOUBLE:
+    case CACT_TYPE_DOUBLE:
         return "float";
-    case TYPE_BOOLEAN:
+    case CACT_TYPE_BOOLEAN:
         return "boolean";
-    case TYPE_PROCEDURE:
+    case CACT_TYPE_PROCEDURE:
         return "procedure";
-    case TYPE_ENVIRONMENT:
+    case CACT_TYPE_ENVIRONMENT:
         return "environment";
-    case TYPE_PAIR:
+    case CACT_TYPE_PAIR:
         return "pair";
-    case TYPE_STRING:
+    case CACT_TYPE_STRING:
         return "string";
-    case TYPE_SYMBOL:
+    case CACT_TYPE_SYMBOL:
         return "symbol";
-    case TYPE_PORT:
+    case CACT_TYPE_PORT:
         return "port";
-    case TYPE_ERROR:
+    case CACT_TYPE_ERROR:
         return "error";
-    case TYPE_UNDEF:
+    case CACT_TYPE_UNDEF:
         return "undefined";
     }
     return NULL;
 }
 
 /* Defined constants. */
-cact_val undefined = {.t = TYPE_UNDEF};
+cact_val undefined = {.t = CACT_TYPE_UNDEF};
 
 /* Is this sexp nil? */
 bool
@@ -54,36 +54,36 @@ equals(cact_val *l, cact_val *r)
     }
 
     switch (l->t) {
-    case TYPE_INT:
+    case CACT_TYPE_INT:
         return l->i == r->i;
         break;
-    case TYPE_DOUBLE:
+    case CACT_TYPE_DOUBLE:
         return l->f == r->f;
         break;
-    case TYPE_BOOLEAN:
+    case CACT_TYPE_BOOLEAN:
         return l->b == r->b;
         break;
-    case TYPE_STRING:
+    case CACT_TYPE_STRING:
         return strcmp(l->s.str, r->s.str) == 0;
         break;
-    case TYPE_SYMBOL: {
+    case CACT_TYPE_SYMBOL: {
         cact_symbol lsym = to_sym(l, "equals");
         cact_symbol rsym = to_sym(r, "equals");
         return symcmp(&lsym, &rsym) == 0;
         break;
     }
-    case TYPE_PAIR:
+    case CACT_TYPE_PAIR:
         return (equals(car(l), car(r))) && (equals(cdr(l), cdr(r)));
         break;
-    case TYPE_PROCEDURE:
+    case CACT_TYPE_PROCEDURE:
         break;
-    case TYPE_ENVIRONMENT:
+    case CACT_TYPE_ENVIRONMENT:
         break;
-    case TYPE_PORT:
+    case CACT_TYPE_PORT:
         break;
-    case TYPE_ERROR:
+    case CACT_TYPE_ERROR:
         break;
-    case TYPE_UNDEF:
+    case CACT_TYPE_UNDEF:
         break;
     }
     return false;
@@ -102,7 +102,7 @@ cact_val *
 make_integer(int i)
 {
     cact_val *x = malloc(sizeof(cact_val));
-    x->t = TYPE_INT;
+    x->t = CACT_TYPE_INT;
     x->i = i;
     return x;
 }
@@ -112,7 +112,7 @@ cact_val *
 make_symbol(char *str)
 {
     cact_val *sym = malloc(sizeof(cact_val));
-    sym->t = TYPE_SYMBOL;
+    sym->t = CACT_TYPE_SYMBOL;
     sym->a.sym = str;
     return sym;
 }
@@ -122,7 +122,7 @@ cact_val *
 make_string(char *str)
 {
     cact_val *x = malloc(sizeof(cact_val));
-    x->t = TYPE_STRING;
+    x->t = CACT_TYPE_STRING;
     x->s.str = str;
     return x;
 }
@@ -132,7 +132,7 @@ cact_val *
 make_procedure(cact_env *e, cact_val *argl, cact_val *body)
 {
     cact_val *x = calloc(1, sizeof(cact_val));
-    x->t = TYPE_PROCEDURE;
+    x->t = CACT_TYPE_PROCEDURE;
     x->c = calloc(1, sizeof(cact_proc));
     x->c->env = e;
     x->c->body = body;
@@ -145,7 +145,7 @@ cact_val *
 make_env(cact_env *parent)
 {
     cact_val *x = calloc(1, sizeof(cact_val));
-    x->t = TYPE_ENVIRONMENT;
+    x->t = CACT_TYPE_ENVIRONMENT;
     x->e = calloc(1, sizeof(cact_env));
     x->e->parent = parent;
     return x;
@@ -156,7 +156,7 @@ cact_val *
 make_error(char *msg, cact_val *irr)
 {
     cact_val *x = calloc(1, sizeof(cact_val));
-    x->t = TYPE_ERROR;
+    x->t = CACT_TYPE_ERROR;
     x->x.msg = strdup(msg);
     x->x.ctx = irr;
     return x;
@@ -167,7 +167,7 @@ cact_val *
 make_boolean(bool b)
 {
     cact_val *x = calloc(1, sizeof(cact_val));
-    x->t = TYPE_BOOLEAN;
+    x->t = CACT_TYPE_BOOLEAN;
     x->b = b;
     return x;
 }
@@ -177,7 +177,7 @@ cact_val *
 cons(cact_val *a, cact_val *d)
 {
     cact_val *pair = malloc(sizeof(cact_val));
-    pair->t = TYPE_PAIR;
+    pair->t = CACT_TYPE_PAIR;
     pair->p.car = a;
     pair->p.cdr = d;
     return pair;

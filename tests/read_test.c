@@ -137,7 +137,7 @@ static char *cact_read_list_test() {
 	mu_assert("cact_read did not read a list", x && is_pair(x));
 
     LIST_FOR_EACH(x, p) {
-        mu_assert("cact_read misread a symbol", car(p)->t == TYPE_SYMBOL);
+        mu_assert("cact_read misread a symbol", car(p)->t == CACT_TYPE_SYMBOL);
     }
 
 	string = "(define double (lambda (x) (+ x x)))";

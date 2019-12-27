@@ -140,16 +140,16 @@ eval(cact_val *x, cact_env *e)
     }
 
     switch (x->t) {
-    case TYPE_INT:
-    case TYPE_BOOLEAN:
-    case TYPE_DOUBLE:
-    case TYPE_STRING:
-    case TYPE_PROCEDURE:
-    case TYPE_ENVIRONMENT:
+    case CACT_TYPE_INT:
+    case CACT_TYPE_BOOLEAN:
+    case CACT_TYPE_DOUBLE:
+    case CACT_TYPE_STRING:
+    case CACT_TYPE_PROCEDURE:
+    case CACT_TYPE_ENVIRONMENT:
         DBG("Evaluating self-evaluating atom %s\n", show_type(x->t));
         return x;
 
-    case TYPE_SYMBOL: {
+    case CACT_TYPE_SYMBOL: {
         cact_val *found = envlookup(e, x);
         if (!found) {
             print_env(e);
@@ -158,7 +158,7 @@ eval(cact_val *x, cact_env *e)
         return cdr(found);
     }
 
-    case TYPE_PAIR: {
+    case CACT_TYPE_PAIR: {
         cact_val *operator = car(x);
         cact_val *operands = cdr(x);
 
@@ -193,7 +193,7 @@ eval(cact_val *x, cact_env *e)
         return apply(maybe_procedure->c, operands, e);
     }
 
-    case TYPE_ERROR: {
+    case CACT_TYPE_ERROR: {
         fprintf(stderr, "Error! %s", x->x.msg);
         print_list(x->x.ctx);
         fprintf(stderr, "\n");

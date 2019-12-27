@@ -32,37 +32,37 @@ fprint_sexp(FILE *f, cact_val *x)
     }
 
     switch (x->t) {
-    case TYPE_BOOLEAN:
+    case CACT_TYPE_BOOLEAN:
         fprintf(f, "%s", x->b ? "#t" : "#f");
         break;
-    case TYPE_INT:
+    case CACT_TYPE_INT:
         fprintf(f, "%i", x->i);
         break;
-    case TYPE_DOUBLE:
+    case CACT_TYPE_DOUBLE:
         fprintf(f, "%f", x->f);
         break;
-    case TYPE_STRING:
+    case CACT_TYPE_STRING:
         fprintf(f, "%s", x->s.str);
         break;
-    case TYPE_SYMBOL:
+    case CACT_TYPE_SYMBOL:
         fprintf(f, "#<symbol: '%s'>", x->a.sym);
         break;
-    case TYPE_PAIR:
+    case CACT_TYPE_PAIR:
         print_list(x);
         break;
-    case TYPE_PROCEDURE:
+    case CACT_TYPE_PROCEDURE:
         fprintf(f, "#<procedure: %p>", (void*)x->c);
         break;
-    case TYPE_ENVIRONMENT:
+    case CACT_TYPE_ENVIRONMENT:
         fprintf(f, "#<environment: %p>", (void*)x->e);
         break;
-    case TYPE_PORT:
+    case CACT_TYPE_PORT:
         break;
-    case TYPE_ERROR:
+    case CACT_TYPE_ERROR:
         fprintf(f, "; error '%s' : ", x->x.msg);
         print_sexp(x->x.ctx);
         break;
-    case TYPE_UNDEF:
+    case CACT_TYPE_UNDEF:
         fprintf(f, "UNDEFINED");
         break;
     }

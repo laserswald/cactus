@@ -241,7 +241,7 @@ void
 make_builtin(cact_env *e, cact_val *x, cact_val *(fn)(cact_val*, cact_env*))
 {
     cact_val *c = malloc(sizeof(*c));
-    c->t = TYPE_PROCEDURE;
+    c->t = CACT_TYPE_PROCEDURE;
     c->c = malloc(sizeof(cact_proc));
     c->c->nativefn = fn;
     envadd(e, x, c);
