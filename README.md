@@ -3,9 +3,9 @@ _a scheme implementation with spines_
 
 ## installation
 
-Compilation is done as usual:
+Compilation is done with djb redo, a minimal implementation being built in:
 
-    make
+    ./do
 
 You can configure what built-in functions you want in cactus by editing `config.h` and recompiling.
 
