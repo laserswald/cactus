@@ -7,76 +7,78 @@
 
 #include "env.h"
 
-typedef struct sexp Sexp;
+typedef struct sexp cact_val;
 
 typedef enum {
-	TYPE_UNDEF,
-	TYPE_INT,
-	TYPE_DOUBLE,
-	TYPE_STRING,
-	TYPE_SYMBOL,
-	TYPE_PAIR,
-	TYPE_CLOSURE,
-	TYPE_ENVIRONMENT,
-	TYPE_PORT,
-	TYPE_ERROR,
-} Type;
+    CACT_TYPE_UNDEF,
+    CACT_TYPE_INT,
+    CACT_TYPE_DOUBLE,
+    CACT_TYPE_BOOLEAN,
+    CACT_TYPE_STRING,
+    CACT_TYPE_SYMBOL,
+    CACT_TYPE_PAIR,
+    CACT_TYPE_PROCEDURE,
+    CACT_TYPE_ENVIRONMENT,
+    CACT_TYPE_PORT,
+    CACT_TYPE_ERROR,
+} cact_type;
 
 typedef struct {
-	char *str;
-} String;
+    char *str;
+} cact_string;
 
 typedef struct {
-	char* sym;
-} Symbol;
+    char* sym;
+} cact_symbol;
 
 typedef struct {
-	Sexp *car;
-	Sexp *cdr;
-} Pair;
+    cact_val *car;
+    cact_val *cdr;
+} cact_pair;
 
 typedef struct {
-	Env *env;
-	Sexp *argl;
-	Sexp *body;
-	Sexp *(*nativefn)(Sexp *args, Env *e);
-} Closure;
+    cact_env *env;
+    cact_val *argl;
+    cact_val *body;
+    cact_val *(*nativefn)(cact_val *args, cact_env *e);
+} cact_proc;
 
 typedef struct {
-	char *msg;
-	Sexp *ctx;
+    char *msg;
+    cact_val *ctx;
 } Error;
 
 struct sexp {
-	Type t;
-	union {
-		int i;
-		double f;
-		String s;
-		Symbol a; // atom
-		Pair p;
-		Closure *c;
-		Env *e;
-		Error x;
-	};
+    cact_type t;
+    union {
+        int i;
+        double f;
+        bool b;
+        cact_string s;
+        cact_symbol a; // atom
+        cact_pair p;
+        cact_proc *c;
+        cact_env *e;
+        Error x;
+    };
 };
 
-Sexp* cons(Sexp* a, Sexp* d);
-Sexp* car(Sexp* x);
-Sexp* cdr(Sexp* x);
+cact_val* cons(cact_val* a, cact_val* d);
+cact_val* car(cact_val* x);
+cact_val* cdr(cact_val* x);
 #define cadr(x) 		car(cdr(x))
 #define caddr(x) 		car(cdr(cdr(x)))
 
-Sexp* append(Sexp *l, Sexp *x);
-Sexp* acons(Sexp* k, Sexp* v, Sexp* alist);
-Sexp* assoc(Sexp* k, Sexp* alist);
+cact_val* append(cact_val *l, cact_val *x);
+cact_val* acons(cact_val* k, cact_val* v, cact_val* alist);
+cact_val* assoc(cact_val* k, cact_val* alist);
 
-const char *show_type(Type t);
-const char *show_sexp(Sexp *x);
+const char *show_type(cact_type t);
+const char *show_sexp(cact_val *x);
 
 #define GENERATE_TYPECONV(typemarker, returntype, funcname, membername) \
 static inline returntype \
-funcname(Sexp *x, char *extras) \
+funcname(cact_val *x, char *extras) \
 { \
  	if (!x) { \
 		fprintf(stderr, "%s: Expected %s, but got nil.\n", extras, show_type(typemarker)); \
@@ -91,46 +93,54 @@ funcname(Sexp *x, char *extras) \
 
 #define GENERATE_TYPECHECK(funcname, typemarker) \
 static inline bool \
-funcname(Sexp *x) { \
+funcname(cact_val *x) { \
 	return x && x->t == typemarker; \
 }
 
 /* generated functions */
-GENERATE_TYPECONV(TYPE_CLOSURE, Closure*, to_closure, c)
-GENERATE_TYPECONV(TYPE_DOUBLE, double, to_float, f)
-GENERATE_TYPECONV(TYPE_ENVIRONMENT, Env*, to_env, e)
-GENERATE_TYPECONV(TYPE_INT, int, to_int, i)
-GENERATE_TYPECONV(TYPE_PAIR, Pair, to_pair, p)
-GENERATE_TYPECONV(TYPE_STRING, String, to_str, s)
-GENERATE_TYPECONV(TYPE_SYMBOL, Symbol, to_sym, a)
-GENERATE_TYPECHECK(is_closure, TYPE_CLOSURE)
-GENERATE_TYPECHECK(is_env, TYPE_ENVIRONMENT)
-GENERATE_TYPECHECK(is_float, TYPE_DOUBLE)
-GENERATE_TYPECHECK(is_int, TYPE_INT)
-GENERATE_TYPECHECK(is_pair, TYPE_PAIR)
-GENERATE_TYPECHECK(is_str, TYPE_STRING)
-GENERATE_TYPECHECK(is_sym, TYPE_SYMBOL)
-GENERATE_TYPECHECK(is_error, TYPE_ERROR)
+GENERATE_TYPECONV(CACT_TYPE_PROCEDURE, cact_proc*, to_procedure, c)
+GENERATE_TYPECONV(CACT_TYPE_BOOLEAN, bool, to_bool, b)
+GENERATE_TYPECONV(CACT_TYPE_DOUBLE, double, to_float, f)
+GENERATE_TYPECONV(CACT_TYPE_ENVIRONMENT, cact_env*, to_env, e)
+GENERATE_TYPECONV(CACT_TYPE_INT, int, to_int, i)
+GENERATE_TYPECONV(CACT_TYPE_PAIR, cact_pair, to_pair, p)
+GENERATE_TYPECONV(CACT_TYPE_STRING, cact_string, to_str, s)
+GENERATE_TYPECONV(CACT_TYPE_SYMBOL, cact_symbol, to_sym, a)
 
-bool equals(Sexp *l, Sexp *r);
+GENERATE_TYPECHECK(is_procedure, CACT_TYPE_PROCEDURE)
+GENERATE_TYPECHECK(is_bool, CACT_TYPE_BOOLEAN)
+GENERATE_TYPECHECK(is_env, CACT_TYPE_ENVIRONMENT)
+GENERATE_TYPECHECK(is_float, CACT_TYPE_DOUBLE)
+GENERATE_TYPECHECK(is_int, CACT_TYPE_INT)
+GENERATE_TYPECHECK(is_pair, CACT_TYPE_PAIR)
+GENERATE_TYPECHECK(is_str, CACT_TYPE_STRING)
+GENERATE_TYPECHECK(is_sym, CACT_TYPE_SYMBOL)
+GENERATE_TYPECHECK(is_error, CACT_TYPE_ERROR)
 
-void print_sexp(Sexp *x);
-void print_env(Env *e);
-void print_list(Sexp *x);
+bool is_nil(cact_val *);
+bool is_truthy(cact_val *);
+cact_val *sexp_not(cact_val *x);
 
-Sexp *make_integer(int i);
-Sexp *make_closure(Env *e, Sexp *args, Sexp *body);
-Sexp *make_error(char *msg, Sexp *irr);
-Sexp *make_string(char *str);
+bool equals(cact_val *l, cact_val *r);
+
+void print_sexp(cact_val *x);
+void print_env(cact_env *e);
+void print_list(cact_val *x);
+
+cact_val *cact_make_integer(int i);
+cact_val *cact_make_procedure(cact_env *e, cact_val *args, cact_val *body);
+cact_val *cact_make_error(char *msg, cact_val *irr);
+cact_val *cact_make_string(char *str);
+cact_val *cact_make_boolean(bool b);
 
 #define LIST_FOR_EACH(list, current) \
-for (Sexp *(current) = list;\
+for (cact_val *(current) = list;\
      current && is_pair(current); \
      current = cdr(current))
 
 #define PROPAGATE_ERROR(err) if (is_error(err)) return (err);
 
-extern Sexp undefined;
+extern cact_val undefined;
 
 #endif // sexp_h_INCLUDED
 

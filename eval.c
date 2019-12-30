@@ -3,129 +3,103 @@
 #include "sym.h"
 #include "env.h"
 #include "eval.h"
+#include "proc.h"
 #include "builtin.h"
 #include "globals.h"
 #include "utils.h"
 #include "write.h"
 
-/* Apply a closure given the arguments and the environment. */
-Sexp *
-apply(Closure *clo, Sexp *args, Env *e)
-{
-    if (clo->nativefn) {
-        return clo->nativefn(args, e);
-    } else {
-        Env params_env = {0};
-        envinit(&params_env, clo->env);
-        Sexp *current_arg = args;
-        LIST_FOR_EACH(clo->argl, param) {
-            if (! current_arg) {
-                fprintf(stderr, "Not enough arguments!");
-                fprint_sexp(stderr, args);
-                abort();
-            }
-            envadd(&params_env, car(param), eval(car(current_arg), e));
-            current_arg = cdr(current_arg);
-        }
-        return builtin_progn(clo->body, &params_env);
-    }
-}
-
-Sexp* special_quote(Sexp* args, Env* e)
+cact_val* special_quote(cact_val* args, cact_env* e)
 {
     return args;
 }
 
-bool is_truthy(Sexp *x)
+bool is_truthy(cact_val *x)
 {
-    if (!x) {
-        return false;
-    }
-
-    if (is_int(x) && x->i == 0) {
+    if (is_bool(x) && x->b == false) {
         return false;
     }
 
     return true;
 }
 
-Sexp* special_if(Sexp* args, Env* e)
+cact_val* special_if(cact_val* args, cact_env* e)
 {
-    Sexp* cond = car(args);
-    Sexp* cseq = cadr(args);
-    Sexp* alt = caddr(args);
-    Sexp* result = &undefined;
+    cact_val* cond = car(args);
+    cact_val* cseq = cadr(args);
+    cact_val* alt = caddr(args);
+    cact_val* result = &undefined;
 
-    if (is_truthy(eval(cond, e))) {
-        result = eval(cseq, e);
+    if (is_truthy(cact_eval(cond, e))) {
+        result = cact_eval(cseq, e);
     } else {
-        result = eval(alt, e);
+        result = cact_eval(alt, e);
     }
 
     return result;
 }
 
-Sexp* special_define(Sexp* args, Env* e)
+cact_val* special_define(cact_val* args, cact_env* e)
 {
-    Sexp *term = car(args);
-    Sexp *defn = car(cdr(args));
+    cact_val *term = car(args);
+    cact_val *defn = car(cdr(args));
 
-    Sexp *value;
+    cact_val *value;
 
     if (is_sym(term)) {
-        value = eval(defn, e);
+        value = cact_eval(defn, e);
     } else if (is_pair(term)) {
-        Sexp* params = cdr(term);
+        cact_val* params = cdr(term);
         term = car(term);
-        value = make_closure(e, params, defn);
+        value = cact_make_procedure(e, params, defn);
     }
 
     if (envadd(e, term, value) < 0) {
-        return make_error("Could not create definition: definition already exists", term);
+        return cact_make_error("Could not create definition: definition already exists", term);
     }
 
     return &undefined;
 }
 
-Sexp* special_lambda(Sexp* operands, Env* e)
+cact_val* special_lambda(cact_val* operands, cact_env* e)
 {
-    Sexp *args = car(operands);
-    Sexp *body = cdr(operands);
-    return make_closure(e, args, body);
+    cact_val *args = car(operands);
+    cact_val *body = cdr(operands);
+    return cact_make_procedure(e, args, body);
 }
 
-Sexp* special_begin(Sexp* args, Env* e)
+cact_val* special_begin(cact_val* args, cact_env* e)
 {
-    Sexp *result = &undefined;
+    cact_val *result = &undefined;
 
     if (is_pair(args)) {
         LIST_FOR_EACH(args, pair) {
-            result = eval(car(pair), e);
+            result = cact_eval(car(pair), e);
             PROPAGATE_ERROR(result);
         }
     } else {
-        result = eval(args, e);
+        result = cact_eval(args, e);
     }
 
     return result;
 }
 
-Sexp* special_set_bang(Sexp* args, Env* e)
+cact_val* special_set_bang(cact_val* args, cact_env* e)
 {
-    Sexp *term = car(args);
-    Sexp *defn = car(cdr(args));
-    Sexp *value = eval(defn, e);
+    cact_val *term = car(args);
+    cact_val *defn = car(cdr(args));
+    cact_val *value = cact_eval(defn, e);
 
     if (envset(e, term, value) < 0) {
-        return make_error("Could not assign value: no such variable", term);
+        return cact_make_error("Could not assign value: no such variable", term);
     }
 
     return &undefined;
 }
 
 struct specials_table {
-    Symbol *sym;
-    Sexp* (*fn)(Sexp*, Env*);
+    cact_symbol *sym;
+    cact_val* (*fn)(cact_val*, cact_env*);
 } specials[] = {
     {&quote_sym,  special_quote},
     {&if_sym,     special_if},
@@ -136,42 +110,42 @@ struct specials_table {
 };
 
 /* Evaluate an expression according to an environment. */
-Sexp *
-eval(Sexp *x, Env *e)
+cact_val *cact_eval(cact_val *x, cact_env *e)
 {
     if (!x) {
         return NULL;
     }
 
     switch (x->t) {
-    case TYPE_INT:
-    case TYPE_DOUBLE:
-    case TYPE_STRING:
-    case TYPE_CLOSURE:
-    case TYPE_ENVIRONMENT:
-        DBG("Evaluating self-evaluating atom %s\n", show_type(x->t));
+    case CACT_TYPE_INT:
+    case CACT_TYPE_BOOLEAN:
+    case CACT_TYPE_DOUBLE:
+    case CACT_TYPE_STRING:
+    case CACT_TYPE_PROCEDURE:
+    case CACT_TYPE_ENVIRONMENT:
+        DBG("Evaluating self-cact_evaluating atom %s\n", show_type(x->t));
         return x;
 
-    case TYPE_SYMBOL: {
-        Sexp *found = envlookup(e, x);
+    case CACT_TYPE_SYMBOL: {
+        cact_val *found = envlookup(e, x);
         if (!found) {
             print_env(e);
-            return make_error("No such symbol", x);
+            return cact_make_error("No such symbol", x);
         }
         return cdr(found);
     }
 
-    case TYPE_PAIR: {
-        Sexp *operator = car(x);
-        Sexp *operands = cdr(x);
+    case CACT_TYPE_PAIR: {
+        cact_val *operator = car(x);
+        cact_val *operands = cdr(x);
 
         if (! operator) {
-            return make_error("Cannot evaluate null as operation", x);
+            return cact_make_error("Cannot cact_evaluate null as operation", x);
         }
 
         // If it's a symbol, check if it's special and do the thing
         if (is_sym(operator)) {
-            Symbol sym = to_sym(operator, "eval");
+            cact_symbol sym = to_sym(operator, "cact_eval");
             int i;
             for (i = 0; i < LENGTH(specials); i++) {
                 if (symcmp(specials[i].sym, &sym) == 0) {
@@ -181,22 +155,22 @@ eval(Sexp *x, Env *e)
             // fallthrough when not a special form
         }
 
-        Sexp *maybe_closure = eval(operator, e);
+        cact_val *maybe_procedure = cact_eval(operator, e);
 
-        if (is_error(maybe_closure)) {
-            return maybe_closure;
+        if (is_error(maybe_procedure)) {
+            return maybe_procedure;
         }
 
-        if (! is_closure(maybe_closure)) {
-            fprintf(stdout, "Cannot apply non-operation %s:\n", show_type(maybe_closure->t));
-            print_sexp(maybe_closure);
+        if (! is_procedure(maybe_procedure)) {
+            fprintf(stdout, "Cannot apply non-operation %s:\n", show_type(maybe_procedure->t));
+            print_sexp(maybe_procedure);
             abort();
         }
 
-        return apply(maybe_closure->c, operands, e);
+        return cact_proc_apply(maybe_procedure->c, operands, e);
     }
 
-    case TYPE_ERROR: {
+    case CACT_TYPE_ERROR: {
         fprintf(stderr, "Error! %s", x->x.msg);
         print_list(x->x.ctx);
         fprintf(stderr, "\n");
@@ -204,7 +178,7 @@ eval(Sexp *x, Env *e)
     }
 
     default:
-        fprintf(stderr, "Cannot evaluate, got type %s.\n", show_type(x->t));
+        fprintf(stderr, "Cannot cact_evaluate, got type %s.\n", show_type(x->t));
         abort();
     }
 }

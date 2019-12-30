@@ -19,108 +19,66 @@
 #include "sym.h"
 #include "eval.h"
 #include "builtin.h"
+#include "load.h"
 
 int verbosity = 0;
 
 /* macros */
 
-void 
-dbg(Sexp *x)
+#define PROMPT "cactus> "
+
+void
+dbg(cact_val *x)
 {
-	printf("; debug: ");
-	print_sexp(x);
-	puts("");
-}
-
-
-int
-runfile(FILE *in, Env *e)
-{
-	DBG("Running file. \n");
-
-	char *s = slurp(in);
-
-	struct lexer l;
-	lexer_init(&l, s);
-
-	Sexp *x;
-	while (*s != '\0') {
-		int status = 0;
-
-		DBG("Reading new sexp. \n");
-
-		status = readsexp(&l, &x);
-
-		if (status != READSEXP_OK) {
-			switch (status) {
-				case READSEXP_END_OF_FILE: {
-					goto STOP_RUNNING;
-				}
-				case READSEXP_OTHER_ERROR: {
-					fprintf(stderr, "unknown error\n");
-		            abort();
-					break;
-				}
-			}
-		}
-
-		DBG("Evaluating sexp: ");
-		// print_sexp(x);
-		DBG("\n");
-		eval(x, e);
-		DBG("Done evaluating sexp.\n");
-	}
-
-STOP_RUNNING:
-
-	DBG("Finished running file. \n");
-	return 0;
+    printf("; debug: ");
+    print_sexp(x);
+    puts("");
 }
 
 int
-repl(FILE *f, Env *e)
+repl(FILE *f, cact_env *e)
 {
-	char line[256];
-	Sexp *x;
-	int status;
-	struct lexer l;
+    char line[256];
+    cact_val *x;
+    int status;
+    struct cact_lexer l;
 
-	printf("slisp> ");
-	while (fgets(line, sizeof line, f) != NULL) {
-		char *lp = line;
-		lexer_init(&l, lp);
-		status = readsexp(&l, &x);
-		if (status != READSEXP_OK) {
-			fprintf(stderr, "Could not finish reading sexp!\n");
-			fprint_sexp(stderr, x);
-			abort();
-		}
-		x = eval(x, e);
+    printf(PROMPT);
+    while (fgets(line, sizeof line, f) != NULL) {
+        char *lp = line;
+        cact_lexer_init(&l, lp);
+        status = cact_read(&l, &x);
+        if (status != CACT_READ_OK) {
+            fprintf(stderr, "Could not finish reading sexp!\n");
+            fprint_sexp(stderr, x);
+            abort();
+        }
+        x = cact_eval(x, e);
+        print_sexp(x);
+        puts("");
+        printf(PROMPT);
+    }
 
-		print_sexp(x);
-		printf("\nslisp> ");
-	}
-
-	return 0;
+    return 0;
 }
 
 int
 main(int argc, char *argv[])
 {
-	DBG("Starting.\n");
-	Env *e = make_builtins();
-	FILE *infile = NULL;
+    DBG("Starting.\n");
+    cact_env *e = cact_make_builtins();
+    FILE *infile = NULL;
 
-	if (argc == 2) {
-		DBG("Reading file.\n");
-		infile = fopen(argv[1], "r");
-		if (! infile) {
-			perror("Could not run file");
-			exit(1);
-		}
-		return runfile(infile, e);
-	}
+    if (argc == 2) {
+        DBG("Reading file.\n");
+        infile = fopen(argv[1], "r");
+        if (! infile) {
+            perror("Could not run file");
+            exit(1);
+        }
+        return cact_load(infile, e);
+    }
 
-	DBG("Starting REPL.\n");
-	return repl(stdin, e);
+    DBG("Starting REPL.\n");
+    return repl(stdin, e);
 }
