@@ -1,31 +1,37 @@
-#ifndef builtin_h_INCLUDED
-#define builtin_h_INCLUDED
+#ifndef cact_builtin_h_INCLUDED
+#define cact_builtin_h_INCLUDED
 
-typedef struct builtin_table {
-	char* name;
-	Sexp* (*fn)(Sexp*, Env*);
+typedef struct cact_builtin_table {
+    char* name;
+    cact_val* (*fn)(cact_val*, cact_env*);
 } BuiltinTable;
 
-Sexp* builtin_if(Sexp *x, Env *e);
-Sexp* builtin_car(Sexp *x, Env *unused);
-Sexp* builtin_cdr(Sexp *x, Env *unused);
-Sexp* builtin_cons(Sexp *x, Env *unused);
-Sexp* builtin_is_nil(Sexp *x, Env *unused);
-Sexp* builtin_is_pair(Sexp *x, Env *unused);
-Sexp* builtin_is_number(Sexp *x, Env *e);
-Sexp* builtin_eq(Sexp *x, Env *unused);
-Sexp* builtin_display(Sexp *x, Env *e);
-Sexp* builtin_newline(Sexp *x, Env *unused);
-Sexp* builtin_progn(Sexp *x, Env *e);
-Sexp* builtin_exit(Sexp *x, Env *e);
+cact_val* cact_builtin_if(cact_val *x, cact_env *e);
+cact_val* cact_builtin_car(cact_val *x, cact_env *unused);
+cact_val* cact_builtin_cdr(cact_val *x, cact_env *unused);
+cact_val* cact_builtin_cons(cact_val *x, cact_env *unused);
+cact_val* cact_builtin_is_nil(cact_val *x, cact_env *unused);
+cact_val* cact_builtin_is_pair(cact_val *x, cact_env *unused);
+cact_val* cact_builtin_is_number(cact_val *x, cact_env *e);
 
-Sexp* builtin_plus(Sexp *x, Env *e);
-Sexp* builtin_minus(Sexp *x, Env *e);
-Sexp* builtin_times(Sexp *x, Env *e);
-Sexp* builtin_divide(Sexp *x, Env *e);
+cact_val* cact_builtin_is_boolean(cact_val *x, cact_env *e);
+cact_val* cact_builtin_not(cact_val *x, cact_env *e);
 
-void make_builtin(Env *e, Sexp *x, Sexp *(fn)(Sexp*, Env*));
-Env * make_builtins();
+cact_val* cact_builtin_eq(cact_val *x, cact_env *unused);
+cact_val* cact_builtin_display(cact_val *x, cact_env *e);
+cact_val* cact_builtin_newline(cact_val *x, cact_env *unused);
+cact_val* cact_builtin_begin(cact_val *x, cact_env *e);
+cact_val* cact_builtin_exit(cact_val *x, cact_env *e);
+cact_val* cact_builtin_load(cact_val *x, cact_env *e);
 
-#endif // builtin_h_INCLUDED
+cact_val* cact_builtin_plus(cact_val *x, cact_env *e);
+cact_val* cact_builtin_minus(cact_val *x, cact_env *e);
+cact_val* cact_builtin_times(cact_val *x, cact_env *e);
+cact_val* cact_builtin_divide(cact_val *x, cact_env *e);
+cact_val* cact_builtin_load(cact_val *x, cact_env *e);
+
+void cact_make_builtin(cact_env *e, cact_val *x, cact_val *(fn)(cact_val*, cact_env*));
+cact_env * cact_make_builtins();
+
+#endif // cact_builtin_h_INCLUDED
 

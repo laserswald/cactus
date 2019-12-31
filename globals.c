@@ -2,10 +2,10 @@
 #include "globals.h"
 
 /* globals */
-Symbol quote_sym;
-Symbol lambda_sym;
-Symbol if_sym;
-Symbol define_sym;
-Symbol begin_sym;
-Symbol set_sym;
+cact_symbol quote_sym;
+cact_symbol lambda_sym;
+cact_symbol if_sym;
+cact_symbol define_sym;
+cact_symbol begin_sym;
+cact_symbol set_sym;
 
