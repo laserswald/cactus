@@ -18,7 +18,8 @@ struct cact_gc {
 };
 
 void cact_gc_init(struct cact_gc *gc) {
-    cact_gc_arena_init(&gc->arena);
+	SLIST_INIT(gc->roots);
+	SLIST_INIT(gc->all);
 }
 
 /* Protect a sexp from collection. */
@@ -45,17 +46,26 @@ cact_gc_mark_visible(struct cact_gc *gc)
 void
 cact_gc_sweep(struct cact_gc *gc)
 {
-    struct cact_gc_handle *current;
-
+    struct cact_gc_handle *current, *deletable;
+    deletable = NULL;
+    SLIST_FOREACH_SAFE(current, gc->roots, entry, deletable) {
+	    if (deletable && ! deletable->marking) {
+            SLIST_REMOVE_AFTER(current, entry);
+            fprintf(stderr, ";;;; gc: deleting item");
+            xfree(deletable);
+	    }
+    }
 }
 
 /* Allocate a new sexp. */
-struct sexp *cact_gc_alloc(struct cact_gc *gc) {
+struct sexp *
+cact_gc_alloc(struct cact_gc *gc) {
 	gc->alloc_count++;
-    if (gc->alloc_count >= CACT_GC_ALLOC_TRIGGER) {
+    if (gc->alloc_count == CACT_GC_ALLOC_TRIGGER) {
 	    cact_gc_sweep(gc);
 	    gc->alloc_count = 0;
     }
     struct sexp *x = xmalloc(sizeof(struct sexp));
+    SLIST_INSERT_HEAD(gc->all, x->gc_handle, entry);
 }
 
