@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "array.h"
+#include "queue.h"
 #include "env.h"
 
 typedef struct sexp cact_val;
@@ -62,6 +64,9 @@ struct sexp {
         Error x;
     };
 };
+
+ARRAY_DECL(cact_val_arr, cact_val);
+SLIST_HEAD(cact_val_slist, cact_val);
 
 cact_val* cons(cact_val* a, cact_val* d);
 cact_val* car(cact_val* x);
