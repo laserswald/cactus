@@ -1,6 +1,6 @@
 
-(define (assert expr? msg) 
-  (if (not expr?)
+(define (assert thing msg) 
+  (if (not thing)
     (begin (display msg) (newline))
     '()))
 
