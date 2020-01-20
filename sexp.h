@@ -48,7 +48,7 @@ typedef struct {
     cact_val *ctx;
 } Error;
 
-struct sexp {
+struct cact_val {
     cact_type t;
     union {
         int i;

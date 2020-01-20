@@ -97,20 +97,9 @@ cact_val* special_set_bang(cact_val* args, cact_env* e)
     return &undefined;
 }
 
-struct specials_table {
-    cact_symbol *sym;
-    cact_val* (*fn)(cact_val*, cact_env*);
-} specials[] = {
-    {&quote_sym,  special_quote},
-    {&if_sym,     special_if},
-    {&define_sym, special_define},
-    {&lambda_sym, special_lambda},
-    {&set_sym,    special_set_bang},
-    {&begin_sym,  special_begin}
-};
 
 /* Evaluate an expression according to an environment. */
-cact_val *cact_eval(cact_val *x, cact_env *e)
+struct cact_val *cact_eval(struct cactus *cact, struct cact_val *x)
 {
     if (!x) {
         return NULL;
@@ -127,20 +116,20 @@ cact_val *cact_eval(cact_val *x, cact_env *e)
         return x;
 
     case CACT_TYPE_SYMBOL: {
-        cact_val *found = envlookup(e, x);
+        cact_val *found = envlookup(cact->current_env, x);
         if (!found) {
-            print_env(e);
+            print_env(cact->current_env);
             return cact_make_error("No such symbol", x);
         }
         return cdr(found);
     }
 
     case CACT_TYPE_PAIR: {
-        cact_val *operator = car(x);
-        cact_val *operands = cdr(x);
+        struct cact_val *operator = car(x);
+        struct cact_val *operands = cdr(x);
 
         if (! operator) {
-            return cact_make_error("Cannot cact_evaluate null as operation", x);
+            return cact_make_error("Cannot evaluate null as operation", x);
         }
 
         // If it's a symbol, check if it's special and do the thing

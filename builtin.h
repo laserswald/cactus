@@ -3,35 +3,29 @@
 
 typedef struct cact_builtin_table {
     char* name;
-    cact_val* (*fn)(cact_val*, cact_env*);
+    struct cact_val* (*fn)(struct cactus *, struct cact_val *);
 } BuiltinTable;
 
-cact_val* cact_builtin_if(cact_val *x, cact_env *e);
-cact_val* cact_builtin_car(cact_val *x, cact_env *unused);
-cact_val* cact_builtin_cdr(cact_val *x, cact_env *unused);
-cact_val* cact_builtin_cons(cact_val *x, cact_env *unused);
-cact_val* cact_builtin_is_nil(cact_val *x, cact_env *unused);
-cact_val* cact_builtin_is_pair(cact_val *x, cact_env *unused);
-cact_val* cact_builtin_is_number(cact_val *x, cact_env *e);
-
-cact_val* cact_builtin_is_boolean(cact_val *x, cact_env *e);
-cact_val* cact_builtin_not(cact_val *x, cact_env *e);
-
-cact_val* cact_builtin_eq(cact_val *x, cact_env *unused);
-cact_val* cact_builtin_display(cact_val *x, cact_env *e);
-cact_val* cact_builtin_newline(cact_val *x, cact_env *unused);
-cact_val* cact_builtin_begin(cact_val *x, cact_env *e);
-cact_val* cact_builtin_exit(cact_val *x, cact_env *e);
-cact_val* cact_builtin_load(cact_val *x, cact_env *e);
-
-cact_val* cact_builtin_plus(cact_val *x, cact_env *e);
-cact_val* cact_builtin_minus(cact_val *x, cact_env *e);
-cact_val* cact_builtin_times(cact_val *x, cact_env *e);
-cact_val* cact_builtin_divide(cact_val *x, cact_env *e);
-cact_val* cact_builtin_load(cact_val *x, cact_env *e);
-
-void cact_make_builtin(cact_env *e, cact_val *x, cact_val *(fn)(cact_val*, cact_env*));
-cact_env * cact_make_builtins();
+struct cact_val* cact_builtin_if(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_car(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_cdr(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_cons(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_is_nil(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_is_pair(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_is_number(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_is_boolean(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_not(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_eq(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_display(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_newline(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_begin(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_exit(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_load(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_plus(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_minus(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_times(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_divide(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_load(struct cactus *, struct cact_val *);
 
 #endif // cact_builtin_h_INCLUDED
 
