@@ -13,6 +13,7 @@ struct cactus {
     struct cact_lexer lexer;
 };
 
+
 /* Initialize a cactus interpreter. */
 void cact_init(struct cactus *);
 

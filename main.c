@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <ctype.h>
 
+#include "core.h"
 #include "globals.h"
 #include "debug.h"
 #include "sexp.h"
@@ -36,24 +37,14 @@ dbg(cact_val *x)
 }
 
 int
-repl(FILE *f, cact_env *e)
+repl(struct cactus *cact, FILE *f)
 {
     char line[256];
-    cact_val *x;
-    int status;
-    struct cact_lexer l;
+    struct cact_val *x;
 
     printf(PROMPT);
     while (fgets(line, sizeof line, f) != NULL) {
-        char *lp = line;
-        cact_lexer_init(&l, lp);
-        status = cact_read(&l, &x);
-        if (status != CACT_READ_OK) {
-            fprintf(stderr, "Could not finish reading sexp!\n");
-            fprint_sexp(stderr, x);
-            abort();
-        }
-        x = cact_eval(x, e);
+        x = cact_eval_string(cact, line);
         print_sexp(x);
         puts("");
         printf(PROMPT);
@@ -62,12 +53,14 @@ repl(FILE *f, cact_env *e)
     return 0;
 }
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-    DBG("Starting.\n");
-    cact_env *e = cact_make_builtins();
+    struct cactus cact;
     FILE *infile = NULL;
+
+    DBG("Starting.\n");
+
+    cact_init(&cact);
 
     if (argc == 2) {
         DBG("Reading file.\n");
@@ -76,9 +69,18 @@ main(int argc, char *argv[])
             perror("Could not run file");
             exit(1);
         }
-        return cact_load(infile, e);
+        struct cact_val *ret = cact_eval_file(&cact, infile);
+        if (is_error(ret)) {
+	        print_sexp(ret);
+            perror("Encountered errors");
+            exit(1);
+        }
     }
 
     DBG("Starting REPL.\n");
-    return repl(stdin, e);
+    int result = repl(&cact, stdin);
+
+    cact_finish(&cact);
+
+    return result;
 }

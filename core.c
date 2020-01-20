@@ -1,25 +1,16 @@
+#include "globals.h"
 #include "core.h"
+#include "config.h"
 #include "debug.h"
 #include "eval.h"
 #include "read.h"
 #include "sexp.h"
 #include "utils.h"
 #include "write.h"
-
-struct specials_table {
-    cact_symbol *sym;
-    cact_val* (*fn)(cact_val*, cact_env*);
-} specials[] = {
-    {&quote_sym,  special_quote},
-    {&if_sym,     special_if},
-    {&define_sym, special_define},
-    {&lambda_sym, special_lambda},
-    {&set_sym,    special_set_bang},
-    {&begin_sym,  special_begin}
-};
+#include "proc.h"
 
 void 
-cact_make_builtin(cact_env *e, cact_val *x, cact_val *(fn)(cact_val*, cact_env*))
+cact_make_builtin(cact_env *e, cact_val *x, cact_native_func fn)
 {
     cact_val *c = malloc(sizeof(*c));
     c->t = CACT_TYPE_PROCEDURE;
@@ -29,11 +20,8 @@ cact_make_builtin(cact_env *e, cact_val *x, cact_val *(fn)(cact_val*, cact_env*)
 }
 
 cact_env* 
-cact_make_builtins() 
+cact_make_builtins(struct cact_env *env) 
 {
-    cact_env *env = malloc(sizeof(cact_env));
-    envinit(env, NULL);
-
     if_sym.sym = "if";
     define_sym.sym = "define";
     begin_sym.sym = "begin";
@@ -51,14 +39,17 @@ cact_make_builtins()
 
 void cact_init(struct cactus *cact)
 {
-	create_initial_env()
-    cact_gc_init(&cact->gc);
+	cact->root_env = malloc(sizeof(struct cact_env));
+    envinit(cact->root_env, NULL);
+    cact_make_builtins(cact->root_env);
+    cact->current_env = cact->root_env;
+    // cact_gc_init(&cact->gc);
 }
 
 /* Finalize a cactus interpreter. */
-void cact_finish(struct cactus *)
+void cact_finish(struct cactus *cact)
 {
-    cact_gc_finish(&cact->gc);
+    // cact_gc_finish(&cact->gc);
 }
 
 /* Evaluate a file using the interpreter. */
@@ -82,7 +73,7 @@ struct cact_val * cact_eval_string(struct cactus *cact, char *s)
 
         DBG("Reading new sexp. \n");
 
-        status = cact_read(&l, &x);
+        status = cact_read(&cact->lexer, &x);
 
         if (status != CACT_READ_OK) {
             switch (status) {
@@ -101,7 +92,7 @@ struct cact_val * cact_eval_string(struct cactus *cact, char *s)
         DBG("Evaluating sexp: ");
         // print_sexp(x);
         DBG("\n");
-        cact_eval(x, cact->e);
+        cact_eval(cact, x);
         DBG("Done evaluating sexp.\n");
     }
 
@@ -110,8 +101,4 @@ STOP_RUNNING:
     DBG("Finished running string. \n");
     return 0;
 }
-
-void cact_push_frame(struct cactus *);
-void cact_pop_frame(struct cactus *);
-struct cact_stack_frame * cact_current_frame(struct cactus *);
 

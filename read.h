@@ -3,6 +3,8 @@
 
 #include "sexp.h"
 
+struct cact_val;
+
 enum cact_read_status {
     CACT_READ_OK,
     CACT_READ_END_OF_FILE,
@@ -50,7 +52,7 @@ struct cact_lexer {
 
 void cact_lexer_init(struct cact_lexer *l, const char* data);
 void printtokstream(struct cact_lexer *l);
-enum cact_read_status cact_read(struct cact_lexer *l, cact_val **s);
+enum cact_read_status cact_read(struct cact_lexer *l, struct cact_val **s);
 
 #endif // CACT_READ_H
 

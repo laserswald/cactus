@@ -5,14 +5,14 @@
 #include "env.h"
 
 /* Apply a procedure given the arguments and the environment. */
-cact_val *
-cact_proc_apply(cact_proc *clo, cact_val *args, cact_env *e)
+struct cact_val *
+cact_proc_apply(struct cactus *cact, cact_proc *clo, cact_val *args)
 {
     if (clo->nativefn) {
-        return clo->nativefn(args, e);
+        return clo->nativefn(cact, args);
     } else {
-        cact_env params_env = {0};
-        envinit(&params_env, clo->env);
+        struct cact_env *params_env = malloc(sizeof(struct cact_env));
+        envinit(params_env, clo->env);
         cact_val *current_arg = args;
         LIST_FOR_EACH(clo->argl, param) {
             if (! current_arg) {
@@ -20,9 +20,13 @@ cact_proc_apply(cact_proc *clo, cact_val *args, cact_env *e)
                 fprint_sexp(stderr, args);
                 abort();
             }
-            envadd(&params_env, car(param), cact_eval(car(current_arg), e));
+            envadd(params_env, car(param), cact_eval(cact, car(current_arg)));
             current_arg = cdr(current_arg);
         }
-        return cact_builtin_begin(clo->body, &params_env);
+        cact->current_env = params_env;
+        struct cact_val *ret = cact_builtin_begin(cact, clo->body);
+        cact->current_env = cact->current_env->parent;
+        free(params_env);
+        return ret;
     }
 }

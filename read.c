@@ -283,8 +283,7 @@ readlist(struct cact_lexer *l, cact_val **r)
 }
 
 /* Read the next valid s-expression from the lexer. */
-enum cact_read_status
-cact_read(struct cact_lexer* l, cact_val** ret) 
+enum cact_read_status cact_read(struct cact_lexer* l, struct cact_val** ret) 
 {
 	int status = CACT_READ_OK;
 	*ret = (cact_val*) NULL;

@@ -7,7 +7,10 @@
 
 #include "env.h"
 
-typedef struct sexp cact_val;
+struct cactus;
+
+typedef struct cact_env cact_env;
+typedef struct cact_val cact_val;
 
 typedef enum {
     CACT_TYPE_UNDEF,
@@ -23,24 +26,24 @@ typedef enum {
     CACT_TYPE_ERROR,
 } cact_type;
 
-typedef struct {
+typedef struct cact_string {
     char *str;
 } cact_string;
 
-typedef struct {
+typedef struct cact_symbol {
     char* sym;
 } cact_symbol;
 
-typedef struct {
+typedef struct cact_pair {
     cact_val *car;
     cact_val *cdr;
 } cact_pair;
 
-typedef struct {
+typedef struct cact_proc {
     cact_env *env;
     cact_val *argl;
     cact_val *body;
-    cact_val *(*nativefn)(cact_val *args, cact_env *e);
+    cact_val *(*nativefn)(struct cactus *, struct cact_val *);
 } cact_proc;
 
 typedef struct {
