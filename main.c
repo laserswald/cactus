@@ -56,6 +56,7 @@ repl(struct cactus *cact, FILE *f)
 int main(int argc, char *argv[])
 {
     struct cactus cact;
+    int result = EXIT_SUCCESS;
     FILE *infile = NULL;
 
     DBG("Starting.\n");
@@ -75,10 +76,10 @@ int main(int argc, char *argv[])
             perror("Encountered errors");
             exit(1);
         }
+    } else {
+	    DBG("Starting REPL.\n");
+	    result = repl(&cact, stdin);
     }
-
-    DBG("Starting REPL.\n");
-    int result = repl(&cact, stdin);
 
     cact_finish(&cact);
 
