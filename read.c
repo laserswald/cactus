@@ -291,6 +291,11 @@ enum cact_read_status cact_read(struct cact_lexer* l, struct cact_val** ret)
 	struct cact_lexeme lx = peeklex(l);
 
 	switch (lx.t) {
+    case CACT_TOKEN_WHITESPACE:
+    case CACT_TOKEN_COMMENT:
+        nextlex(l);
+        status = cact_read(l, ret);
+        break;
 	case CACT_TOKEN_OPEN_PAREN:
 		status = readlist(l, ret);
 		break;
@@ -321,11 +326,8 @@ enum cact_read_status cact_read(struct cact_lexer* l, struct cact_val** ret)
 	case CACT_TOKEN_END:
 		status = CACT_READ_END_OF_FILE;
 		break;
-        case CACT_TOKEN_COMMENT:
-	        nextlex(l);
-	        status = cact_read(l, ret);
-	        break;
 	case CACT_TOKEN_ERROR:
+		fprintf(stderr, "Got an error token");
 	default:
 		status = CACT_READ_OTHER_ERROR;
 		break;
