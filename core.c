@@ -81,25 +81,23 @@ struct cact_val * cact_eval_string(struct cactus *cact, char *s)
             case CACT_READ_END_OF_FILE:
                 goto STOP_RUNNING;
 
+            case CACT_READ_UNMATCHED_CHAR:
+                fprint_sexp(stderr, x);
+                return x;
+
             case CACT_READ_OTHER_ERROR:
                 fprintf(stderr, "unknown error\n");
                 fprint_sexp(stderr, x);
-                abort();
                 break;
 
             }
         }
 
-        DBG("Evaluating sexp: ");
-        // print_sexp(x);
-        DBG("\n");
-        cact_eval(cact, x);
-        DBG("Done evaluating sexp.\n");
+        x = cact_eval(cact, x);
     }
 
 STOP_RUNNING:
 
-    DBG("Finished running string. \n");
-    return 0;
+    return x;
 }
 

@@ -6,6 +6,7 @@
 struct cact_val;
 
 enum cact_read_status {
+	CACT_READ_IN_PROGRESS,
     CACT_READ_OK,
     CACT_READ_END_OF_FILE,
     CACT_READ_UNMATCHED_CHAR,
@@ -36,17 +37,29 @@ enum cact_token {
     CACT_NUM_TOKENS,
 };
 
+/* Holds a human-readable point in a file. */
+struct cact_str_coords {
+    int line;
+    int col;
+    int bytes;
+};
+
+void cact_str_coords_init(struct cact_str_coords *);
+
+/* Adjust the coordinates given the next character */
+void cact_str_coords_push(struct cact_str_coords *, int);
+
 struct cact_lexeme {
+    struct cact_str_coords coords;
     enum cact_token t;
     char *st;
     size_t sz;
-    int lno;
 };
 
 struct cact_lexer {
     const char *st;
     char *cur;
-    int lno;
+    struct cact_str_coords coords;
     struct cact_lexeme buf;
 };
 

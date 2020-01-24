@@ -139,8 +139,8 @@ static char *cact_read_list_test() {
 	string = "(a)";
 	cact_lexer_init(&l, string);
 	status = cact_read(&l, &x);
-	mu_assert("cact_read not ok when reading list", status == CACT_READ_OK);
-	mu_assert("cact_read did not read a list", x && is_pair(x));
+	mu_assert("cact_read not ok when reading list with one item", status == CACT_READ_OK);
+	mu_assert("cact_read did not read a list with one item", x && is_pair(x));
 
 	mu_assert("cact_read did not read first item in list", car(x));
 	mu_assert("cact_read did not read second item in list", ! cdr(x));

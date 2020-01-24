@@ -8,6 +8,22 @@
 #include "utils.h"
 #include "sym.h"
 
+void cact_str_coords_init(struct cact_str_coords *cds)
+{
+	memset(cds, 0, sizeof(struct cact_str_coords));
+}
+
+void cact_str_coords_push(struct cact_str_coords *cds, int c)
+{
+	cds->bytes++;
+    if (c == '\n') {
+	    cds->col = 0;
+	    cds->line++;
+    } else {
+	    cds->col++;
+    }
+}
+
 /* Is this int allowable as an identifier character? */
 int
 is_ident(int i)
@@ -15,17 +31,6 @@ is_ident(int i)
     return i != 0 && (isalpha(i) || strchr("!$%&*+-./:<=>?@^_~", i) != NULL);
 }
 
-/* Consume characters from the string until the function returns 0. */
-int
-charspan(const char* s, int (*fn)(int))
-{
-    int l = 0;
-    while (*s && fn(*s)) {
-        s++;
-        l++;
-    }
-    return l;
-}
 
 /* Return 0 if the character is double quote, 1 otherwise. */
 int 
@@ -45,8 +50,45 @@ cact_lexer_init(struct cact_lexer* l, const char* s)
 {
     l->st = s;
     l->cur = (char*) s;
-    l->lno = 0;
+    cact_str_coords_init(&l->coords);
     l->buf.t = CACT_TOKEN_NOTHING;
+}
+
+static int
+cact_lexer_getc(struct cact_lexer* l)
+{
+	if (! l->cur) {
+		return -1;
+	}
+
+	if (*l->cur == 0) {
+	    return 0;
+	}
+
+    l->cur++;
+    cact_str_coords_push(&l->coords, *l->cur);
+    return *l->cur;
+}
+
+static int
+cact_lexer_peekc(struct cact_lexer* l)
+{
+	if (! l->cur) {
+		return -1;
+	}
+	return *l->cur;
+}
+
+/* Consume characters from the string until the function returns 0. */
+static int
+cact_lexer_charspan(struct cact_lexer* l, int (*fn)(int))
+{
+    int len = 0;
+    while (cact_lexer_peekc(l) && fn(cact_lexer_peekc(l))) {
+        cact_lexer_getc(l);
+        len++;
+    }
+    return len;
 }
 
 /* Print a lexeme to stdout. */
@@ -111,63 +153,58 @@ nextlex(struct cact_lexer* l)
 {
     struct cact_lexeme le = {
         .st = l->cur,
-        .lno = l->lno,
+        .coords = l->coords
     };
 
-	char *p = l->cur;
+	int c = cact_lexer_peekc(l);
 
-	if (! p || ! l->st) {
-		le.t = CACT_TOKEN_ERROR;
-	} else if (isspace(*p)) {
+	if (! c) {
+		le.t = CACT_TOKEN_END;
+	} else if (isspace(c)) {
 		le.t = CACT_TOKEN_WHITESPACE;
-		while (*p && isspace(*p)){
-			if (*p == '\n') l->lno++;
-			p++;
-		}
-	} else if (is_ident(*p)) {
+		cact_lexer_charspan(l, isspace);
+	} else if (is_ident(c)) {
 		le.t = CACT_TOKEN_IDENTIFIER;
-		p += charspan(p, is_ident);
-	} else if (isdigit(*p)) {
+		cact_lexer_charspan(l, is_ident);
+	} else if (isdigit(c)) {
 		le.t = CACT_TOKEN_INTEGER;
-		p += charspan(p, isdigit);
-	} else if (*p == '(') {
+		cact_lexer_charspan(l, isdigit);
+	} else if (c == '(') {
 		le.t = CACT_TOKEN_OPEN_PAREN;
-		p++;
-	} else if (*p == ')') {
+		cact_lexer_getc(l);
+	} else if (c == ')') {
 		le.t = CACT_TOKEN_CLOSE_PAREN;
-		p++;
-	} else if (*p == '\'') {
+		cact_lexer_getc(l);
+	} else if (c == '\'') {
 		le.t = CACT_TOKEN_SINGLE_QUOTE;
-		p++;
-	} else if (*p == '"') {
+		cact_lexer_getc(l);
+	} else if (c == '"') {
 		le.t = CACT_TOKEN_STRING;
-		p++;
-		p += charspan(p, notdblq);
-		p++;
-	} else if (*p == '#') { 
+		cact_lexer_getc(l);
+		cact_lexer_charspan(l, notdblq);
+		cact_lexer_getc(l);
+	} else if (c == '#') { 
 		/* boolean and character */
-		p++;
-		if (*p == 't' || *p == 'f') {
-			p++;
+		c = cact_lexer_getc(l);
+		if (c == 't' || c == 'f') {
 			le.t = CACT_TOKEN_BOOLEAN;
-		} else if (*p == '\\') {
-			p++;
+			cact_lexer_charspan(l, isalpha);
+		} else if (c == '\\') {
+			cact_lexer_getc(l);
 			le.t = CACT_TOKEN_CHARACTER;
-			p += charspan(p, isalpha);
+			cact_lexer_charspan(l, isalpha);
 		} else {
 			le.t = CACT_TOKEN_ERROR;
 		}
-	} else if (*p == ';') { 
+	} else if (c == ';') { 
         le.t = CACT_TOKEN_COMMENT;
-		p += charspan(p, notnl);
-		l->lno++;
-        p++;
-	} else if (! *p) {
-		le.t = CACT_TOKEN_END;
+		cact_lexer_charspan(l, notnl);
+		cact_lexer_getc(l);
+	} else if (c == -1) {
+		le.t = CACT_TOKEN_ERROR;
 	}
 
-	le.sz = p - l->cur;
-	l->cur = p;
+	le.sz = l->coords.bytes - le.coords.bytes;
 	l->buf = le;
 
 	return le;
@@ -258,10 +295,14 @@ readlist(struct cact_lexer *l, cact_val **r)
 {
 	int status;
 	*r = NULL;
-	if (! expecttok(l, CACT_TOKEN_OPEN_PAREN)) {
+
+    struct cact_lexeme open_paren = peeklex(l);
+
+	if (open_paren.t != CACT_TOKEN_OPEN_PAREN) {
 		*r = cact_make_error("readlist: somehow didn't get open paren", NULL);
 		return CACT_READ_OTHER_ERROR;
 	}
+
 	while (! peekistok(l, CACT_TOKEN_CLOSE_PAREN) && peeklex(l).t > 0) {
 		cact_val *e = NULL;
 		status = cact_read(l, &e);
@@ -275,63 +316,86 @@ readlist(struct cact_lexer *l, cact_val **r)
 		*r = append(*r, e);
 		expecttok(l, CACT_TOKEN_WHITESPACE);
 	}
+
 	if (! expecttok(l, CACT_TOKEN_CLOSE_PAREN)) {
-		*r = cact_make_error("readlist: somehow didn't get close paren", NULL);
-		return CACT_READ_OTHER_ERROR;
+		*r = cact_make_error(
+			"readlist: somehow didn't get close paren", 
+			cons(
+			    cact_make_integer(open_paren.coords.line),
+			    cact_make_integer(open_paren.coords.col)
+			)
+		);
+		return CACT_READ_UNMATCHED_CHAR;
 	}
+
 	return CACT_READ_OK;
 }
 
 /* Read the next valid s-expression from the lexer. */
 enum cact_read_status cact_read(struct cact_lexer* l, struct cact_val** ret) 
 {
-	int status = CACT_READ_OK;
+	int status = CACT_READ_IN_PROGRESS;
 	*ret = (cact_val*) NULL;
 
-	struct cact_lexeme lx = peeklex(l);
+	struct cact_lexeme lx;
 
-	switch (lx.t) {
-    case CACT_TOKEN_WHITESPACE:
-    case CACT_TOKEN_COMMENT:
-        nextlex(l);
-        status = cact_read(l, ret);
-        break;
-	case CACT_TOKEN_OPEN_PAREN:
-		status = readlist(l, ret);
-		break;
-	case CACT_TOKEN_IDENTIFIER:
-		*ret = lextosym(lx);
-		nextlex(l);
-		break;
-	case CACT_TOKEN_BOOLEAN:
-		*ret = lextobool(lx);
-		nextlex(l);
-		break;
-	case CACT_TOKEN_INTEGER:
-		*ret = lextoint(lx);
-		nextlex(l);
-		break;
-	case CACT_TOKEN_SINGLE_QUOTE:
-		nextlex(l);
-		cact_val* quoted;
-		status = cact_read(l, &quoted);
-		cact_val* q = cact_make_symbol("quote");
-		*ret = cons(q, quoted);
-		nextlex(l);
-		break;
-	case CACT_TOKEN_STRING:
-		*ret = lextostr(lx);
-		nextlex(l);
-		break;
-	case CACT_TOKEN_END:
-		status = CACT_READ_END_OF_FILE;
-		break;
-	case CACT_TOKEN_ERROR:
-		fprintf(stderr, "Got an error token");
-	default:
-		status = CACT_READ_OTHER_ERROR;
-		break;
-	}
+    do {
+	    lx = nextlex(l);
+		switch (lx.t) {
+
+        /* Ignored tokens. */
+
+	    case CACT_TOKEN_WHITESPACE:
+	    case CACT_TOKEN_COMMENT:
+		    break;
+
+        /* Convert the lexeme directly into a value. */
+
+		case CACT_TOKEN_IDENTIFIER:
+			*ret = lextosym(lx);
+			status = CACT_READ_OK;
+			break;
+		case CACT_TOKEN_BOOLEAN:
+			*ret = lextobool(lx);
+			status = CACT_READ_OK;
+			break;
+		case CACT_TOKEN_INTEGER:
+			*ret = lextoint(lx);
+			status = CACT_READ_OK;
+			break;
+		case CACT_TOKEN_STRING:
+			*ret = lextostr(lx);
+			status = CACT_READ_OK;
+			break;
+
+        /* Data structures. */
+
+		case CACT_TOKEN_OPEN_PAREN:
+			status = readlist(l, ret);
+			break;
+
+        /* Extra syntax. */
+
+		case CACT_TOKEN_SINGLE_QUOTE:
+			nextlex(l);
+			cact_val* quoted;
+			status = cact_read(l, &quoted);
+			cact_val* q = cact_make_symbol("quote");
+			*ret = cons(q, quoted);
+			status = CACT_READ_OK;
+			break;
+
+		case CACT_TOKEN_END:
+			status = CACT_READ_END_OF_FILE;
+			break;
+
+		case CACT_TOKEN_ERROR:
+		default:
+			status = CACT_READ_OTHER_ERROR;
+			break;
+		}
+
+    } while (status == CACT_READ_IN_PROGRESS);
 
 	return status;
 }

@@ -60,7 +60,7 @@ fprint_sexp(FILE *f, cact_val *x)
         break;
     case CACT_TYPE_ERROR:
         fprintf(f, "; error '%s' : ", x->x.msg);
-        print_sexp(x->x.ctx);
+        fprint_sexp(f, x->x.ctx);
         break;
     case CACT_TYPE_UNDEF:
         fprintf(f, "UNDEFINED");
