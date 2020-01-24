@@ -33,6 +33,21 @@ static char *cact_read_blank_test() {
 	return 0;
 }
 
+static char *cact_read_whitespace_test() {
+	int status = CACT_READ_OK;
+	cact_val *x = NULL;
+	char* string = NULL;
+	struct cact_lexer l;
+
+	// Blank string
+	string = "\n \t";
+	cact_lexer_init(&l, string);
+	status = cact_read(&l, &x);
+	mu_assert("cact_read with only whitespace did not return EOF", status == CACT_READ_END_OF_FILE);
+
+	return 0;
+}
+
 static char *cact_read_ident_test() {
 	int status = CACT_READ_OK;
 	cact_val *x = NULL;
@@ -168,6 +183,7 @@ cact_read_quote_test()
 char *read_tests() {
 	mu_run_test(cact_read_null_test);
 	mu_run_test(cact_read_blank_test);
+	mu_run_test(cact_read_whitespace_test);
 	mu_run_test(cact_read_ident_test);
 	mu_run_test(cact_read_int_test);
 	mu_run_test(cact_read_boolean_test);

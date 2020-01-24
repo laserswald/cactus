@@ -77,15 +77,16 @@ struct cact_val * cact_eval_string(struct cactus *cact, char *s)
 
         if (status != CACT_READ_OK) {
             switch (status) {
-            case CACT_READ_END_OF_FILE: {
+
+            case CACT_READ_END_OF_FILE:
                 goto STOP_RUNNING;
-            }
-            case CACT_READ_OTHER_ERROR: {
+
+            case CACT_READ_OTHER_ERROR:
                 fprintf(stderr, "unknown error\n");
                 fprint_sexp(stderr, x);
                 abort();
                 break;
-            }
+
             }
         }
 
