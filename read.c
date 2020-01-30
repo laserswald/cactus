@@ -303,6 +303,8 @@ readlist(struct cact_lexer *l, cact_val **r)
 		return CACT_READ_OTHER_ERROR;
 	}
 
+	nextlex(l);
+
 	while (! peekistok(l, CACT_TOKEN_CLOSE_PAREN) && peeklex(l).t > 0) {
 		cact_val *e = NULL;
 		status = cact_read(l, &e);
@@ -340,13 +342,14 @@ enum cact_read_status cact_read(struct cact_lexer* l, struct cact_val** ret)
 	struct cact_lexeme lx;
 
     do {
-	    lx = nextlex(l);
+	    lx = peeklex(l);
 		switch (lx.t) {
 
         /* Ignored tokens. */
 
 	    case CACT_TOKEN_WHITESPACE:
 	    case CACT_TOKEN_COMMENT:
+		    nextlex(l);
 		    break;
 
         /* Convert the lexeme directly into a value. */
@@ -354,18 +357,22 @@ enum cact_read_status cact_read(struct cact_lexer* l, struct cact_val** ret)
 		case CACT_TOKEN_IDENTIFIER:
 			*ret = lextosym(lx);
 			status = CACT_READ_OK;
+		    nextlex(l);
 			break;
 		case CACT_TOKEN_BOOLEAN:
 			*ret = lextobool(lx);
 			status = CACT_READ_OK;
+		    nextlex(l);
 			break;
 		case CACT_TOKEN_INTEGER:
 			*ret = lextoint(lx);
 			status = CACT_READ_OK;
+		    nextlex(l);
 			break;
 		case CACT_TOKEN_STRING:
 			*ret = lextostr(lx);
 			status = CACT_READ_OK;
+		    nextlex(l);
 			break;
 
         /* Data structures. */
@@ -383,6 +390,7 @@ enum cact_read_status cact_read(struct cact_lexer* l, struct cact_val** ret)
 			cact_val* q = cact_make_symbol("quote");
 			*ret = cons(q, quoted);
 			status = CACT_READ_OK;
+		    nextlex(l);
 			break;
 
 		case CACT_TOKEN_END:
