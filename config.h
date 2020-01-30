@@ -1,9 +1,19 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include "eval.h"
 #include "builtin.h"
 
 BuiltinTable builtins[] = {
+	// The special forms.
+
+    {"define", special_define},
+    {"if", special_if},
+    {"set!", special_set_bang},
+    {"begin", special_begin},
+    {"quote", special_quote},
+    {"lambda", special_lambda},
+
     {"car", cact_builtin_car},
     {"cdr", cact_builtin_cdr},
     {"cons", cact_builtin_cons},
