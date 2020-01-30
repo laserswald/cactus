@@ -50,9 +50,9 @@ struct cact_val* cact_builtin_is_nil(struct cactus *cact, struct cact_val *x)
     struct cact_val *arg = cact_eval(cact, car(x));
     PROPAGATE_ERROR(arg);
     if (! arg) {
-        return cact_make_integer(1);
+        return cact_make_boolean(true);
     }
-    return cact_make_integer(0);
+    return cact_make_boolean(false);
 }
 
 struct cact_val* cact_builtin_is_pair(struct cactus *cact, struct cact_val *x) 
@@ -60,9 +60,9 @@ struct cact_val* cact_builtin_is_pair(struct cactus *cact, struct cact_val *x)
     struct cact_val *arg = cact_eval(cact, car(x));
     PROPAGATE_ERROR(arg);
     if (is_pair(arg))
-        return cact_make_integer(1);
+        return cact_make_boolean(true);
     else
-        return cact_make_integer(0);
+        return cact_make_boolean(false);
 }
 
 struct cact_val* cact_builtin_is_number(struct cactus *cact, struct cact_val *x)
@@ -70,9 +70,9 @@ struct cact_val* cact_builtin_is_number(struct cactus *cact, struct cact_val *x)
     struct cact_val *arg = cact_eval(cact, car(x));
     PROPAGATE_ERROR(arg);
     if (is_int(arg) || is_float(arg))
-        return cact_make_integer(1);
+        return cact_make_boolean(true);
     else
-        return cact_make_integer(0);
+        return cact_make_boolean(false);
 }
 
 struct cact_val* cact_builtin_eq(struct cactus *cact, struct cact_val *x) 
@@ -81,7 +81,7 @@ struct cact_val* cact_builtin_eq(struct cactus *cact, struct cact_val *x)
     struct cact_val *snd = cact_eval(cact, cadr(x));
     PROPAGATE_ERROR(fst);
     PROPAGATE_ERROR(snd);
-    return cact_make_integer(equals(fst, snd));
+    return cact_make_boolean(equals(fst, snd));
 }
 
 struct cact_val* cact_builtin_display(struct cactus *cact, struct cact_val *x) 

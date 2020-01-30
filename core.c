@@ -65,16 +65,13 @@ struct cact_val * cact_eval_file(struct cactus *cact, FILE *in)
 /* Evaluate a string using the interpreter. */
 struct cact_val * cact_eval_string(struct cactus *cact, char *s)
 {
+    struct cact_val *exp, *ret = NULL;
     cact_lexer_init(&cact->lexer, s);
-
-    struct cact_val *x;
     while (*s != '\0') {
         int status = 0;
-
         DBG("Reading new sexp. \n");
 
-        status = cact_read(&cact->lexer, &x);
-
+        status = cact_read(&cact->lexer, &exp);
         if (status != CACT_READ_OK) {
             switch (status) {
 
@@ -82,22 +79,19 @@ struct cact_val * cact_eval_string(struct cactus *cact, char *s)
                 goto STOP_RUNNING;
 
             case CACT_READ_UNMATCHED_CHAR:
-                fprint_sexp(stderr, x);
-                return x;
+                fprint_sexp(stderr, exp);
+                return ret;
 
             case CACT_READ_OTHER_ERROR:
                 fprintf(stderr, "unknown error\n");
-                fprint_sexp(stderr, x);
+                fprint_sexp(stderr, exp);
                 break;
-
             }
         }
 
-        x = cact_eval(cact, x);
+        ret = cact_eval(cact, exp);
     }
-
 STOP_RUNNING:
-
-    return x;
+    return ret;
 }
 
