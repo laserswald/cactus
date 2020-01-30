@@ -8,14 +8,16 @@
 
 int tests_run = 0;
 
-static char *read_tests();
-static char *sexp_tests();
-static char *boolean_tests();
+char *read_tests();
+char *sexp_tests();
+char *boolean_tests();
+char *eval_tests();
 
 static char *all_tests() {
 	mu_run_test(read_tests);
 	mu_run_test(sexp_tests);
 	mu_run_test(boolean_tests);
+	mu_run_test(eval_tests);
 	return 0;
 }
 

@@ -42,7 +42,7 @@ struct cact_val *special_if(struct cactus *cact, struct cact_val *args)
 struct cact_val *special_define(struct cactus *cact, struct cact_val *args)
 {
     cact_val *term = car(args);
-    cact_val *defn = car(cdr(args));
+    cact_val *defn = cdr(args);
 
     cact_val *value;
 
