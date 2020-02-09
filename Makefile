@@ -2,7 +2,7 @@ BINARY = cactus
 CFLAGS = -g -Wall -Wpedantic
 CC=gcc
 
-SOURCE_FILES := core.c builtin.c env.c eval.c globals.c load.c read.c sexp.c utils.c write.c xmalloc.c proc.c
+SOURCE_FILES := core.c builtin.c env.c eval.c globals.c read.c sexp.c utils.c write.c xmalloc.c proc.c
 OBJECT_FILES := $(SOURCE_FILES:.c=.o)
 
 all: $(BINARY) fulltest

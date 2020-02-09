@@ -20,7 +20,6 @@
 #include "sym.h"
 #include "eval.h"
 #include "builtin.h"
-#include "load.h"
 
 int verbosity = 0;
 

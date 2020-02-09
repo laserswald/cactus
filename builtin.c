@@ -7,7 +7,6 @@
 #include "debug.h"
 #include "utils.h"
 // #include "config.h"
-#include "load.h"
 #include "read.h"
 
 /* Unpack arguments, and take the car of the list at the first argument */
