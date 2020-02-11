@@ -1,7 +1,9 @@
 #ifndef __CACT_CORE_H__
 #define __CACT_CORE_H__
 
-#include "array.h"
+#include <stdio.h>
+
+#include "sym.h"
 #include "read.h"
 
 /**
@@ -10,7 +12,8 @@
 struct cactus {
 	struct cact_env *root_env;
 	struct cact_env *current_env;
-    struct cact_lexer lexer;
+	struct cact_lexer lexer;
+	struct cact_symbol_table interned_syms;
 };
 
 

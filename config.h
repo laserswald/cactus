@@ -24,8 +24,12 @@ BuiltinTable builtins[] = {
     {"not", cact_builtin_not},
 
     {"eq?", cact_builtin_eq},
+    {"eqv?", cact_builtin_eqv},
+    {"equal?", cact_builtin_equal},
+
     {"display", cact_builtin_display},
     {"newline", cact_builtin_newline},
+
     {"begin", cact_builtin_begin},
     {"exit", cact_builtin_exit},
     {"load", cact_builtin_load},

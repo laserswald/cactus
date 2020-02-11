@@ -16,6 +16,8 @@ struct cact_val* cact_builtin_is_number(struct cactus *, struct cact_val *);
 struct cact_val* cact_builtin_is_boolean(struct cactus *, struct cact_val *);
 struct cact_val* cact_builtin_not(struct cactus *, struct cact_val *);
 struct cact_val* cact_builtin_eq(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_eqv(struct cactus *, struct cact_val *);
+struct cact_val* cact_builtin_equal(struct cactus *, struct cact_val *);
 struct cact_val* cact_builtin_display(struct cactus *, struct cact_val *);
 struct cact_val* cact_builtin_newline(struct cactus *, struct cact_val *);
 struct cact_val* cact_builtin_begin(struct cactus *, struct cact_val *);

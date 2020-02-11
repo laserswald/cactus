@@ -97,18 +97,6 @@ struct cact_val* special_set_bang(struct cactus *cact, struct cact_val *args)
     return &undefined;
 }
 
-struct specials_table {
-    cact_symbol *sym;
-    struct cact_val *(*fn)(struct cactus *, struct cact_val *);
-} specials[] = {
-    {&quote_sym,  special_quote},
-    {&if_sym,     special_if},
-    {&define_sym, special_define},
-    {&lambda_sym, special_lambda},
-    {&set_sym,    special_set_bang},
-    {&begin_sym,  special_begin}
-};
-
 /* Evaluate an expression according to an environment. */
 struct cact_val *cact_eval(struct cactus *cact, struct cact_val *x)
 {
@@ -141,18 +129,6 @@ struct cact_val *cact_eval(struct cactus *cact, struct cact_val *x)
 
         if (! operator) {
             return cact_make_error("Cannot evaluate null as operation", x);
-        }
-
-        // If it's a symbol, check if it's special and do the thing
-        if (is_sym(operator)) {
-            cact_symbol sym = to_sym(operator, "cact_eval");
-            int i;
-            for (i = 0; i < LENGTH(specials); i++) {
-                if (symcmp(specials[i].sym, &sym) == 0) {
-                    return specials[i].fn(cact, operands);
-                }
-            }
-            // fallthrough when not a special form
         }
 
         cact_val *maybe_procedure = cact_eval(cact, operator);

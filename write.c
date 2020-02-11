@@ -45,7 +45,7 @@ fprint_sexp(FILE *f, cact_val *x)
         fprintf(f, "%s", x->s.str);
         break;
     case CACT_TYPE_SYMBOL:
-        fprintf(f, "#<symbol: '%s'>", x->a.sym);
+        fprintf(f, "#<symbol: '%s'>", x->a->sym);
         break;
     case CACT_TYPE_PAIR:
         print_list(x);

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "write.h"
 #include "sexp.h"
 #include "env.h"
 

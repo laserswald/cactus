@@ -45,37 +45,63 @@ is_nil(cact_val *x)
     return x == NULL;
 }
 
-/* Deeply compare two values. */
 bool
-equals(cact_val *l, cact_val *r)
+cact_val_eq(cact_val *l, cact_val *r)
 {
+    return l == r;
+}
+
+bool
+cact_val_eqv(cact_val *l, cact_val *r)
+{
+    if (cact_val_eq(l, r)) {
+        return true;
+    }
+
     if (l->t != r->t) {
         return false;
     }
 
     switch (l->t) {
+    case CACT_TYPE_BOOLEAN:
+        return l->b == r->b;
+        break;
+    case CACT_TYPE_SYMBOL: {
+        cact_symbol *lsym = to_sym(l, "equals");
+        cact_symbol *rsym = to_sym(r, "equals");
+        return symcmp(lsym, rsym) == 0;
+        break;
+    }
     case CACT_TYPE_INT:
         return l->i == r->i;
         break;
     case CACT_TYPE_DOUBLE:
         return l->f == r->f;
         break;
-    case CACT_TYPE_BOOLEAN:
-        return l->b == r->b;
+    case CACT_TYPE_PROCEDURE:
+        return l->c == r->c;
         break;
+    default:
+        break;
+    }
+
+    return false;
+}
+
+/* Deeply compare two values. */
+bool
+cact_val_equal(cact_val *l, cact_val *r)
+{
+    if (cact_val_eqv(l, r)) {
+        return true;
+    }
+
+    switch (l->t) {
     case CACT_TYPE_STRING:
         return strcmp(l->s.str, r->s.str) == 0;
         break;
-    case CACT_TYPE_SYMBOL: {
-        cact_symbol lsym = to_sym(l, "equals");
-        cact_symbol rsym = to_sym(r, "equals");
-        return symcmp(&lsym, &rsym) == 0;
-        break;
-    }
     case CACT_TYPE_PAIR:
-        return (equals(car(l), car(r))) && (equals(cdr(l), cdr(r)));
-        break;
-    case CACT_TYPE_PROCEDURE:
+        return (cact_val_equal(car(l), car(r))) && (cact_val_equal(cdr(l), cdr(r)));
         break;
     case CACT_TYPE_ENVIRONMENT:
         break;
@@ -84,6 +110,8 @@ equals(cact_val *l, cact_val *r)
     case CACT_TYPE_ERROR:
         break;
     case CACT_TYPE_UNDEF:
+        break;
+    default:
         break;
     }
     return false;
@@ -105,16 +133,6 @@ cact_make_integer(int i)
     x->t = CACT_TYPE_INT;
     x->i = i;
     return x;
-}
-
-/* Create a new symbol. */
-cact_val *
-cact_make_symbol(char *str)
-{
-    cact_val *sym = malloc(sizeof(cact_val));
-    sym->t = CACT_TYPE_SYMBOL;
-    sym->a.sym = str;
-    return sym;
 }
 
 /* Create a string. */
@@ -170,6 +188,16 @@ cact_make_boolean(bool b)
     x->t = CACT_TYPE_BOOLEAN;
     x->b = b;
     return x;
+}
+
+cact_val *
+cact_make_pair(cact_val *a, cact_val *d)
+{
+    cact_val *pair = malloc(sizeof(cact_val));
+    pair->t = CACT_TYPE_PAIR;
+    pair->p.car = a;
+    pair->p.cdr = d;
+    return pair;
 }
 
 /* Create a pair. */
@@ -228,7 +256,7 @@ assoc(cact_val *key, cact_val *alist)
 
     cact_pair kv = to_pair(fst, "assoc");
 
-    if (equals(kv.car, key)) {
+    if (cact_val_equal(kv.car, key)) {
         return car(alist);
     }
 

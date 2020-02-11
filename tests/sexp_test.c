@@ -19,7 +19,7 @@ static char *car_cdr_cons_test()
     cact_val *l = cact_make_integer(li);
     int ri = rand();
     cact_val *r = cact_make_integer(ri);
-    cact_val *pair = cons(l, r);
+    cact_val *pair = cact_make_pair(l, r);
 
     mu_assert("cons did not create a new pair", is_pair(pair));
     mu_assert("car of pair was not generated number", car(pair)->i == li);

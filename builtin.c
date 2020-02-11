@@ -8,6 +8,7 @@
 #include "utils.h"
 // #include "config.h"
 #include "read.h"
+#include "write.h"
 
 /* Unpack arguments, and take the car of the list at the first argument */
 struct cact_val *cact_builtin_car(struct cactus *cact, struct cact_val *args) 
@@ -40,7 +41,7 @@ struct cact_val *cact_builtin_cons(struct cactus *cact, struct cact_val *x)
     struct cact_val *snd = cact_eval(cact, cadr(x));
     PROPAGATE_ERROR(fst);
     PROPAGATE_ERROR(snd);
-    struct cact_val *p = cons(fst, snd);
+    struct cact_val *p = cact_make_pair(fst, snd);
     return p;
 }
 
@@ -80,7 +81,25 @@ struct cact_val* cact_builtin_eq(struct cactus *cact, struct cact_val *x)
     struct cact_val *snd = cact_eval(cact, cadr(x));
     PROPAGATE_ERROR(fst);
     PROPAGATE_ERROR(snd);
-    return cact_make_boolean(equals(fst, snd));
+    return cact_make_boolean(cact_val_eq(fst, snd));
+}
+
+struct cact_val* cact_builtin_eqv(struct cactus *cact, struct cact_val *x) 
+{
+    struct cact_val *fst = cact_eval(cact, car(x));
+    struct cact_val *snd = cact_eval(cact, cadr(x));
+    PROPAGATE_ERROR(fst);
+    PROPAGATE_ERROR(snd);
+    return cact_make_boolean(cact_val_eqv(fst, snd));
+}
+
+struct cact_val* cact_builtin_equal(struct cactus *cact, struct cact_val *x) 
+{
+    struct cact_val *fst = cact_eval(cact, car(x));
+    struct cact_val *snd = cact_eval(cact, cadr(x));
+    PROPAGATE_ERROR(fst);
+    PROPAGATE_ERROR(snd);
+    return cact_make_boolean(cact_val_equal(fst, snd));
 }
 
 struct cact_val* cact_builtin_display(struct cactus *cact, struct cact_val *x) 
@@ -215,7 +234,7 @@ struct cact_val* cact_builtin_is_boolean(struct cactus *cact, struct cact_val *x
 struct cact_val* cact_builtin_not(struct cactus *cact, struct cact_val *x)
 { 
 	struct cact_val *arg = cact_eval(cact, car(x));
-    PROPAGATE_ERROR(arg);
+        PROPAGATE_ERROR(arg);
 	return sexp_not(arg);
 }
 

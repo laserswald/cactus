@@ -16,7 +16,7 @@ not_test()
         {NULL, false},
         {cact_make_boolean(true), false},
         {cact_make_integer(3), false},
-        {cons(cact_make_integer(3), NULL), false},
+        {cact_make_pair(cact_make_integer(3), NULL), false},
         {cact_make_boolean(false), true},
         {cact_make_symbol("nil"), false},
     };
