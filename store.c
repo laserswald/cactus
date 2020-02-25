@@ -4,6 +4,8 @@
  * Arena operations.
  */
 
+
+/* Does this arena have this pointer? */
 bool cact_arena_has(struct cact_arena *arena, void *thing)
 {
     void *first_item = arena->data;
@@ -64,6 +66,12 @@ void *cact_arena_set_allocate(struct cact_arena_set *set)
 
     if (i == ARRAY_LENGTH(set)) {
         // Allocate new arena
+	    struct cact_arena new_arena;
+	    new_arena.element_sz = elt_sz;
+	    new_arena.data = xcalloc(64, new_arena.element_sz);
+	    new_arena.occupied_set = 0;
+
+	    ARRAY_ADD(set, new_arena);
     }
 
     struct cact_arena *arena = &ARRAY_ITEM(set, i);
@@ -78,12 +86,12 @@ void *cact_arena_set_allocate(struct cact_arena_set *set)
 void cact_store_init(struct cact_store *store)
 {
     cact_arena_set_init(&store->arenas[CACT_OBJ_PAIR], sizeof(struct cact_pair));
-    cact_arena_set_init(&store->arenas[CACT_OBJ_PROCEDURE], sizeof(struct cact_proc));
-    cact_arena_set_init(&store->arenas[CACT_OBJ_ENV], sizeof(struct cact_env));
 }
 
 struct cact_obj cact_store_allocate(struct cact_store *store, enum cact_obj_type type)
 {
+	if (cact_store_)
+
     struct cact_obj obj;
 
     obj.type = type;

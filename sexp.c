@@ -36,35 +36,32 @@ show_type(cact_type t) {
 }
 
 /* Defined constants. */
-cact_val undefined = {.t = CACT_TYPE_UNDEF};
+cact_val undefined = {.t = CACT_TYPE_NULL};
 
 /* Is this sexp nil? */
-bool
-is_nil(cact_val *x)
+bool is_nil(cact_val x)
 {
-    return x == NULL;
+    return x.t == CACT_TYPE_NULL;
 }
 
-bool
-cact_val_eq(cact_val *l, cact_val *r)
+bool cact_val_eq(cact_val l, cact_val r)
 {
     return l == r;
 }
 
-bool
-cact_val_eqv(cact_val *l, cact_val *r)
+bool cact_val_eqv(cact_val l, cact_val r)
 {
     if (cact_val_eq(l, r)) {
         return true;
     }
 
-    if (l->t != r->t) {
+    if (l.t != r.t) {
         return false;
     }
 
-    switch (l->t) {
+    switch (l.t) {
     case CACT_TYPE_BOOLEAN:
-        return l->b == r->b;
+        return l.b == r.b;
         break;
     case CACT_TYPE_SYMBOL: {
         cact_symbol *lsym = to_sym(l, "equals");
@@ -190,78 +187,6 @@ cact_make_boolean(bool b)
     return x;
 }
 
-cact_val *
-cact_make_pair(cact_val *a, cact_val *d)
-{
-    cact_val *pair = malloc(sizeof(cact_val));
-    pair->t = CACT_TYPE_PAIR;
-    pair->p.car = a;
-    pair->p.cdr = d;
-    return pair;
-}
-
-/* Create a pair. */
-cact_val *
-cons(cact_val *a, cact_val *d)
-{
-    cact_val *pair = malloc(sizeof(cact_val));
-    pair->t = CACT_TYPE_PAIR;
-    pair->p.car = a;
-    pair->p.cdr = d;
-    return pair;
-}
-
-/* Get the car of a pair. */
-cact_val *
-car(cact_val *x)
-{
-    if (!x && !is_pair(x)) {
-        return cact_make_error("Not a pair: ", x);
-    }
-    cact_pair p = x->p;
-    return p.car;
-}
-
-/* Get the cdr of a pair. */
-cact_val *
-cdr(cact_val *x)
-{
-    if (!x || !is_pair(x)) {
-        return cact_make_error("Not a pair: ", x);
-    }
-    cact_pair p = x->p;
-    return p.cdr;
-}
-
-/* Add a key and value to an association list. */
-cact_val *
-acons(cact_val *key, cact_val *val, cact_val *alist)
-{
-    cact_val *pair = cons(key, val);
-    return cons(pair, alist);
-}
-
-/* Lookup the value associated with the key in the alist. */
-cact_val *
-assoc(cact_val *key, cact_val *alist)
-{
-    if (! alist) {
-        return NULL;
-    }
-
-    cact_val* fst = car(alist);
-    if (is_error(fst)) {
-        return fst;
-    }
-
-    cact_pair kv = to_pair(fst, "assoc");
-
-    if (cact_val_equal(kv.car, key)) {
-        return car(alist);
-    }
-
-    return assoc(key, cdr(alist));
-}
 
 /* Compare two symbols for equality/ordering. */
 int
