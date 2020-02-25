@@ -12,7 +12,7 @@
 void 
 cact_make_builtin(cact_env *e, cact_val *x, cact_native_func fn)
 {
-    cact_val *c = malloc(sizeof(*c));
+    cact_val c;
     c->t = CACT_TYPE_PROCEDURE;
     c->c = malloc(sizeof(cact_proc));
     c->c->nativefn = fn;
@@ -22,7 +22,6 @@ cact_make_builtin(cact_env *e, cact_val *x, cact_native_func fn)
 cact_env* 
 cact_make_builtins(struct cactus *cact) 
 {
-
     int i;
     for (i = 0; i < LENGTH(builtins); i++) {
         struct cact_val *sym = cact_get_symbol(cact, builtins[i].name);
@@ -37,11 +36,13 @@ void cact_init(struct cactus *cact)
 	// Begin by initializing the symbol table
 	TABLE_INIT(&cact->interned_syms);
 
+	cact_gc_init(&cact->gc);
+
 	cact->root_env = malloc(sizeof(struct cact_env));
 	envinit(cact->root_env, NULL);
 	cact_make_builtins(cact);
+
 	cact->current_env = cact->root_env;
-	// cact_gc_init(&cact->gc);
 }
 
 /* Finalize a cactus interpreter. */
@@ -54,10 +55,7 @@ void cact_finish(struct cactus *cact)
 struct cact_val * cact_eval_file(struct cactus *cact, FILE *in)
 {
     DBG("Running file. \n");
-
-    char *s = slurp(in);
-
-    return cact_eval_string(cact, s);
+    return cact_eval_string(cact, slurp(in));
 }
 
 /* Evaluate a string using the interpreter. */

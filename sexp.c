@@ -39,14 +39,35 @@ show_type(cact_type t) {
 cact_val undefined = {.t = CACT_TYPE_NULL};
 
 /* Is this sexp nil? */
-bool is_nil(cact_val x)
+bool is_nil(cact_val *x)
 {
     return x.t == CACT_TYPE_NULL;
 }
 
+/* 
+ * Returns true if the two items 'refer to the same object'.
+ * 
+ * Semantically, #t, #f, and the empty list are all individual 
+ * objects, so comparing booleans and nulls are valid for 'eq?'. 
+ * Heap allocated objects will be compared by their pointers.
+ */
 bool cact_val_eq(cact_val l, cact_val r)
 {
-    return l == r;
+	/* Go ahead and bail if they are different types */
+	if (l.t != r.t) {
+		return false;
+	}
+
+    switch (l.t) {
+    case CACT_TYPE_NULL:
+		return true;
+    case CACT_TYPE_BOOLEAN:
+        return l.b == r.b;
+    case CACT_TYPE_OBJECT:
+        return l.obj == r.obj;
+    }
+
+    return false;
 }
 
 bool cact_val_eqv(cact_val l, cact_val r)
@@ -55,31 +76,13 @@ bool cact_val_eqv(cact_val l, cact_val r)
         return true;
     }
 
-    if (l.t != r.t) {
-        return false;
-    }
-
     switch (l.t) {
-    case CACT_TYPE_BOOLEAN:
-        return l.b == r.b;
-        break;
-    case CACT_TYPE_SYMBOL: {
-        cact_symbol *lsym = to_sym(l, "equals");
-        cact_symbol *rsym = to_sym(r, "equals");
-        return symcmp(lsym, rsym) == 0;
-        break;
-    }
     case CACT_TYPE_INT:
-        return l->i == r->i;
-        break;
+        return l.i == r.i;
     case CACT_TYPE_DOUBLE:
-        return l->f == r->f;
-        break;
-    case CACT_TYPE_PROCEDURE:
-        return l->c == r->c;
-        break;
-    default:
-        break;
+        return l.f == r.f;
+    case CACT_TYPE_CHARACTER:
+        return l.c == r.c;
     }
 
     return false;
@@ -87,13 +90,19 @@ bool cact_val_eqv(cact_val l, cact_val r)
 
 /* Deeply compare two values. */
 bool
-cact_val_equal(cact_val *l, cact_val *r)
+cact_val_equal(cact_val l, cact_val r)
 {
     if (cact_val_eqv(l, r)) {
         return true;
     }
 
-    switch (l->t) {
+    if (l.t != CACT_TYPE_OBJECT) {
+	    return false;
+    }
+
+    cact_obj obj = l.obj;
+
+    switch (obj.) {
     case CACT_TYPE_STRING:
         return strcmp(l->s.str, r->s.str) == 0;
         break;
@@ -111,6 +120,7 @@ cact_val_equal(cact_val *l, cact_val *r)
     default:
         break;
     }
+
     return false;
 }
 
@@ -188,61 +198,6 @@ cact_make_boolean(bool b)
 }
 
 
-/* Compare two symbols for equality/ordering. */
-int
-symcmp(cact_symbol *a, cact_symbol *b)
-{
-    return strcmp(a->sym, b->sym);
-}
-
-cact_val *
-append(cact_val *l, cact_val *x)
-{
-    if (!l)
-        return cons(x, NULL);
-
-    cact_val *e = l;
-
-    while (cdr(e))
-        e = cdr(e);
-
-    e->p.cdr = cons(x, NULL);
-    return l;
-}
-
-
-cact_val *
-lookup(cact_env *e, cact_val *key)
-{
-    if (!e) return NULL;
-
-    cact_val *found_kv = assoc(key, e->list);
-
-    if (!found_kv && e->parent) {
-        found_kv = lookup(e->parent, key);
-    }
-
-    if (!found_kv) {
-        return NULL;
-    }
-
-    return found_kv;
-}
-
-void
-define(cact_env *e, cact_val *key, cact_val *val)
-{
-    if (!e)
-        return;
-
-    cact_val *found_kv = lookup(e, key);
-
-    if (found_kv) {
-        found_kv->p.cdr = val;
-    } else {
-        e->list = acons(key, val, e->list);
-    }
-}
 
 cact_val *
 sexp_not(cact_val *x) 
