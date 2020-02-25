@@ -9,6 +9,14 @@ enum cact_obj_type {
 	CACT_OBJ_PAIR,
 	CACT_OBJ_PROCEDURE,
 	CACT_OBJ_ENVIRONMENT,
+
+    /* TODO: Ports */
+    /* CACT_OBJ_PORT, */
+
+    /* TODO: Vectors */
+    /* CACT_OBJ_VECTOR, */
+
+	/* TODO: Record types */
 	/* CACT_OBJ_RECORD_TYPE, */ 
 	/* CACT_OBJ_RECORD_INST, */
 };
@@ -17,7 +25,8 @@ typedef void (*cact_obj_mark_fn)(struct cact_obj *);
 typedef void (*cact_obj_destroy_fn)(struct cact_obj *);
 
 /* Common things to do to heap-allocated objects. */
-/*
+/* TODO: implement these */
+/* 
 struct cact_obj_ops {
 	cact_obj_mark_fn mark;
 	cact_obj_destroy_fn destroy;
