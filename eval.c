@@ -9,28 +9,21 @@
 #include "utils.h"
 #include "write.h"
 
-struct cact_val *special_quote(struct cactus *cact, struct cact_val *args)
+struct cact_val 
+special_quote(struct cactus *cact, struct cact_val args)
 {
     return args;
 }
 
-bool is_truthy(struct cact_val *x)
+struct cact_val 
+special_if(struct cactus *cact, struct cact_val args)
 {
-    if (is_bool(x) && x->b == false) {
-        return false;
-    }
+    cact_val cond = cact_car(args);
+    cact_val cseq = cact_cadr(args);
+    cact_val alt = cact_caddr(args);
+    cact_val result = &undefined;
 
-    return true;
-}
-
-struct cact_val *special_if(struct cactus *cact, struct cact_val *args)
-{
-    cact_val* cond = car(args);
-    cact_val* cseq = cadr(args);
-    cact_val* alt = caddr(args);
-    cact_val* result = &undefined;
-
-    if (is_truthy(cact_eval(cact, cond))) {
+    if (cact_is_truthy(cact_eval(cact, cond))) {
         result = cact_eval(cact, cseq);
     } else {
         result = cact_eval(cact, alt);
@@ -97,7 +90,7 @@ struct cact_val* special_set_bang(struct cactus *cact, struct cact_val *args)
     return &undefined;
 }
 
-/* Evaluate an expression according to an environment. */
+/* Evaluate an expression. */
 struct cact_val *cact_eval(struct cactus *cact, struct cact_val *x)
 {
     if (!x) {

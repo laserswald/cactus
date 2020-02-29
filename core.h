@@ -5,6 +5,7 @@
 
 #include "sym.h"
 #include "read.h"
+#include "store.h"
 
 /**
  * The core structure for a Cactus interpreter.
@@ -14,6 +15,7 @@ struct cactus {
 	struct cact_env *current_env;
 	struct cact_lexer lexer;
 	struct cact_symbol_table interned_syms;
+	struct cact_store store;
 };
 
 

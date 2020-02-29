@@ -69,8 +69,8 @@ int main(int argc, char *argv[])
             perror("Could not run file");
             exit(1);
         }
-        struct cact_val *ret = cact_eval_file(&cact, infile);
-        if (is_error(ret)) {
+        struct cact_val ret = cact_eval_file(&cact, infile);
+        if (cact_is_error(ret)) {
 	        print_sexp(ret);
             perror("Encountered errors");
             exit(1);

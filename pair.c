@@ -45,32 +45,32 @@ cact_set_car(struct cactus *cact, struct cact_val p, struct cact_val x)
     }
 
     struct cact_pair p = x.obj->as.pair;
-    return p.car;
+    p.car = x;
 }
 
 /* Set the cdr of a pair. */
 struct cact_val
-cact_cdr(struct cactus *cact, struct cact_val x)
+cact_set_cdr(struct cactus *cact, struct cact_val x)
 {
     if (! cact_is_pair(x)) {
         return cact_make_error(cact, "Not a pair: ", x);
     }
 
     struct cact_pair p = x.obj->as.pair;
-    return p.cdr;
+    p.cdr = x;
 }
 
 /* Add a key and value to an association list. */
-struct cact_val *
-cact_list_acons(cact_val *key, cact_val *val, cact_val *alist)
+struct cact_val
+cact_list_acons(struct cactus *cact, cact_val key, cact_val val, cact_val alist)
 {
-    cact_val *pair = cons(key, val);
+    cact_val *pair = cact_cons(key, val);
     return cons(pair, alist);
 }
 
 /* Lookup the value associated with the key in the alist. */
-cact_val *
-assoc(cact_val *key, cact_val *alist)
+struct cact_val
+cact_assoc(cact_val *key, cact_val *alist)
 {
     if (! alist) {
         return NULL;

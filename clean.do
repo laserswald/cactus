@@ -1,1 +1,1 @@
-rm cactus *.o fulltest *.a tags
+rm -f cactus *.o fulltest *.a tags

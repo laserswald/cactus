@@ -17,6 +17,15 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
+#include <limits.h>
+
+#include "xmalloc.h"
+
+#ifndef fatalx
+#include <stdio.h>
+#define fatalx(message) do { fprintf(stderr, "array: %s\n", message); abort(); } while (0)
+#endif 
+
 #define ARRAY_INITIALIZER { NULL, 0, 0 }
 
 #define ARRAY_DECL(n, c)						                           \
@@ -37,10 +46,10 @@
 		fatalx("size too big");					                           \
 	if ((a)->space == 0) {						                           \
 		(a)->space = ARRAY_INITIALSPACE(a);			                       \
-		(a)->list = xrealloc((a)->list, 1, (a)->space);		               \
+		(a)->list = xrealloc((a)->list, 1 * (a)->space);		               \
 	}								                                       \
 	while ((a)->space <= ((a)->num + (n)) * ARRAY_ITEMSIZE(a)) {	       \
-		(a)->list = xrealloc((a)->list, 2, (a)->space);		               \
+		(a)->list = xrealloc((a)->list, 2 * (a)->space);		               \
 		(a)->space *= 2;					                               \
 	}								                                       \
 } while (0)

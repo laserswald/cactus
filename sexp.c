@@ -35,11 +35,19 @@ show_type(cact_type t) {
     return NULL;
 }
 
-/* Defined constants. */
-cact_val undefined = {.t = CACT_TYPE_NULL};
+bool is_truthy(struct cact_val *x)
+{
+    if (is_bool(x) && x->b == false) {
+        return false;
+    }
+
+    return true;
+}
+
 
 /* Is this sexp nil? */
-bool is_nil(cact_val *x)
+bool
+cact_is_null(cact_val x)
 {
     return x.t == CACT_TYPE_NULL;
 }
@@ -51,7 +59,8 @@ bool is_nil(cact_val *x)
  * objects, so comparing booleans and nulls are valid for 'eq?'. 
  * Heap allocated objects will be compared by their pointers.
  */
-bool cact_val_eq(cact_val l, cact_val r)
+bool
+cact_val_eq(cact_val l, cact_val r)
 {
 	/* Go ahead and bail if they are different types */
 	if (l.t != r.t) {
@@ -70,7 +79,8 @@ bool cact_val_eq(cact_val l, cact_val r)
     return false;
 }
 
-bool cact_val_eqv(cact_val l, cact_val r)
+bool
+cact_val_eqv(cact_val l, cact_val r)
 {
     if (cact_val_eq(l, r)) {
         return true;
@@ -196,8 +206,6 @@ cact_make_boolean(bool b)
     x->b = b;
     return x;
 }
-
-
 
 cact_val *
 sexp_not(cact_val *x) 

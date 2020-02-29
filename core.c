@@ -36,7 +36,7 @@ void cact_init(struct cactus *cact)
 	// Begin by initializing the symbol table
 	TABLE_INIT(&cact->interned_syms);
 
-	cact_gc_init(&cact->gc);
+	cact_store_init(&cact->store);
 
 	cact->root_env = malloc(sizeof(struct cact_env));
 	envinit(cact->root_env, NULL);
@@ -52,17 +52,22 @@ void cact_finish(struct cactus *cact)
 }
 
 /* Evaluate a file using the interpreter. */
-struct cact_val * cact_eval_file(struct cactus *cact, FILE *in)
+struct cact_val
+cact_eval_file(struct cactus *cact, FILE *in)
 {
     DBG("Running file. \n");
     return cact_eval_string(cact, slurp(in));
 }
 
 /* Evaluate a string using the interpreter. */
-struct cact_val * cact_eval_string(struct cactus *cact, char *s)
+struct cact_val 
+cact_eval_string(struct cactus *cact, char *s)
 {
-    struct cact_val *exp, *ret = NULL;
+    struct cact_val exp = CACT_NULL_VAL;
+    struct cact_val ret = CACT_NULL_VAL;
+
     cact_lexer_init(&cact->lexer, s);
+
     while (*s != '\0') {
         int status = 0;
         DBG("Reading new sexp. \n");
