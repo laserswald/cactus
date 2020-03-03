@@ -64,7 +64,7 @@ struct cact_lexer {
 
 void cact_lexer_init(struct cact_lexer *l, const char* data);
 void printtokstream(struct cact_lexer *l);
-enum cact_read_status cact_read(struct cactus *l, struct cact_val **s);
+enum cact_read_status cact_read(struct cactus *l, struct cact_val *s);
 
 #endif // CACT_READ_H
 

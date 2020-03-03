@@ -1,12 +1,15 @@
 #ifndef CACT_OBJ_H
 #define CACT_OBJ_H
 
-#include "store.h"
-#include "sexp.h"
 #include "proc.h"
+#include "str.h"
+#include "sym.h"
 #include "pair.h"
 #include "env.h"
 #include "err.h"
+#include "store.h"
+
+struct cact_store_data;
 
 /* Types of heap-allocated objects. */
 enum cact_obj_type {
@@ -31,13 +34,9 @@ enum cact_obj_type {
 }i;
 
 
-struct cact_string {
-    char *str;
-};
-
 struct cact_error {
     char *msg;
-    cact_val *ctx;
+    struct cact_val ctx;
 };
 
 /* A value that has an associated heap component. */
@@ -57,18 +56,18 @@ struct cact_obj {
 void cact_obj_mark(struct cact_obj *);
 void cact_obj_destroy(struct cact_obj *);
 
-const char* show_obj_type(enum cact_obj_type);
+const char* cact_obj_show_type(enum cact_obj_type);
 
 #define DEFINE_OBJECT_CONVERSION(typemarker, returntype, funcname, membername) \
 static inline returntype \
 funcname(cact_val x, char *extras) \
 { \
 	if (x.type != CACT_TYPE_OBJ) { \
-		fprintf(stderr, "%s: Expected object, but got %s.\n", extras, show_type(x.type)); \
+		fprintf(stderr, "%s: Expected object, but got %s.\n", extras, cact_val_show_type(x.type)); \
 		abort(); \
 	} \
 	if (x.as.object->type != typemarker) { \
-		fprintf(stderr, "%s: Expected %s, but got %s.\n", extras, show_obj_type(typemarker), show_obj_type(x.as.object->type)); \
+		fprintf(stderr, "%s: Expected %s, but got %s.\n", extras, cact_obj_show_type(typemarker), cact_type_str(x)); \
 		abort(); \
 	} \
 	return x.as.object->as.membername; \
@@ -87,8 +86,9 @@ DEFINE_OBJECT_CONVERSION(CACT_OBJ_PROCEDURE,   struct cact_proc,   cact_to_proce
 DEFINE_OBJECT_CONVERSION(CACT_OBJ_ENVIRONMENT, struct cact_env,    cact_to_env,       env)
 DEFINE_OBJECT_CONVERSION(CACT_OBJ_ERROR,       struct cact_error,  cact_to_error,     err)
 
-DEFINE_OBJECT_CHECK(cact_is_string, CACT_OBJ_STRING)
 DEFINE_OBJECT_CHECK(cact_is_pair, CACT_OBJ_PAIR)
+DEFINE_OBJECT_CHECK(cact_is_string, CACT_OBJ_STRING)
+DEFINE_OBJECT_CHECK(cact_is_symbol, CACT_OBJ_SYMBOL)
 DEFINE_OBJECT_CHECK(cact_is_procedure, CACT_OBJ_PROCEDURE)
 DEFINE_OBJECT_CHECK(cact_is_env, CACT_OBJ_ENVIRONMENT)
 DEFINE_OBJECT_CHECK(cact_is_error, CACT_OBJ_ERROR)

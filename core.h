@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 
+#include "sexp.h"
 #include "sym.h"
 #include "read.h"
 #include "store.h"
@@ -18,22 +19,13 @@ struct cactus {
 	struct cact_store store;
 };
 
-
 /* Initialize a cactus interpreter. */
 void cact_init(struct cactus *);
 
 /* Finalize a cactus interpreter. */
 void cact_finish(struct cactus *);
 
-/* Evaluate a file using the interpreter. */
-struct cact_val * cact_eval_file(struct cactus *, FILE *);
-
-/* Evaluate a string using the interpreter. */
-struct cact_val * cact_eval_string(struct cactus *, char *);
-
-void cact_push_frame(struct cactus *);
-void cact_pop_frame(struct cactus *);
-struct cact_stack_frame * cact_current_frame(struct cactus *);
+void cact_def_global(struct cactus *, char *, struct cact_val);
 
 #endif // __CACT_CORE_H__
 

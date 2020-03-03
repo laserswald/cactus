@@ -1,17 +1,7 @@
+#include "number.h"
 
-
-struct cact_rat {
-    z_t num;
-    z_t den;
-};
-
-struct cact_cplx {
-	struct cact_rat *real;
-	struct cact_rat *imag;
+bool
+cact_is_number(struct cact_val x)
+{
+    return cact_is_fixnum(x) || cact_is_flonum(x);
 }
-
-struct cact_num {
-
-};
-
-struct cact_rat cact_num_div()

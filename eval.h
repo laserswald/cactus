@@ -12,5 +12,11 @@ struct cact_val special_quote(struct cactus *, struct cact_val);
 
 struct cact_val cact_eval(struct cactus *, struct cact_val);
 
+/* Evaluate a file using the interpreter. */
+struct cact_val cact_eval_file(struct cactus *, FILE *);
+
+/* Evaluate a string using the interpreter. */
+struct cact_val cact_eval_string(struct cactus *, char *);
+
 #endif // cact_eval_h_INCLUDED
 

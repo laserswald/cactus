@@ -50,10 +50,10 @@ cact_set_car(struct cactus *cact, struct cact_val p, struct cact_val x)
 
 /* Set the cdr of a pair. */
 struct cact_val
-cact_set_cdr(struct cactus *cact, struct cact_val x)
+cact_set_cdr(struct cactus *cact, struct cact_val p, struct cact_val x)
 {
-    if (! cact_is_pair(x)) {
-        return cact_make_error(cact, "Not a pair: ", x);
+    if (! cact_is_pair(p)) {
+        return cact_make_error(cact, "Not a pair: ", p);
     }
 
     struct cact_pair p = x.obj->as.pair;
@@ -90,8 +90,8 @@ cact_assoc(cact_val *key, cact_val *alist)
     return assoc(key, cdr(alist));
 }
 
-cact_val *
-append(cact_val *l, cact_val *x)
+struct cact_val
+cact_append(struct cactus *cact, struct cact_val *l, struct cact_val *x)
 {
     if (!l)
         return cons(x, NULL);
@@ -137,4 +137,11 @@ define(cact_env *e, cact_val *key, cact_val *val)
     } else {
         e->list = acons(key, val, e->list);
     }
+}
+unsigned int length(cact_val *l) {
+    unsigned int len = 0;
+    LIST_FOR_EACH(l, p) {
+        len++;
+    }
+    return len;
 }

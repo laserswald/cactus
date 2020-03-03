@@ -2,30 +2,43 @@
 #include "write.h"
 #include "sexp.h"
 #include "env.h"
+#include "store.h"
+#include "core.h"
+
+/* Create an environment. */
+struct cact_val
+cact_make_env(struct cactus *cact, cact_env *parent)
+{
+	cact_val v;
+	v.type = CACT_TYPE_OBJ;
+	v.as.object = cact_store_allocate(&cact->store);
+	cact_env_init(&v.as.object->as.env, parent);
+    return v;
+}
 
 void
-envinit(cact_env *e, cact_env *parent)
+cact_env_init(struct cact_env *e, struct cact_env *parent)
 {
     e->parent = parent;
 }
 
 /* 
- * Look up the key in the environment and return the associated sexp
- * or null. 
+ * Look up the key in the environment and return it, or raise an error
  */
-cact_val *
-envlookup(cact_env *e, cact_val *key)
+struct cact_val
+cact_env_lookup(struct cact_env *e, struct cact_val key)
 {
-    if (!e) return NULL;
+    if (!e) 
+	    return CACT_NULL_VAL;
 
-    cact_val *found_kv = assoc(key, e->list);
+    struct cact_val found_kv = cact_assoc(key, e->list);
 
-    if (!found_kv && e->parent) {
-        found_kv = envlookup(e->parent, key);
+    if (cact_is_null(found_kv) && e->parent) {
+        found_kv = cact_env_lookup(e->parent, key);
     }
 
-    if (!found_kv) {
-        return NULL;
+    if (cact_is_null(found_kv)) {
+        return cact_make_error("Symbol not defined", key);
     }
 
     return found_kv;
@@ -36,34 +49,34 @@ envlookup(cact_env *e, cact_val *key)
  * assignment.
  */
 int 
-envadd(cact_env *e, cact_val *key, cact_val *val)
+cact_env_define(struct cactus *cact, cact_env *e, cact_val key, cact_val val)
 {
     if (!e)
         return -1;
 
-    cact_val *found_kv = assoc(key, e->list);
+    cact_val found_kv = cact_assoc(key, e->list);
 
-    if (found_kv)
+    if (cact_is_null(found_kv)) {
         return -2;
+    }
 
-    e->list = acons(key, val, e->list);
+    e->list = cact_acons(cact, key, val, e->list);
 
     return 0;
 }
 
 /* Assign the key to the value, ensuring the key already exists. */
 int 
-envset(cact_env *e, cact_val *key, cact_val *val)
+cact_env_set(cact_env *e, cact_val key, cact_val val)
 {
     if (!e)
         return -1;
 
-    cact_val *found_kv = envlookup(e, key);
+    cact_val found_kv = cact_env_lookup(e, key);
 
-    if (! found_kv)
-        return -2;
+    if (cact_is_null(found_kv)) return -2;
 
-    found_kv->p.cdr = val;
+    cact_set_cdr(found_kv, val);
 
     return 0;
 }

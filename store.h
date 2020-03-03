@@ -5,15 +5,12 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-
 /* Bookkeeping data for items that live in the store. */
 struct cact_store_data {
     struct cact_arena *arena;
     size_t place;
     int marked;
 };
-
-#include "obj.h"
 
 struct cact_arena {
     void *data;
@@ -32,7 +29,9 @@ struct cact_store {
 bool cact_arena_has(struct cact_arena*, void*);
 void cact_arena_set_init(struct cact_arena_set *, size_t);
 void cact_store_init(struct cact_store*);
-struct cact_obj cact_store_allocate(struct cact_store*, enum cact_obj_type);
+
+#include "obj.h"
+struct cact_obj *cact_store_allocate(struct cact_store*);
 
 #endif // CACT_STORE_H
 

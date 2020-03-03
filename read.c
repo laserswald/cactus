@@ -3,11 +3,13 @@
 #include <assert.h>
 #include <string.h>
 
+#include "core.h"
 #include "read.h"
 #include "debug.h"
 #include "sexp.h"
 #include "utils.h"
 #include "sym.h"
+#include "str.h"
 
 void cact_str_coords_init(struct cact_str_coords *cds)
 {
@@ -255,7 +257,7 @@ printtokstream(struct cact_lexer *l)
 }
 
 /* Convert a lexeme to a symbol. */
-cact_val*
+struct cact_val
 lextosym(struct cactus *cact, struct cact_lexeme lx)
 {
 	char* sym = strslice(lx.st, &lx.st[lx.sz]);
@@ -263,61 +265,61 @@ lextosym(struct cactus *cact, struct cact_lexeme lx)
 }
 
 /* Convert a lexeme to an integer. */
-cact_val*
+struct cact_val
 lextoint(struct cact_lexeme lx)
 {
 	char *end = lx.st;
 	long i = strtol(lx.st, &end, 10);
-	return cact_make_integer(i);
+	return CACT_FIX_VAL(i);
 }
 
 /* Convert a lexeme to a string. */
-cact_val*
+struct cact_val
 lextostr(struct cact_lexeme lx)
 {
 	return cact_make_string(strslice(lx.st + 1, &lx.st[lx.sz - 1]));
 }
 
 /* Convert a lexeme to a boolean. */
-cact_val* 
+struct cact_val
 lextobool(struct cact_lexeme lx) 
 {
 	if (strncmp(lx.st, "#t", 2) == 0 || strncmp(lx.st, "#true", 5) == 0) {
-		return cact_make_boolean(true);
+		return CACT_BOOL_VAL(true);
 	} else if (strncmp(lx.st, "#f", 2) == 0 || strncmp(lx.st, "#false", 6) == 0) {
-		return cact_make_boolean(false);
+		return CACT_BOOL_VAL(false);
 	}
-	return cact_make_error("Improperly formatted boolean.", NULL);
+	return cact_make_error("Improperly formatted boolean.", CACT_NULL_VAL);
 }
 
 /* Read a list from the given lexer and fill the cact_val with it. */
 int 
-readlist(struct cactus *cact, cact_val **r) 
+readlist(struct cactus *cact, struct cact_val *r) 
 {
-    	struct cact_lexer *l = &cact->lexer;
+	struct cact_lexer *l = &cact->lexer;
 	int status;
-	*r = NULL;
+	*r = CACT_NULL_VAL;
 
 	struct cact_lexeme open_paren = peeklex(l);
 
 	if (open_paren.t != CACT_TOKEN_OPEN_PAREN) {
-		*r = cact_make_error("readlist: somehow didn't get open paren", NULL);
+		*r = cact_make_error("readlist: somehow didn't get open paren", CACT_NULL_VAL);
 		return CACT_READ_OTHER_ERROR;
 	}
 
 	nextlex(l);
 
 	while (! peekistok(l, CACT_TOKEN_CLOSE_PAREN) && peeklex(l).t > 0) {
-		cact_val *e = NULL;
+		cact_val e;
 		status = cact_read(cact, &e);
 		if (status != CACT_READ_OK) {
 			return status;
 		}
-		if (e == &undefined) {
-			*r = cact_make_error("Unexpected ending", NULL);
+		if (cact_is_undef(e)) {
+			*r = cact_make_error("Unexpected ending", CACT_NULL_VAL);
 			return CACT_READ_OTHER_ERROR;
 		}
-		*r = append(*r, e);
+		*r = cact_append(cact, *r, e);
 		expecttok(l, CACT_TOKEN_WHITESPACE);
 	}
 
@@ -325,8 +327,9 @@ readlist(struct cactus *cact, cact_val **r)
 		*r = cact_make_error(
 			"readlist: somehow didn't get close paren", 
 			cact_make_pair(
-				cact_make_integer(open_paren.coords.line),
-				cact_make_integer(open_paren.coords.col)
+				cact,
+				CACT_FIX_VAL(open_paren.coords.line),
+				CACT_FIX_VAL(open_paren.coords.col)
 			)
 		);
 		return CACT_READ_UNMATCHED_CHAR;
@@ -336,10 +339,11 @@ readlist(struct cactus *cact, cact_val **r)
 }
 
 /* Read the next valid s-expression from the lexer. */
-enum cact_read_status cact_read(struct cactus* cact, struct cact_val** ret) 
+enum cact_read_status 
+cact_read(struct cactus* cact, struct cact_val* ret) 
 {
 	int status = CACT_READ_IN_PROGRESS;
-	*ret = (cact_val*) NULL;
+	*ret = CACT_NULL_VAL;
 	struct cact_lexer *l = &cact->lexer;
 
 	struct cact_lexeme lx;
@@ -388,10 +392,10 @@ enum cact_read_status cact_read(struct cactus* cact, struct cact_val** ret)
 
 		case CACT_TOKEN_SINGLE_QUOTE:
 			nextlex(l);
-			cact_val* quoted;
+			cact_val quoted;
 			status = cact_read(cact, &quoted);
-			cact_val* q = cact_get_symbol(cact, "quote");
-			*ret = cact_make_pair(q, quoted);
+			cact_val q = cact_get_symbol(cact, "quote");
+			*ret = cact_make_pair(cact, q, quoted);
 			status = CACT_READ_OK;
 			break;
 
