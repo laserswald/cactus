@@ -1,4 +1,4 @@
-# cactus
+# 🌵cactus
 _a scheme implementation with spines_
 
 ## installation
