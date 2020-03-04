@@ -9,7 +9,7 @@ typedef struct cact_symbol {
     char* sym;
 } cact_symbol;
 
-TABLE_DECL(cact_symbol_table, struct cact_symbol)
+TABLE_DECL(cact_symbol_table, char *, struct cact_symbol)
 
 int symcmp(cact_symbol *a, cact_symbol *b);
 
