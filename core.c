@@ -4,10 +4,11 @@
 
 #include "core.h"
 
-void cact_init(struct cactus *cact)
+void
+cact_init(struct cactus *cact)
 {
 	// Begin by initializing the symbol table
-	TABLE_INIT(&cact->interned_syms);
+	TABLE_INIT(&cact->interned_syms, table_string_hash, table_string_cmp);
 
 	cact_store_init(&cact->store);
 
@@ -27,7 +28,7 @@ cact_def_global(struct cactus *cact, char *name, struct cact_val val)
 void
 cact_make_builtins(struct cactus *cact, struct cact_builtin *builtins, size_t len) 
 {
-    int i;
+    size_t i;
     for (i = 0; i < len; i++) {
 	    struct cact_val builtin = cact_make_native_proc(cact, builtins[i].fn);
 	    cact_def_global(cact, builtins[i].name, builtin);
@@ -35,7 +36,8 @@ cact_make_builtins(struct cactus *cact, struct cact_builtin *builtins, size_t le
 }
 
 /* Finalize a cactus interpreter. */
-void cact_finish(struct cactus *cact)
+void
+cact_finish(struct cactus *cact)
 {
 	// cact_store_finish(&cact->store);
 }

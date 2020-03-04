@@ -17,47 +17,26 @@
 #ifndef TABLE_H
 #define TABLE_H
 
+#include <stdint.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <string.h>
+
 /*
- * This file defines a hash table data structure with string keys.
+ * This file defines a hash table and a hash set.
  * 
  * A hash table is an implementation of an associative array that uses
  * a hashing function on the given key to index into a normal array with
  * integer indices. This makes lookup for hash tables O(1) in the best case.
  */ 
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
-
-#define TABLE_STATUS_OK 0
-#define TABLE_STATUS_ERROR 1
-#define TABLE_SENTINEL_KEY (void*)0xDEADBEEF /* Change this if there's a problem */
-
-#define TABLE_INITIALIZER {NULL, 0, 0}
-
-#define TABLE_DECL(n, c) \
-struct n##_hash_entry { \
-	char	*key; \
-	c	*val; \
-}; \
-struct n { \
-	struct n##_hash_entry *entries; \
-	unsigned int count; \
-	size_t available; \
-};
-
-#define TABLE_SPACE(tab) ((tab)->available)
-
-#define TABLE_INITIAL_SIZE 8
-
 /* A relatively good hashing function. */
-static inline uint32_t 
+static inline unsigned int
 fnv1a_hash(const char* key, const size_t length) 
 {
-	uint32_t hash = 2166136261u;
+	unsigned int hash = 2166136261u;
 
-	for (int i = 0; i < length; i++) {
+	for (size_t i = 0; i < length; i++) {
 		hash ^= key[i];
 		hash *= 16777619;
 	}
@@ -65,10 +44,67 @@ fnv1a_hash(const char* key, const size_t length)
 	return hash;
 } 
 
-#define TABLE_INIT(t) do { \
+static unsigned int
+table_string_hash(void *key)
+{
+	return fnv1a_hash(key, strlen(key));
+}
+
+static unsigned int
+table_string_cmp(void *a, void *b)
+{
+	return strcmp((const char*) a, (const char*) b);
+}
+
+typedef unsigned int (*table_hash_fn)(void *);
+typedef unsigned int (*table_cmp_fn)(void *, void *);
+
+#define TABLE_INITIAL_SIZE 8
+
+#define TABLE_STATUS_OK    0
+#define TABLE_STATUS_NOT_FOUND -1
+#define TABLE_STATUS_ERROR -2
+
+#define TABLE_ENTRY_EMPTY 0
+#define TABLE_ENTRY_DELETED 1
+#define TABLE_ENTRY_FILLED 2
+
+#define TABLE_FIND_AVAILABLE 0
+#define TABLE_FIND_VALUE 1
+
+#define TABLE_ENTRY(name) name##_table_entry
+
+#define TABLE_DECL(name, keytype, valtype) \
+struct TABLE_ENTRY(name) { \
+	keytype key; \
+	valtype val; \
+	int state; \
+};\
+struct name { \
+	struct TABLE_ENTRY(name) *entries; \
+	unsigned int count; \
+	size_t available; \
+	table_hash_fn hashfn; \
+	table_cmp_fn cmpfn; \
+};
+
+#define STRING_TABLE_DECL(name, valtype) \
+	TABLE_DECL(name, char*, valtype)
+
+#define STRING_TABLE_INIT(name)	  \
+	TABLE_INIT(name, table_string_hash, table_string_cmp)
+
+#define TABLE_SPACE(tab)                 (tab->available)
+#define TABLE_FIND(name, tab, key)	 name##_TABLE_FIND((tab), (key))
+#define TABLE_ENTER(name, tab, key, val) name##_TABLE_ENTER(tab, key, val)
+#define TABLE_REMOVE(name, tab, key)	 name##_TABLE_REMOVE(tab, key)
+
+#define TABLE_INIT(t, hash, cmp) do { \
 	(t)->count = 0; \
 	(t)->entries = NULL; \
 	(t)->available = 0; \
+	(t)->hashfn = hash; \
+	(t)->cmpfn = cmp; \
 } while (0)
 
 #define TABLE_CLEAR(tab) do { \
@@ -84,141 +120,123 @@ fnv1a_hash(const char* key, const size_t length)
 		 __table_foreach_idx++, e = &(h)->entries[__table_foreach_idx]) 
 
 /* Generate functions for the hash table. */
-#define TABLE_GENERATE(n, c) \
+#define TABLE_GENERATE(name, keytype, valtype) \
 \
 /* Find the first filled entry with the key. */ \
-static struct n##_hash_entry * \
-n##_HASH_FIND_FILLED_ENTRY(struct n##_hash_entry *entries, size_t entrieslen, char *str) \
+static int \
+name##_TABLE_FIND_INDEX(struct name *table, keytype key, int what) \
 { \
-	assert(str); \
-	if (! entries || entrieslen == 0) { \
-		return NULL; \
+	if (! table) { \
+		return TABLE_STATUS_ERROR; \
 	} \
-	uint32_t bucket_idx = fnv1a_hash(str, strlen(str)) % entrieslen; \
+	uint32_t bucket_idx = (table)->hashfn(key) % TABLE_SPACE(table); \
 	uint32_t current = bucket_idx; \
-	struct n##_hash_entry *found = NULL; \
+	int first_sentinel = -1; \
 	do { \
 		assert(current >= 0); \
-		assert(current < entrieslen); \
-		found = &(entries[current]); \
-    		if (found->key == NULL) { \
-			break; \
-		} else if (strcmp(found->key, str) == 0) { \
-			return found; \
+		assert(current < TABLE_SPACE(table)); \
+		struct TABLE_ENTRY(name) found = table->entries[current]; \
+		switch (found.state) {\
+		case TABLE_ENTRY_EMPTY: \
+		    return (first_sentinel != -1) ? first_sentinel : current; \
+		case TABLE_ENTRY_DELETED: \
+		    if (first_sentinel == -1) first_sentinel = current; \
+		    break; \
+		case TABLE_ENTRY_FILLED: \
+		    if (what == TABLE_FIND_VALUE && table->cmpfn(&found.key, &key) == 0) return current; \
+		    break; \
 		} \
-		current = (current + 1) % entrieslen; \
+		current = (current + 1) % TABLE_SPACE(table); \
 	} while (current != bucket_idx); \
-	return NULL; \
-} \
-\
-/* Find the bucket corresponding to the key. */ \
-static struct n##_hash_entry * \
-n##_HASH_FIND_EMPTY_ENTRY(struct n##_hash_entry *entries, size_t entrieslen, char *str) \
-{ \
-	assert(str); \
-	if (! entries || entrieslen == 0) { \
-		return NULL; \
-	} \
-	uint32_t bucket_idx = fnv1a_hash(str, strlen(str)) % entrieslen; \
-	uint32_t current = bucket_idx; \
-	struct n##_hash_entry *found = NULL; \
-	do { \
-		assert(current >= 0); \
-		assert(current < entrieslen); \
-		found = &(entries[current]); \
-		if (found->key == NULL || found->key == TABLE_SENTINEL_KEY) { \
-			return found; \
-		} \
-		current = (current + 1) % entrieslen; \
-	} while (current != bucket_idx); \
-	return NULL; \
+	return TABLE_STATUS_NOT_FOUND; \
 } \
 \
 /* Ensure the hasstruct nle has the given size. */ \
 static int \
-n##_HASH_GROW(struct n *tab, size_t newsize) \
+name##_TABLE_GROW(struct name *tab, size_t newsize) \
 { \
-	struct n##_hash_entry *newentries; \
 	if (! tab) { \
 		return TABLE_STATUS_ERROR; \
 	} \
 	if (newsize < (tab)->available) { \
 		return TABLE_STATUS_OK; \
 	} \
-	newentries = calloc(newsize, sizeof(struct n##_hash_entry)); \
-	struct n##_hash_entry *p, *newp; \
-	for (size_t i = 0; i < (tab)->available; i++) { \
-		p = &((tab)->entries[i]); \
-		if (p->key == NULL || p->key == TABLE_SENTINEL_KEY) { \
+	struct TABLE_ENTRY(name) *old_entries = tab->entries; \
+	size_t old_entries_len = tab->available; \
+	tab->entries = calloc(newsize, sizeof(struct TABLE_ENTRY(name))); \
+	tab->available = newsize; \
+	struct TABLE_ENTRY(name) p; \
+	for (size_t i = 0; i < old_entries_len; i++) { \
+		p = old_entries[i]; \
+		if (p.state != TABLE_ENTRY_FILLED) { \
 			continue; \
 		} \
-		newp = n##_HASH_FIND_EMPTY_ENTRY(newentries, newsize, p->key); \
-		assert(newp); /* This should never be null */ \
-		newp->key = p->key; \
-		newp->val = p->val; \
+		int index = name##_TABLE_FIND_INDEX(tab, p.key, TABLE_FIND_AVAILABLE); \
+		tab->entries[index].key = p.key; \
+		tab->entries[index].val = p.val; \
+		tab->entries[index].state = TABLE_ENTRY_FILLED; \
 	} \
-	free((tab)->entries); \
-	(tab)->entries = newentries; \
-	(tab)->available = newsize; \
+	free(old_entries); \
 	return TABLE_STATUS_OK; \
 } \
  \
-/* Find a value by a key. */ \
-c *\
-n##_HASH_FIND(struct n *h, char *str) \
+/* Find a value by a key, or returns NULL. */ \
+valtype* \
+name##_TABLE_FIND(struct name *h, keytype key) \
 { \
 	if (! h) { \
 		return NULL; \
 	} \
-	struct n##_hash_entry *found = n##_HASH_FIND_FILLED_ENTRY(h->entries, h->available, str); \
-	if (! found || ! found->key) { \
+	int bucketidx = name##_TABLE_FIND_INDEX(h, key, TABLE_FIND_VALUE); \
+	if (bucketidx < 0) { \
 		return NULL; \
 	} \
-	return found->val; \
+	struct TABLE_ENTRY(name) *found = &(h->entries[bucketidx]); \
+	if (! found->key) { \
+		return NULL; \
+	} \
+	return &(found->val); \
 } \
  \
 int \
-n##_HASH_ENTER(struct n *h, char *str, c *item) \
+name##_TABLE_ENTER(struct name *h, keytype key, valtype item) \
 { \
 	if (! h) { \
 		return TABLE_STATUS_ERROR; \
 	} \
-	struct n##_hash_entry *found = n##_HASH_FIND_EMPTY_ENTRY(h->entries, h->available, str); \
-	if (! found) { \
-		if (h->available == 0) { \
-			n##_HASH_GROW(h, 8); \
+	int index = name##_TABLE_FIND_INDEX(h, key, TABLE_FIND_VALUE); \
+	if (index == TABLE_STATUS_NOT_FOUND) { \
+		if (h->available < TABLE_INITIAL_SIZE) { \
+			name##_TABLE_GROW(h, TABLE_INITIAL_SIZE); \
 		} else { \
-			n##_HASH_GROW(h, h->available * 2); \
+			name##_TABLE_GROW(h, h->available * 2); \
 		} \
-		found = n##_HASH_FIND_EMPTY_ENTRY(h->entries, h->available, str); \
+		index = name##_TABLE_FIND_INDEX(h, key, TABLE_FIND_VALUE); \
 	} \
-	assert(found); \
-	found->key = str; \
-	found->val = item; \
+	assert(index >= 0); \
+	h->entries[index].key = key; \
+	h->entries[index].val = item; \
+	h->entries[index].state = TABLE_ENTRY_FILLED; \
 	h->count++; \
 	return TABLE_STATUS_OK; \
 } \
 \
 int \
-n##_HASH_REMOVE(struct n *h, char *str) \
+name##_TABLE_REMOVE(struct name *h, keytype key) \
 { \
 	if (! h) { \
 		return TABLE_STATUS_ERROR; \
 	} \
-	struct n##_hash_entry *found = n##_HASH_FIND_FILLED_ENTRY(h->entries, h->available, str); \
-	if (! found) { \
+	int index = name##_TABLE_FIND_INDEX(h, key, TABLE_FIND_VALUE); \
+	if (index < 0) { \
 		return TABLE_STATUS_OK; \
 	} \
-	assert(found); \
-	found->key = TABLE_SENTINEL_KEY; \
-	found->val = NULL; \
-	h->count--; \
+	struct TABLE_ENTRY(name) found = h->entries[index]; \
+	if (found.state == TABLE_ENTRY_FILLED) { \
+		found.state = TABLE_ENTRY_DELETED; \
+	} \
 	return TABLE_STATUS_OK; \
 }
 
-#define TABLE_FIND(name, tab, key)		 name##_HASH_FIND((tab), (key))
-#define TABLE_ENTER(name, tab, key, val) name##_HASH_ENTER(tab, key, val)
-#define TABLE_REMOVE(name, tab, key)	 name##_HASH_REMOVE(tab, key)
-
-#endif // HASH_H
+#endif // TABLE_H
 
