@@ -2,7 +2,7 @@
 #define write_h_INCLUDED
 
 #include <stdio.h>
-#include "sexp.h"
+#include "cactus/val.h"
 
 int fprint_list(FILE *f, cact_val x);
 int fprint_sexp(FILE *f, cact_val x);

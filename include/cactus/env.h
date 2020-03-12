@@ -1,7 +1,7 @@
 #ifndef __ENV_H__
 #define __ENV_H__
 
-#include "sexp.h"
+#include "cactus/val.h"
 
 struct cact_env {
     struct cact_env *parent;

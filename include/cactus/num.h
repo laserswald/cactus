@@ -1,7 +1,7 @@
 #ifndef NUMBER_H
 #define NUMBER_H
 
-#include "sexp.h"
+#include "cactus/val.h"
 
 DEFINE_VALUE_CONV(CACT_TYPE_FLONUM,  double, cact_to_double, flonum)
 DEFINE_VALUE_CONV(CACT_TYPE_FIXNUM,  int,    cact_to_long,   fixnum)

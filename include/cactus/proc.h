@@ -1,8 +1,8 @@
 #ifndef CACT_PROC_H
 #define CACT_PROC_H
 
-#include "sexp.h"
-#include "env.h"
+#include "cactus/val.h"
+#include "cactus/env.h"
 
 struct cactus;
 

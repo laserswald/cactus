@@ -1,1 +1,1 @@
-cc -o $3 -c "$2.c" -Wall -pedantic
+cc -o $3 -c "$2.c" -Wall -pedantic -Iinclude
