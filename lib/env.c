@@ -1,9 +1,12 @@
+
 #include <stdlib.h>
-#include "write.h"
-#include "sexp.h"
-#include "env.h"
-#include "store.h"
-#include "core.h"
+
+#include "cactus/env.h"
+
+#include "cactus/write.h"
+#include "cactus/val.h"
+#include "cactus/store.h"
+#include "cactus/core.h"
 
 /* Create an environment. */
 struct cact_val

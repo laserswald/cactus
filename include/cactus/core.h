@@ -3,10 +3,19 @@
 
 #include <stdio.h>
 
-#include "sexp.h"
-#include "sym.h"
-#include "read.h"
-#include "store.h"
+#include "cactus/env.h"
+#include "cactus/read.h"
+#include "cactus/sym.h"
+#include "cactus/store.h"
+#include "cactus/proc.h"
+
+/**
+ * A structure for quickly adding new native functions.
+ */
+struct cact_builtin {
+    char* name;
+    cact_native_func fn;
+};
 
 /**
  * The core structure for a Cactus interpreter.
@@ -26,6 +35,8 @@ void cact_init(struct cactus *);
 void cact_finish(struct cactus *);
 
 void cact_def_global(struct cactus *, char *, struct cact_val);
+
+void cact_make_builtins(struct cactus *cact, struct cact_builtin *builtins, size_t len);
 
 #endif // __CACT_CORE_H__
 

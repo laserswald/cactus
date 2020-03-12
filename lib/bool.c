@@ -1,4 +1,4 @@
-#include "bool.h"
+#include "cactus/bool.h"
 
 cact_val
 cact_bool_not(cact_val x) 

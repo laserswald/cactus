@@ -1,0 +1,748 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	/a3c87ab5/
+ARRAY_ADD	include/array.h	/^#define ARRAY_ADD(/;"	d
+ARRAY_CLEAR	include/array.h	/^#define ARRAY_CLEAR(/;"	d
+ARRAY_CONCAT	include/array.h	/^#define ARRAY_CONCAT(/;"	d
+ARRAY_DATA	include/array.h	/^#define ARRAY_DATA(/;"	d
+ARRAY_DECL	include/array.h	/^#define ARRAY_DECL(/;"	d
+ARRAY_EMPTY	include/array.h	/^#define ARRAY_EMPTY(/;"	d
+ARRAY_ENSURE	include/array.h	/^#define ARRAY_ENSURE(/;"	d
+ARRAY_EXPAND	include/array.h	/^#define ARRAY_EXPAND(/;"	d
+ARRAY_FIRST	include/array.h	/^#define ARRAY_FIRST(/;"	d
+ARRAY_FREE	include/array.h	/^#define ARRAY_FREE(/;"	d
+ARRAY_FREEALL	include/array.h	/^#define ARRAY_FREEALL(/;"	d
+ARRAY_H	include/array.h	/^#define ARRAY_H$/;"	d
+ARRAY_INIT	include/array.h	/^#define ARRAY_INIT(/;"	d
+ARRAY_INITIALIZER	include/array.h	/^#define ARRAY_INITIALIZER /;"	d
+ARRAY_INITIALSPACE	include/array.h	/^#define ARRAY_INITIALSPACE(/;"	d
+ARRAY_INSERT	include/array.h	/^#define ARRAY_INSERT(/;"	d
+ARRAY_ITEM	include/array.h	/^#define ARRAY_ITEM(/;"	d
+ARRAY_ITEMSIZE	include/array.h	/^#define ARRAY_ITEMSIZE(/;"	d
+ARRAY_LAST	include/array.h	/^#define ARRAY_LAST(/;"	d
+ARRAY_LENGTH	include/array.h	/^#define ARRAY_LENGTH(/;"	d
+ARRAY_REMOVE	include/array.h	/^#define ARRAY_REMOVE(/;"	d
+ARRAY_SET	include/array.h	/^#define ARRAY_SET(/;"	d
+ARRAY_TRUNC	include/array.h	/^#define ARRAY_TRUNC(/;"	d
+BUILTIN_FUNC	include/builtin.h	/^#define BUILTIN_FUNC(/;"	d
+CACT_BOOL_VAL	include/cactus/val.h	/^#define CACT_BOOL_VAL(/;"	d	signature:(p)
+CACT_BOOL_VAL	include/sexp.h	/^#define CACT_BOOL_VAL(/;"	d	signature:(p)
+CACT_BOOL_VAL	src/sexp.c	/^#define CACT_BOOL_VAL(/;"	d	file:	signature:(p)
+CACT_CHAR_VAL	include/cactus/val.h	/^#define CACT_CHAR_VAL(/;"	d	signature:(p)
+CACT_CHAR_VAL	include/sexp.h	/^#define CACT_CHAR_VAL(/;"	d	signature:(p)
+CACT_CHAR_VAL	src/sexp.c	/^#define CACT_CHAR_VAL(/;"	d	file:	signature:(p)
+CACT_FIX_VAL	include/cactus/val.h	/^#define CACT_FIX_VAL(/;"	d	signature:(n)
+CACT_FIX_VAL	include/sexp.h	/^#define CACT_FIX_VAL(/;"	d	signature:(n)
+CACT_FIX_VAL	src/sexp.c	/^#define CACT_FIX_VAL(/;"	d	file:	signature:(n)
+CACT_FLO_VAL	include/cactus/val.h	/^#define CACT_FLO_VAL(/;"	d	signature:(n)
+CACT_FLO_VAL	include/sexp.h	/^#define CACT_FLO_VAL(/;"	d	signature:(n)
+CACT_FLO_VAL	src/sexp.c	/^#define CACT_FLO_VAL(/;"	d	file:	signature:(n)
+CACT_LIST_FOR_EACH_ITEM	include/cactus/pair.h	/^#define CACT_LIST_FOR_EACH_ITEM(/;"	d	signature:(item,list)
+CACT_LIST_FOR_EACH_ITEM	include/pair.h	/^#define CACT_LIST_FOR_EACH_ITEM(/;"	d
+CACT_LIST_FOR_EACH_PAIR	include/cactus/pair.h	/^#define CACT_LIST_FOR_EACH_PAIR(/;"	d	signature:(pair,list)
+CACT_LIST_FOR_EACH_PAIR	include/pair.h	/^#define CACT_LIST_FOR_EACH_PAIR(/;"	d
+CACT_NULL_VAL	include/cactus/val.h	/^#define CACT_NULL_VAL /;"	d
+CACT_NULL_VAL	include/sexp.h	/^#define CACT_NULL_VAL /;"	d
+CACT_NULL_VAL	src/sexp.c	/^#define CACT_NULL_VAL /;"	d	file:
+CACT_NUM_TOKENS	include/read.h	/^    CACT_NUM_TOKENS,$/;"	e	enum:cact_token
+CACT_NUM_TOKENS	src/read.c	/^    CACT_NUM_TOKENS,$/;"	e	enum:cact_token	file:
+CACT_OBJ_ENVIRONMENT	include/cactus/obj.h	/^	CACT_OBJ_ENVIRONMENT,$/;"	e	enum:cact_obj_type
+CACT_OBJ_ENVIRONMENT	include/obj.h	/^	CACT_OBJ_ENVIRONMENT,$/;"	e	enum:cact_obj_type
+CACT_OBJ_ERROR	include/cactus/obj.h	/^	CACT_OBJ_ERROR,$/;"	e	enum:cact_obj_type
+CACT_OBJ_ERROR	include/obj.h	/^	CACT_OBJ_ERROR,$/;"	e	enum:cact_obj_type
+CACT_OBJ_H	include/cactus/obj.h	/^#define CACT_OBJ_H$/;"	d
+CACT_OBJ_H	include/obj.h	/^#define CACT_OBJ_H$/;"	d
+CACT_OBJ_PAIR	include/cactus/obj.h	/^	CACT_OBJ_PAIR,$/;"	e	enum:cact_obj_type
+CACT_OBJ_PAIR	include/obj.h	/^	CACT_OBJ_PAIR,$/;"	e	enum:cact_obj_type
+CACT_OBJ_PROCEDURE	include/cactus/obj.h	/^	CACT_OBJ_PROCEDURE,$/;"	e	enum:cact_obj_type
+CACT_OBJ_PROCEDURE	include/obj.h	/^	CACT_OBJ_PROCEDURE,$/;"	e	enum:cact_obj_type
+CACT_OBJ_STRING	include/cactus/obj.h	/^	CACT_OBJ_STRING,$/;"	e	enum:cact_obj_type
+CACT_OBJ_STRING	include/obj.h	/^	CACT_OBJ_STRING,$/;"	e	enum:cact_obj_type
+CACT_OBJ_SYMBOL	include/cactus/obj.h	/^	CACT_OBJ_SYMBOL,$/;"	e	enum:cact_obj_type
+CACT_OBJ_SYMBOL	include/obj.h	/^	CACT_OBJ_SYMBOL,$/;"	e	enum:cact_obj_type
+CACT_OBJ_VAL	include/cactus/val.h	/^#define CACT_OBJ_VAL(/;"	d	signature:(p)
+CACT_OBJ_VAL	include/sexp.h	/^#define CACT_OBJ_VAL(/;"	d	signature:(p)
+CACT_OBJ_VAL	src/sexp.c	/^#define CACT_OBJ_VAL(/;"	d	file:	signature:(p)
+CACT_PAIR_H	include/cactus/pair.h	/^#define CACT_PAIR_H$/;"	d
+CACT_PAIR_H	include/pair.h	/^#define CACT_PAIR_H$/;"	d
+CACT_PROC_H	include/cactus/proc.h	/^#define CACT_PROC_H$/;"	d
+CACT_PROC_H	include/proc.h	/^#define CACT_PROC_H$/;"	d
+CACT_READ_END_OF_FILE	include/read.h	/^    CACT_READ_END_OF_FILE,$/;"	e	enum:cact_read_status
+CACT_READ_END_OF_FILE	src/read.c	/^    CACT_READ_END_OF_FILE,$/;"	e	enum:cact_read_status	file:
+CACT_READ_H	include/read.h	/^#define CACT_READ_H$/;"	d
+CACT_READ_IN_PROGRESS	include/read.h	/^	CACT_READ_IN_PROGRESS,$/;"	e	enum:cact_read_status
+CACT_READ_IN_PROGRESS	src/read.c	/^	CACT_READ_IN_PROGRESS,$/;"	e	enum:cact_read_status	file:
+CACT_READ_OK	include/read.h	/^    CACT_READ_OK,$/;"	e	enum:cact_read_status
+CACT_READ_OK	src/read.c	/^    CACT_READ_OK,$/;"	e	enum:cact_read_status	file:
+CACT_READ_OTHER_ERROR	include/read.h	/^    CACT_READ_OTHER_ERROR,$/;"	e	enum:cact_read_status
+CACT_READ_OTHER_ERROR	src/read.c	/^    CACT_READ_OTHER_ERROR,$/;"	e	enum:cact_read_status	file:
+CACT_READ_UNMATCHED_CHAR	include/read.h	/^    CACT_READ_UNMATCHED_CHAR,$/;"	e	enum:cact_read_status
+CACT_READ_UNMATCHED_CHAR	src/read.c	/^    CACT_READ_UNMATCHED_CHAR,$/;"	e	enum:cact_read_status	file:
+CACT_REC_H	include/rec.h	/^#define CACT_REC_H$/;"	d
+CACT_STORE_H	include/cactus/store.h	/^#define CACT_STORE_H$/;"	d
+CACT_STORE_H	include/store.h	/^#define CACT_STORE_H$/;"	d
+CACT_TOKEN_BACKQUOTE	include/read.h	/^    CACT_TOKEN_BACKQUOTE,$/;"	e	enum:cact_token
+CACT_TOKEN_BACKQUOTE	src/read.c	/^    CACT_TOKEN_BACKQUOTE,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_BOOLEAN	include/read.h	/^    CACT_TOKEN_BOOLEAN,$/;"	e	enum:cact_token
+CACT_TOKEN_BOOLEAN	src/read.c	/^    CACT_TOKEN_BOOLEAN,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_BYTESTRING_OPEN	include/read.h	/^    CACT_TOKEN_BYTESTRING_OPEN,$/;"	e	enum:cact_token
+CACT_TOKEN_BYTESTRING_OPEN	src/read.c	/^    CACT_TOKEN_BYTESTRING_OPEN,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_CHARACTER	include/read.h	/^    CACT_TOKEN_CHARACTER,$/;"	e	enum:cact_token
+CACT_TOKEN_CHARACTER	src/read.c	/^    CACT_TOKEN_CHARACTER,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_CLOSE_PAREN	include/read.h	/^    CACT_TOKEN_CLOSE_PAREN,$/;"	e	enum:cact_token
+CACT_TOKEN_CLOSE_PAREN	src/read.c	/^    CACT_TOKEN_CLOSE_PAREN,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_COMMA	include/read.h	/^    CACT_TOKEN_COMMA,$/;"	e	enum:cact_token
+CACT_TOKEN_COMMA	src/read.c	/^    CACT_TOKEN_COMMA,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_COMMA_SPLICE	include/read.h	/^    CACT_TOKEN_COMMA_SPLICE,$/;"	e	enum:cact_token
+CACT_TOKEN_COMMA_SPLICE	src/read.c	/^    CACT_TOKEN_COMMA_SPLICE,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_COMMENT	include/read.h	/^    CACT_TOKEN_COMMENT,$/;"	e	enum:cact_token
+CACT_TOKEN_COMMENT	src/read.c	/^    CACT_TOKEN_COMMENT,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_DOT	include/read.h	/^    CACT_TOKEN_DOT,$/;"	e	enum:cact_token
+CACT_TOKEN_DOT	src/read.c	/^    CACT_TOKEN_DOT,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_END	include/read.h	/^    CACT_TOKEN_END = -1,$/;"	e	enum:cact_token
+CACT_TOKEN_END	src/read.c	/^    CACT_TOKEN_END = -1,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_ERROR	include/read.h	/^    CACT_TOKEN_ERROR = -2,$/;"	e	enum:cact_token
+CACT_TOKEN_ERROR	src/read.c	/^    CACT_TOKEN_ERROR = -2,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_FLOAT	include/read.h	/^    CACT_TOKEN_FLOAT,$/;"	e	enum:cact_token
+CACT_TOKEN_FLOAT	src/read.c	/^    CACT_TOKEN_FLOAT,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_IDENTIFIER	include/read.h	/^    CACT_TOKEN_IDENTIFIER,$/;"	e	enum:cact_token
+CACT_TOKEN_IDENTIFIER	src/read.c	/^    CACT_TOKEN_IDENTIFIER,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_INTEGER	include/read.h	/^    CACT_TOKEN_INTEGER,$/;"	e	enum:cact_token
+CACT_TOKEN_INTEGER	src/read.c	/^    CACT_TOKEN_INTEGER,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_NOTHING	include/read.h	/^    CACT_TOKEN_NOTHING = 0,$/;"	e	enum:cact_token
+CACT_TOKEN_NOTHING	src/read.c	/^    CACT_TOKEN_NOTHING = 0,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_OPEN_PAREN	include/read.h	/^    CACT_TOKEN_OPEN_PAREN,$/;"	e	enum:cact_token
+CACT_TOKEN_OPEN_PAREN	src/read.c	/^    CACT_TOKEN_OPEN_PAREN,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_SINGLE_QUOTE	include/read.h	/^    CACT_TOKEN_SINGLE_QUOTE,$/;"	e	enum:cact_token
+CACT_TOKEN_SINGLE_QUOTE	src/read.c	/^    CACT_TOKEN_SINGLE_QUOTE,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_STRING	include/read.h	/^    CACT_TOKEN_STRING,$/;"	e	enum:cact_token
+CACT_TOKEN_STRING	src/read.c	/^    CACT_TOKEN_STRING,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_VECTOR_OPEN	include/read.h	/^    CACT_TOKEN_VECTOR_OPEN,$/;"	e	enum:cact_token
+CACT_TOKEN_VECTOR_OPEN	src/read.c	/^    CACT_TOKEN_VECTOR_OPEN,$/;"	e	enum:cact_token	file:
+CACT_TOKEN_WHITESPACE	include/read.h	/^    CACT_TOKEN_WHITESPACE,$/;"	e	enum:cact_token
+CACT_TOKEN_WHITESPACE	src/read.c	/^    CACT_TOKEN_WHITESPACE,$/;"	e	enum:cact_token	file:
+CACT_TYPE_BOOL	include/cactus/val.h	/^    CACT_TYPE_BOOL,$/;"	e	enum:cact_type
+CACT_TYPE_BOOL	include/sexp.h	/^    CACT_TYPE_BOOL,$/;"	e	enum:cact_type
+CACT_TYPE_BOOL	src/sexp.c	/^	CACT_TYPE_BOOL,$/;"	e	enum:cact_type	file:
+CACT_TYPE_CHAR	include/cactus/val.h	/^    CACT_TYPE_CHAR,$/;"	e	enum:cact_type
+CACT_TYPE_CHAR	include/sexp.h	/^    CACT_TYPE_CHAR,$/;"	e	enum:cact_type
+CACT_TYPE_CHAR	src/sexp.c	/^	CACT_TYPE_CHAR,$/;"	e	enum:cact_type	file:
+CACT_TYPE_FIXNUM	include/cactus/val.h	/^    CACT_TYPE_FIXNUM,$/;"	e	enum:cact_type
+CACT_TYPE_FIXNUM	include/sexp.h	/^    CACT_TYPE_FIXNUM,$/;"	e	enum:cact_type
+CACT_TYPE_FIXNUM	src/sexp.c	/^	CACT_TYPE_FIXNUM,$/;"	e	enum:cact_type	file:
+CACT_TYPE_FLONUM	include/cactus/val.h	/^    CACT_TYPE_FLONUM,$/;"	e	enum:cact_type
+CACT_TYPE_FLONUM	include/sexp.h	/^    CACT_TYPE_FLONUM,$/;"	e	enum:cact_type
+CACT_TYPE_FLONUM	src/sexp.c	/^	CACT_TYPE_FLONUM,$/;"	e	enum:cact_type	file:
+CACT_TYPE_NULL	include/cactus/val.h	/^    CACT_TYPE_NULL,$/;"	e	enum:cact_type
+CACT_TYPE_NULL	include/sexp.h	/^    CACT_TYPE_NULL,$/;"	e	enum:cact_type
+CACT_TYPE_NULL	src/sexp.c	/^	CACT_TYPE_NULL,$/;"	e	enum:cact_type	file:
+CACT_TYPE_OBJ	include/cactus/val.h	/^    CACT_TYPE_OBJ,$/;"	e	enum:cact_type
+CACT_TYPE_OBJ	include/sexp.h	/^    CACT_TYPE_OBJ,$/;"	e	enum:cact_type
+CACT_TYPE_OBJ	src/sexp.c	/^	CACT_TYPE_OBJ,$/;"	e	enum:cact_type	file:
+CACT_TYPE_SYM	include/sexp.h	/^    CACT_TYPE_SYM,$/;"	e	enum:cact_type
+CACT_TYPE_SYM	src/sexp.c	/^	CACT_TYPE_SYM,$/;"	e	enum:cact_type	file:
+CACT_TYPE_UNDEF	include/cactus/val.h	/^	CACT_TYPE_UNDEF,$/;"	e	enum:cact_type
+CACT_TYPE_UNDEF	include/sexp.h	/^	CACT_TYPE_UNDEF,$/;"	e	enum:cact_type
+CACT_TYPE_UNDEF	src/sexp.c	/^	CACT_TYPE_UNDEF,$/;"	e	enum:cact_type	file:
+CACT_UNDEF_VAL	include/cactus/val.h	/^#define CACT_UNDEF_VAL /;"	d
+CACT_UNDEF_VAL	include/sexp.h	/^#define CACT_UNDEF_VAL /;"	d
+CACT_UNDEF_VAL	src/sexp.c	/^#define CACT_UNDEF_VAL /;"	d	file:
+CONFIG_H	include/config.h	/^#define CONFIG_H$/;"	d
+DBG	include/debug.h	/^#define DBG(/;"	d
+DBGSXP	include/debug.h	/^#define DBGSXP(/;"	d
+DEFINE_COMPARISON_BUILTIN	src/builtin.c	/^#define DEFINE_COMPARISON_BUILTIN(/;"	d	file:	signature:(name,fn)
+DEFINE_OBJECT_CHECK	include/cactus/obj.h	/^#define DEFINE_OBJECT_CHECK(/;"	d	signature:(funcname,typemarker)
+DEFINE_OBJECT_CHECK	include/obj.h	/^#define DEFINE_OBJECT_CHECK(/;"	d	signature:(funcname,typemarker)
+DEFINE_OBJECT_CONVERSION	include/cactus/obj.h	/^#define DEFINE_OBJECT_CONVERSION(/;"	d	signature:(typemarker,returntype,funcname,membername)
+DEFINE_OBJECT_CONVERSION	include/obj.h	/^#define DEFINE_OBJECT_CONVERSION(/;"	d	signature:(typemarker,returntype,funcname,membername)
+DEFINE_TYPE_PREDICATE_BUILTIN	src/builtin.c	/^#define DEFINE_TYPE_PREDICATE_BUILTIN(/;"	d	file:	signature:(name,fn)
+DEFINE_TYPE_PREDICATE_BUILTIN	src/builtin.c	/^DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_nil, cact_is_null)$/;"	f	signature:(cact_builtin_is_nil,cact_is_null)
+DEFINE_VALUE_CHECK	include/cactus/val.h	/^#define DEFINE_VALUE_CHECK(/;"	d	signature:(funcname,typemarker)
+DEFINE_VALUE_CHECK	include/sexp.h	/^#define DEFINE_VALUE_CHECK(/;"	d	signature:(funcname,typemarker)
+DEFINE_VALUE_CHECK	src/sexp.c	/^#define DEFINE_VALUE_CHECK(/;"	d	file:	signature:(funcname,typemarker)
+DEFINE_VALUE_CONV	include/cactus/val.h	/^#define DEFINE_VALUE_CONV(/;"	d	signature:(typemarker,returntype,funcname,membername)
+DEFINE_VALUE_CONV	include/sexp.h	/^#define DEFINE_VALUE_CONV(/;"	d	signature:(typemarker,returntype,funcname,membername)
+DEFINE_VALUE_CONV	src/sexp.c	/^#define DEFINE_VALUE_CONV(/;"	d	file:	signature:(typemarker,returntype,funcname,membername)
+DEFINE_VALUE_CONV	src/sexp.c	/^DEFINE_VALUE_CONV(CACT_TYPE_CHAR,  char,cact_to_char,   character)$/;"	f	signature:(CACT_TYPE_CHAR,char,cact_to_char,character)
+EVAL_H	include/eval.h	/^#define EVAL_H$/;"	d
+LENGTH	include/utils.h	/^#define LENGTH(/;"	d
+MINUNIT_H	tests/minunit.h	/^#define MINUNIT_H$/;"	d
+NUMBER_H	include/cactus/num.h	/^#define NUMBER_H$/;"	d
+NUMBER_H	include/number.h	/^#define NUMBER_H$/;"	d
+OP_DO	src/vm.c	/^#define OP_DO(/;"	d	file:
+PROMPT	main.c	/^#define PROMPT /;"	d	file:
+PROPAGATE_ERROR	include/cactus/val.h	/^#define PROPAGATE_ERROR(/;"	d	signature:(err)
+PROPAGATE_ERROR	include/sexp.h	/^#define PROPAGATE_ERROR(/;"	d	signature:(err)
+RB_AUGMENT	include/tree.h	/^#define RB_AUGMENT(/;"	d
+RB_BLACK	include/tree.h	/^#define RB_BLACK	/;"	d
+RB_COLOR	include/tree.h	/^#define RB_COLOR(/;"	d
+RB_EMPTY	include/tree.h	/^#define RB_EMPTY(/;"	d
+RB_ENTRY	include/tree.h	/^#define RB_ENTRY(/;"	d
+RB_FIND	include/tree.h	/^#define RB_FIND(/;"	d
+RB_FOREACH	include/tree.h	/^#define RB_FOREACH(/;"	d
+RB_FOREACH_REVERSE	include/tree.h	/^#define RB_FOREACH_REVERSE(/;"	d
+RB_FOREACH_REVERSE_SAFE	include/tree.h	/^#define RB_FOREACH_REVERSE_SAFE(/;"	d
+RB_FOREACH_SAFE	include/tree.h	/^#define RB_FOREACH_SAFE(/;"	d
+RB_GENERATE	include/tree.h	/^#define	RB_GENERATE(/;"	d
+RB_GENERATE_INTERNAL	include/tree.h	/^#define RB_GENERATE_INTERNAL(/;"	d
+RB_GENERATE_STATIC	include/tree.h	/^#define	RB_GENERATE_STATIC(/;"	d
+RB_HEAD	include/tree.h	/^#define RB_HEAD(/;"	d
+RB_INF	include/tree.h	/^#define RB_INF	/;"	d
+RB_INIT	include/tree.h	/^#define RB_INIT(/;"	d
+RB_INITIALIZER	include/tree.h	/^#define RB_INITIALIZER(/;"	d
+RB_INSERT	include/tree.h	/^#define RB_INSERT(/;"	d
+RB_LEFT	include/tree.h	/^#define RB_LEFT(/;"	d
+RB_MAX	include/tree.h	/^#define RB_MAX(/;"	d
+RB_MIN	include/tree.h	/^#define RB_MIN(/;"	d
+RB_NEGINF	include/tree.h	/^#define RB_NEGINF	/;"	d
+RB_NEXT	include/tree.h	/^#define RB_NEXT(/;"	d
+RB_NFIND	include/tree.h	/^#define RB_NFIND(/;"	d
+RB_PARENT	include/tree.h	/^#define RB_PARENT(/;"	d
+RB_PREV	include/tree.h	/^#define RB_PREV(/;"	d
+RB_PROTOTYPE	include/tree.h	/^#define	RB_PROTOTYPE(/;"	d
+RB_PROTOTYPE_INTERNAL	include/tree.h	/^#define RB_PROTOTYPE_INTERNAL(/;"	d
+RB_PROTOTYPE_STATIC	include/tree.h	/^#define	RB_PROTOTYPE_STATIC(/;"	d
+RB_RED	include/tree.h	/^#define RB_RED	/;"	d
+RB_REMOVE	include/tree.h	/^#define RB_REMOVE(/;"	d
+RB_RIGHT	include/tree.h	/^#define RB_RIGHT(/;"	d
+RB_ROOT	include/tree.h	/^#define RB_ROOT(/;"	d
+RB_ROTATE_LEFT	include/tree.h	/^#define RB_ROTATE_LEFT(/;"	d
+RB_ROTATE_RIGHT	include/tree.h	/^#define RB_ROTATE_RIGHT(/;"	d
+RB_SET	include/tree.h	/^#define RB_SET(/;"	d
+RB_SET_BLACKRED	include/tree.h	/^#define RB_SET_BLACKRED(/;"	d
+SPLAY_ASSEMBLE	include/tree.h	/^#define SPLAY_ASSEMBLE(/;"	d
+SPLAY_EMPTY	include/tree.h	/^#define SPLAY_EMPTY(/;"	d
+SPLAY_ENTRY	include/tree.h	/^#define SPLAY_ENTRY(/;"	d
+SPLAY_FIND	include/tree.h	/^#define SPLAY_FIND(/;"	d
+SPLAY_FOREACH	include/tree.h	/^#define SPLAY_FOREACH(/;"	d
+SPLAY_GENERATE	include/tree.h	/^#define SPLAY_GENERATE(/;"	d
+SPLAY_HEAD	include/tree.h	/^#define SPLAY_HEAD(/;"	d
+SPLAY_INF	include/tree.h	/^#define SPLAY_INF	/;"	d
+SPLAY_INIT	include/tree.h	/^#define SPLAY_INIT(/;"	d
+SPLAY_INITIALIZER	include/tree.h	/^#define SPLAY_INITIALIZER(/;"	d
+SPLAY_INSERT	include/tree.h	/^#define SPLAY_INSERT(/;"	d
+SPLAY_LEFT	include/tree.h	/^#define SPLAY_LEFT(/;"	d
+SPLAY_LINKLEFT	include/tree.h	/^#define SPLAY_LINKLEFT(/;"	d
+SPLAY_LINKRIGHT	include/tree.h	/^#define SPLAY_LINKRIGHT(/;"	d
+SPLAY_MAX	include/tree.h	/^#define SPLAY_MAX(/;"	d
+SPLAY_MIN	include/tree.h	/^#define SPLAY_MIN(/;"	d
+SPLAY_NEGINF	include/tree.h	/^#define SPLAY_NEGINF	/;"	d
+SPLAY_NEXT	include/tree.h	/^#define SPLAY_NEXT(/;"	d
+SPLAY_PROTOTYPE	include/tree.h	/^#define SPLAY_PROTOTYPE(/;"	d
+SPLAY_REMOVE	include/tree.h	/^#define SPLAY_REMOVE(/;"	d
+SPLAY_RIGHT	include/tree.h	/^#define SPLAY_RIGHT(/;"	d
+SPLAY_ROOT	include/tree.h	/^#define SPLAY_ROOT(/;"	d
+SPLAY_ROTATE_LEFT	include/tree.h	/^#define SPLAY_ROTATE_LEFT(/;"	d
+SPLAY_ROTATE_RIGHT	include/tree.h	/^#define SPLAY_ROTATE_RIGHT(/;"	d
+STRING_TABLE_DECL	include/table.h	/^#define STRING_TABLE_DECL(/;"	d	signature:(name,valtype)
+STRING_TABLE_INIT	include/table.h	/^#define STRING_TABLE_INIT(/;"	d	signature:(name)
+TABLE_CLEAR	include/table.h	/^#define TABLE_CLEAR(/;"	d	signature:(tab)
+TABLE_DECL	include/table.h	/^#define TABLE_DECL(/;"	d	signature:(name,keytype,valtype)
+TABLE_ENTER	include/table.h	/^#define TABLE_ENTER(/;"	d	signature:(name,tab,key,val)
+TABLE_ENTRY	include/table.h	/^#define TABLE_ENTRY(/;"	d	signature:(name)
+TABLE_ENTRY_DELETED	include/table.h	/^#define TABLE_ENTRY_DELETED /;"	d
+TABLE_ENTRY_EMPTY	include/table.h	/^#define TABLE_ENTRY_EMPTY /;"	d
+TABLE_ENTRY_FILLED	include/table.h	/^#define TABLE_ENTRY_FILLED /;"	d
+TABLE_FIND	include/table.h	/^#define TABLE_FIND(/;"	d	signature:(name,tab,key)
+TABLE_FIND_AVAILABLE	include/table.h	/^#define TABLE_FIND_AVAILABLE /;"	d
+TABLE_FIND_VALUE	include/table.h	/^#define TABLE_FIND_VALUE /;"	d
+TABLE_FOREACH_BUCKET	include/table.h	/^#define TABLE_FOREACH_BUCKET(/;"	d	signature:(n,e,h)
+TABLE_GENERATE	include/table.h	/^#define TABLE_GENERATE(/;"	d	signature:(name,keytype,valtype)
+TABLE_GENERATE	src/sym.c	/^TABLE_GENERATE(cact_symbol_table, char *, struct cact_symbol)$/;"	f	signature:(cact_symbol_table,char *,struct cact_symbol)
+TABLE_H	include/table.h	/^#define TABLE_H$/;"	d
+TABLE_INIT	include/table.h	/^#define TABLE_INIT(/;"	d	signature:(t,hash,cmp)
+TABLE_INITIAL_SIZE	include/table.h	/^#define TABLE_INITIAL_SIZE /;"	d
+TABLE_REMOVE	include/table.h	/^#define TABLE_REMOVE(/;"	d	signature:(name,tab,key)
+TABLE_SPACE	include/table.h	/^#define TABLE_SPACE(/;"	d	signature:(tab)
+TABLE_STATUS_ERROR	include/table.h	/^#define TABLE_STATUS_ERROR /;"	d
+TABLE_STATUS_NOT_FOUND	include/table.h	/^#define TABLE_STATUS_NOT_FOUND /;"	d
+TABLE_STATUS_OK	include/table.h	/^#define TABLE_STATUS_OK /;"	d
+UTILS_H	include/utils.h	/^#define UTILS_H$/;"	d
+XMALLOC_H	include/xmalloc.h	/^#define XMALLOC_H$/;"	d
+_CACT_VALUE_H_	include/sexp.h	/^#define _CACT_VALUE_H_$/;"	d
+_SYS_TREE_H_	include/tree.h	/^#define	_SYS_TREE_H_$/;"	d
+__CACT_BOOL_H__	include/bool.h	/^#define __CACT_BOOL_H__$/;"	d
+__CACT_BOOL_H__	include/cactus/bool.h	/^#define __CACT_BOOL_H__$/;"	d
+__CACT_CORE_H__	include/cactus/core.h	/^#define __CACT_CORE_H__$/;"	d
+__CACT_CORE_H__	include/core.h	/^#define __CACT_CORE_H__$/;"	d
+__ENV_H__	include/cactus/env.h	/^#define __ENV_H__$/;"	d
+__ENV_H__	include/env.h	/^#define __ENV_H__$/;"	d
+__anon5e420ed70108	tests/boolean_test.c	/^    struct {$/;"	s	function:not_test	file:
+__anon5e420ed70208	tests/boolean_test.c	/^    struct {$/;"	s	function:is_boolean_test	file:
+__anon6ad07e4e010a	include/sexp.h	/^    union {$/;"	u	struct:cact_val
+__anon78e6796d010a	src/sexp.c	/^    union {$/;"	u	struct:cact_val	file:
+__anon8815f49b010a	include/cactus/obj.h	/^    union {$/;"	u	struct:cact_obj
+__anon88941c43010a	include/cactus/val.h	/^    union {$/;"	u	struct:cact_val
+__anona5db0e29010a	include/obj.h	/^    union {$/;"	u	struct:cact_obj
+_abspath	.do_built.dir/redo	/^_abspath()$/;"	f
+_abspath	.do_built.dir/redo-ifchange	/^_abspath()$/;"	f
+_abspath	.do_built.dir/redo-whichdo	/^_abspath()$/;"	f
+_abspath	do	/^_abspath()$/;"	f
+_debug	.do_built.dir/redo	/^_debug() {$/;"	f
+_debug	.do_built.dir/redo-ifchange	/^_debug() {$/;"	f
+_debug	.do_built.dir/redo-whichdo	/^_debug() {$/;"	f
+_debug	do	/^_debug() {$/;"	f
+_dirsplit	.do_built.dir/redo	/^_dirsplit() {$/;"	f
+_dirsplit	.do_built.dir/redo-ifchange	/^_dirsplit() {$/;"	f
+_dirsplit	.do_built.dir/redo-whichdo	/^_dirsplit() {$/;"	f
+_dirsplit	do	/^_dirsplit() {$/;"	f
+_do	.do_built.dir/redo	/^_do()$/;"	f
+_do	.do_built.dir/redo-ifchange	/^_do()$/;"	f
+_do	.do_built.dir/redo-whichdo	/^_do()$/;"	f
+_do	do	/^_do()$/;"	f
+_endswith	.do_built.dir/redo	/^_endswith()$/;"	f
+_endswith	.do_built.dir/redo-ifchange	/^_endswith()$/;"	f
+_endswith	.do_built.dir/redo-whichdo	/^_endswith()$/;"	f
+_endswith	do	/^_endswith()$/;"	f
+_find_dofile	.do_built.dir/redo	/^_find_dofile()$/;"	f
+_find_dofile	.do_built.dir/redo-ifchange	/^_find_dofile()$/;"	f
+_find_dofile	.do_built.dir/redo-whichdo	/^_find_dofile()$/;"	f
+_find_dofile	do	/^_find_dofile()$/;"	f
+_find_dofiles	.do_built.dir/redo	/^_find_dofiles()$/;"	f
+_find_dofiles	.do_built.dir/redo-ifchange	/^_find_dofiles()$/;"	f
+_find_dofiles	.do_built.dir/redo-whichdo	/^_find_dofiles()$/;"	f
+_find_dofiles	do	/^_find_dofiles()$/;"	f
+_find_dofiles_pwd	.do_built.dir/redo	/^_find_dofiles_pwd()$/;"	f
+_find_dofiles_pwd	.do_built.dir/redo-ifchange	/^_find_dofiles_pwd()$/;"	f
+_find_dofiles_pwd	.do_built.dir/redo-whichdo	/^_find_dofiles_pwd()$/;"	f
+_find_dofiles_pwd	do	/^_find_dofiles_pwd()$/;"	f
+_normpath	.do_built.dir/redo	/^_normpath()$/;"	f
+_normpath	.do_built.dir/redo-ifchange	/^_normpath()$/;"	f
+_normpath	.do_built.dir/redo-whichdo	/^_normpath()$/;"	f
+_normpath	do	/^_normpath()$/;"	f
+_realpath	.do_built.dir/redo	/^_realpath()$/;"	f
+_realpath	.do_built.dir/redo-ifchange	/^_realpath()$/;"	f
+_realpath	.do_built.dir/redo-whichdo	/^_realpath()$/;"	f
+_realpath	do	/^_realpath()$/;"	f
+_redo	.do_built.dir/redo	/^_redo()$/;"	f
+_redo	.do_built.dir/redo-ifchange	/^_redo()$/;"	f
+_redo	.do_built.dir/redo-whichdo	/^_redo()$/;"	f
+_redo	do	/^_redo()$/;"	f
+_relpath	.do_built.dir/redo	/^_relpath()$/;"	f
+_relpath	.do_built.dir/redo-ifchange	/^_relpath()$/;"	f
+_relpath	.do_built.dir/redo-whichdo	/^_relpath()$/;"	f
+_relpath	do	/^_relpath()$/;"	f
+_run_dofile	.do_built.dir/redo	/^_run_dofile()$/;"	f
+_run_dofile	.do_built.dir/redo-ifchange	/^_run_dofile()$/;"	f
+_run_dofile	.do_built.dir/redo-whichdo	/^_run_dofile()$/;"	f
+_run_dofile	do	/^_run_dofile()$/;"	f
+_seq	.do_built.dir/redo	/^_seq() {$/;"	f
+_seq	.do_built.dir/redo-ifchange	/^_seq() {$/;"	f
+_seq	.do_built.dir/redo-whichdo	/^_seq() {$/;"	f
+_seq	do	/^_seq() {$/;"	f
+_startswith	.do_built.dir/redo	/^_startswith()$/;"	f
+_startswith	.do_built.dir/redo-ifchange	/^_startswith()$/;"	f
+_startswith	.do_built.dir/redo-whichdo	/^_startswith()$/;"	f
+_startswith	do	/^_startswith()$/;"	f
+_updir	.do_built.dir/redo	/^_updir()$/;"	f
+_updir	.do_built.dir/redo-ifchange	/^_updir()$/;"	f
+_updir	.do_built.dir/redo-whichdo	/^_updir()$/;"	f
+_updir	do	/^_updir()$/;"	f
+_whichdo	.do_built.dir/redo	/^_whichdo()$/;"	f
+_whichdo	.do_built.dir/redo-ifchange	/^_whichdo()$/;"	f
+_whichdo	.do_built.dir/redo-whichdo	/^_whichdo()$/;"	f
+_whichdo	do	/^_whichdo()$/;"	f
+all_tests	tests/fulltest.c	/^static char *all_tests() {$/;"	f	typeref:typename:char *	file:
+append_test	tests/sexp_test.c	/^static char *append_test()$/;"	f	typeref:typename:char *	file:
+arena	include/cactus/store.h	/^    struct cact_arena *arena;$/;"	m	struct:cact_store_data	typeref:struct:cact_arena *
+arena	include/store.h	/^    struct cact_arena *arena;$/;"	m	struct:cact_store_data	typeref:struct:cact_arena *
+arena	src/store.c	/^    struct cact_arena *arena;$/;"	m	struct:cact_store_data	typeref:struct:cact_arena *	file:
+arena_set	include/cactus/store.h	/^    struct cact_arena_set arena_set;$/;"	m	struct:cact_store	typeref:struct:cact_arena_set
+arena_set	include/store.h	/^    struct cact_arena_set arena_set;$/;"	m	struct:cact_store	typeref:struct:cact_arena_set
+arena_set	src/store.c	/^    struct cact_arena_set arena_set;$/;"	m	struct:cact_store	typeref:struct:cact_arena_set	file:
+argl	include/cactus/proc.h	/^    struct cact_val argl;$/;"	m	struct:cact_proc	typeref:struct:cact_val
+argl	include/proc.h	/^    struct cact_val argl;$/;"	m	struct:cact_proc	typeref:struct:cact_val
+argl	src/proc.c	/^    cact_val argl;$/;"	m	struct:cact_proc	typeref:typename:cact_val	file:
+as	include/cactus/obj.h	/^    } as;$/;"	m	struct:cact_obj	typeref:union:cact_obj::__anon8815f49b010a
+as	include/cactus/val.h	/^    } as;$/;"	m	struct:cact_val	typeref:union:cact_val::__anon88941c43010a
+as	include/obj.h	/^    } as;$/;"	m	struct:cact_obj	typeref:union:cact_obj::__anona5db0e29010a
+as	include/sexp.h	/^    } as;$/;"	m	struct:cact_val	typeref:union:cact_val::__anon6ad07e4e010a
+as	src/sexp.c	/^    } as;$/;"	m	struct:cact_val	typeref:union:cact_val::__anon78e6796d010a	file:
+assoc_list_test	tests/sexp_test.c	/^static char *assoc_list_test()$/;"	f	typeref:typename:char *	file:
+begin_sym	src/globals.c	/^cact_symbol begin_sym;$/;"	v	typeref:typename:cact_symbol
+body	include/cactus/proc.h	/^    struct cact_val body;$/;"	m	struct:cact_proc	typeref:struct:cact_val
+body	include/proc.h	/^    struct cact_val body;$/;"	m	struct:cact_proc	typeref:struct:cact_val
+body	src/proc.c	/^    cact_val body;$/;"	m	struct:cact_proc	typeref:typename:cact_val	file:
+boolean	include/cactus/val.h	/^        bool      boolean;$/;"	m	union:cact_val::__anon88941c43010a	typeref:typename:bool
+boolean	include/sexp.h	/^        bool boolean;$/;"	m	union:cact_val::__anon6ad07e4e010a	typeref:typename:bool
+boolean	src/sexp.c	/^        bool boolean;$/;"	m	union:cact_val::__anon78e6796d010a	typeref:typename:bool	file:
+boolean_tests	tests/boolean_test.c	/^boolean_tests()$/;"	f	typeref:typename:char *
+buf	include/read.h	/^    struct cact_lexeme buf;$/;"	m	struct:cact_lexer	typeref:struct:cact_lexeme
+buf	src/read.c	/^    struct cact_lexeme buf;$/;"	m	struct:cact_lexer	typeref:struct:cact_lexeme	file:
+builtins	src/builtin.c	/^cact_builtin builtins[] = {$/;"	v	typeref:typename:cact_builtin[]
+bytes	include/read.h	/^    int bytes;$/;"	m	struct:cact_str_coords	typeref:typename:int
+bytes	src/read.c	/^    int bytes;$/;"	m	struct:cact_str_coords	typeref:typename:int	file:
+cact	tests/read_test.c	/^struct cactus cact;$/;"	v	typeref:struct:cactus
+cact_append	lib/pair.c	/^cact_append(struct cactus *cact, struct cact_val *l, struct cact_val *x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val * l,struct cact_val * x)
+cact_append	src/pair.c	/^cact_append(struct cactus *cact, struct cact_val *l, struct cact_val *x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val * l,struct cact_val * x)
+cact_arena	include/cactus/store.h	/^struct cact_arena {$/;"	s
+cact_arena	include/store.h	/^struct cact_arena {$/;"	s
+cact_arena	src/store.c	/^struct cact_arena {$/;"	s	file:
+cact_arena_get_next	src/store.c	/^cact_arena_get_next(struct cact_arena *arena)$/;"	f	typeref:typename:void *	signature:(struct cact_arena * arena)
+cact_arena_has	src/store.c	/^cact_arena_has(struct cact_arena *arena, void *thing)$/;"	f	typeref:typename:bool	signature:(struct cact_arena * arena,void * thing)
+cact_arena_is_full	src/store.c	/^cact_arena_is_full(struct cact_arena *arena)$/;"	f	typeref:typename:bool	signature:(struct cact_arena * arena)
+cact_arena_next_open	src/store.c	/^cact_arena_next_open(struct cact_arena *arena)$/;"	f	typeref:typename:size_t	signature:(struct cact_arena * arena)
+cact_arena_set_allocate	src/store.c	/^cact_arena_set_allocate(struct cact_arena_set *set)$/;"	f	typeref:typename:void *	signature:(struct cact_arena_set * set)
+cact_arena_set_clean	src/store.c	/^cact_arena_set_clean(struct cact_arena_set *set)$/;"	f	typeref:typename:int	signature:(struct cact_arena_set * set)
+cact_arena_set_init	src/store.c	/^cact_arena_set_init(struct cact_arena_set *set, size_t elt_sz)$/;"	f	typeref:typename:void	signature:(struct cact_arena_set * set,size_t elt_sz)
+cact_assoc	lib/pair.c	/^cact_assoc(cact_val *key, cact_val *alist)$/;"	f	typeref:struct:cact_val	signature:(cact_val * key,cact_val * alist)
+cact_assoc	src/pair.c	/^cact_assoc(cact_val *key, cact_val *alist)$/;"	f	typeref:struct:cact_val	signature:(cact_val * key,cact_val * alist)
+cact_bool_not	lib/bool.c	/^cact_bool_not(cact_val x) $/;"	f	typeref:typename:cact_val	signature:(cact_val x)
+cact_bool_not	src/bool.c	/^cact_bool_not(cact_val x) $/;"	f	typeref:typename:cact_val
+cact_builtin	include/builtin.h	/^struct cact_builtin {$/;"	s
+cact_builtin	include/cactus/core.h	/^struct cact_builtin {$/;"	s
+cact_builtin	src/builtin.c	/^struct cact_builtin {$/;"	s	file:
+cact_builtin_begin	src/builtin.c	/^cact_builtin_begin(struct cactus *cact, struct cact_val args) $/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val args)
+cact_builtin_car	src/builtin.c	/^cact_builtin_car(struct cactus *cact, struct cact_val args) $/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val args)
+cact_builtin_cdr	src/builtin.c	/^cact_builtin_cdr(struct cactus *cact, struct cact_val args) $/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val args)
+cact_builtin_cons	src/builtin.c	/^cact_builtin_cons(struct cactus *cact, struct cact_val args) $/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val args)
+cact_builtin_divide	src/builtin.c	/^cact_builtin_divide(struct cactus *cact, struct cact_val x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val x)
+cact_builtin_exit	src/builtin.c	/^cact_builtin_exit(struct cactus *cact, struct cact_val x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val x)
+cact_builtin_h_INCLUDED	include/builtin.h	/^#define cact_builtin_h_INCLUDED$/;"	d
+cact_builtin_load	src/builtin.c	/^cact_builtin_load(struct cactus *cact, struct cact_val x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val x)
+cact_builtin_minus	src/builtin.c	/^cact_builtin_minus(struct cactus *cact, struct cact_val x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val x)
+cact_builtin_newline	src/builtin.c	/^cact_builtin_newline(struct cactus *cact, struct cact_val args) $/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val args)
+cact_builtin_not	src/builtin.c	/^cact_builtin_not(struct cactus *cact, struct cact_val x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val x)
+cact_builtin_plus	src/builtin.c	/^cact_builtin_plus(struct cactus *cact, struct cact_val args)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val args)
+cact_builtin_times	src/builtin.c	/^cact_builtin_times(struct cactus *cact, struct cact_val args)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val args)
+cact_caddr	include/cactus/pair.h	/^#define cact_caddr(/;"	d	signature:(x)
+cact_caddr	include/pair.h	/^#define cact_caddr(/;"	d
+cact_cadr	include/cactus/pair.h	/^#define cact_cadr(/;"	d	signature:(x)
+cact_cadr	include/pair.h	/^#define cact_cadr(/;"	d
+cact_car	lib/pair.c	/^cact_car(struct cactus *cact, struct cact_val x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val x)
+cact_car	src/pair.c	/^cact_car(struct cactus *cact, struct cact_val x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val x)
+cact_cdr	lib/pair.c	/^cact_cdr(struct cactus *cact, struct cact_val x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val x)
+cact_cdr	src/pair.c	/^cact_cdr(struct cactus *cact, struct cact_val x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val x)
+cact_cons	lib/pair.c	/^cact_cons(struct cactus *cact, struct cact_val a, struct cact_val d)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val a,struct cact_val d)
+cact_cons	src/pair.c	/^cact_cons(struct cactus *cact, struct cact_val a, struct cact_val d)$/;"	f	typeref:typename:EXPORT struct cact_val	signature:(struct cactus * cact,struct cact_val a,struct cact_val d)
+cact_def_global	lib/core.c	/^cact_def_global(struct cactus *cact, char *name, struct cact_val val)$/;"	f	typeref:typename:void	signature:(struct cactus * cact,char * name,struct cact_val val)
+cact_def_global	src/core.c	/^cact_def_global(cactus *cact, char *name, cact_val val)$/;"	f	typeref:typename:void	signature:(cactus * cact,char * name,cact_val val)
+cact_env	include/cactus/env.h	/^struct cact_env {$/;"	s
+cact_env	include/env.h	/^struct cact_env {$/;"	s
+cact_env	src/env.c	/^struct cact_env {$/;"	s	file:
+cact_env_define	lib/env.c	/^cact_env_define(struct cactus *cact, cact_env *e, cact_val key, cact_val val)$/;"	f	typeref:typename:int	signature:(struct cactus * cact,cact_env * e,cact_val key,cact_val val)
+cact_env_define	src/env.c	/^cact_env_define(struct cactus *cact, cact_env *e, cact_val key, cact_val val)$/;"	f	typeref:typename:int	signature:(struct cactus * cact,cact_env * e,cact_val key,cact_val val)
+cact_env_init	lib/env.c	/^cact_env_init(struct cact_env *e, struct cact_env *parent)$/;"	f	typeref:typename:void	signature:(struct cact_env * e,struct cact_env * parent)
+cact_env_init	src/env.c	/^cact_env_init(struct cact_env *e, struct cact_env *parent)$/;"	f	typeref:typename:void	signature:(struct cact_env * e,struct cact_env * parent)
+cact_env_lookup	lib/env.c	/^cact_env_lookup(struct cact_env *e, struct cact_val key)$/;"	f	typeref:struct:cact_val	signature:(struct cact_env * e,struct cact_val key)
+cact_env_lookup	src/env.c	/^cact_env_lookup(struct cact_env *e, struct cact_val key)$/;"	f	typeref:struct:cact_val	signature:(struct cact_env * e,struct cact_val key)
+cact_env_set	lib/env.c	/^cact_env_set(cact_env *e, cact_val key, cact_val val)$/;"	f	typeref:typename:int	signature:(cact_env * e,cact_val key,cact_val val)
+cact_env_set	src/env.c	/^cact_env_set(cact_env *e, cact_val key, cact_val val)$/;"	f	typeref:typename:int	signature:(cact_env * e,cact_val key,cact_val val)
+cact_error	include/cactus/obj.h	/^struct cact_error {$/;"	s
+cact_error	include/obj.h	/^struct cact_error {$/;"	s
+cact_eval	lib/eval.c	/^cact_eval(struct cactus *cact, struct cact_val x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val x)
+cact_eval	src/eval.c	/^cact_eval(struct cactus *cact, struct cact_val x)$/;"	f	typeref:struct:cact_val
+cact_eval_file	lib/eval.c	/^cact_eval_file(struct cactus *cact, FILE *in)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,FILE * in)
+cact_eval_file	src/eval.c	/^cact_eval_file(struct cactus *cact, FILE *in)$/;"	f	typeref:struct:cact_val
+cact_eval_string	lib/eval.c	/^cact_eval_string(struct cactus *cact, char *s)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,char * s)
+cact_eval_string	src/eval.c	/^cact_eval_string(struct cactus *cact, char *s)$/;"	f	typeref:struct:cact_val
+cact_finish	lib/core.c	/^cact_finish(struct cactus *cact)$/;"	f	typeref:typename:void	signature:(struct cactus * cact)
+cact_finish	src/core.c	/^cact_finish(cactus *cact) $/;"	f	typeref:typename:void	signature:(cactus * cact)
+cact_init	lib/core.c	/^cact_init(struct cactus *cact)$/;"	f	typeref:typename:void	signature:(struct cactus * cact)
+cact_init	src/core.c	/^cact_init(cactus *cact)$/;"	f	typeref:typename:void	signature:(cactus * cact)
+cact_is_null	src/sexp.c	/^cact_is_null(cact_val x)$/;"	f	typeref:typename:bool	signature:(cact_val x)
+cact_is_number	lib/number.c	/^cact_is_number(struct cact_val x)$/;"	f	typeref:typename:bool	signature:(struct cact_val x)
+cact_is_number	src/number.c	/^cact_is_number(struct cact_val x)$/;"	f	typeref:typename:bool
+cact_length	lib/pair.c	/^cact_length(cact_val *l) $/;"	f	typeref:typename:unsigned int	signature:(cact_val * l)
+cact_lexeme	include/read.h	/^struct cact_lexeme {$/;"	s
+cact_lexeme	src/read.c	/^struct cact_lexeme {$/;"	s	file:
+cact_lexer	include/read.h	/^struct cact_lexer {$/;"	s
+cact_lexer	src/read.c	/^struct cact_lexer {$/;"	s	file:
+cact_lexer_charspan	src/read.c	/^cact_lexer_charspan(struct cact_lexer* l, int (*fn)(int))$/;"	f	typeref:typename:int	file:	signature:(struct cact_lexer * l,int (* fn)(int))
+cact_lexer_getc	src/read.c	/^cact_lexer_getc(struct cact_lexer* l)$/;"	f	typeref:typename:int	file:	signature:(struct cact_lexer * l)
+cact_lexer_init	src/read.c	/^cact_lexer_init(struct cact_lexer* l, const char* s)$/;"	f	typeref:typename:void	signature:(struct cact_lexer * l,const char * s)
+cact_lexer_peekc	src/read.c	/^cact_lexer_peekc(struct cact_lexer* l)$/;"	f	typeref:typename:int	file:	signature:(struct cact_lexer * l)
+cact_list_acons	lib/pair.c	/^cact_list_acons(struct cactus *cact, cact_val key, cact_val val, cact_val alist)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,cact_val key,cact_val val,cact_val alist)
+cact_list_acons	src/pair.c	/^cact_list_acons(struct cactus *cact, cact_val key, cact_val val, cact_val alist)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,cact_val key,cact_val val,cact_val alist)
+cact_make_builtins	lib/core.c	/^cact_make_builtins(struct cactus *cact, struct cact_builtin *builtins, size_t len) $/;"	f	typeref:typename:void	signature:(struct cactus * cact,struct cact_builtin * builtins,size_t len)
+cact_make_builtins	src/core.c	/^cact_make_builtins(cactus *cact, cact_builtin *builtins, size_t len) $/;"	f	typeref:typename:void	signature:(cactus * cact,cact_builtin * builtins,size_t len)
+cact_make_env	lib/env.c	/^cact_make_env(struct cactus *cact, cact_env *parent)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,cact_env * parent)
+cact_make_env	src/env.c	/^cact_make_env(struct cactus *cact, cact_env *parent)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,cact_env * parent)
+cact_make_native_proc	src/proc.c	/^cact_make_native_proc(struct cactus *cact, cact_native_func fn)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,cact_native_func fn)
+cact_make_procedure	src/proc.c	/^cact_make_procedure(struct cactus *cact, cact_env *e, cact_val argl, cact_val body)$/;"	f	typeref:typename:cact_val	signature:(struct cactus * cact,cact_env * e,cact_val argl,cact_val body)
+cact_make_string	src/str.c	/^cact_make_string(char *str)$/;"	f	typeref:typename:cact_val *
+cact_native_func	include/cactus/proc.h	/^typedef struct cact_val (*cact_native_func)(struct cactus *, struct cact_val);$/;"	t	typeref:struct:cact_val (*)(struct cactus *,struct cact_val)
+cact_native_func	include/proc.h	/^typedef struct cact_val (*cact_native_func)(struct cactus *, struct cact_val);$/;"	t	typeref:struct:cact_val (*)(struct cactus *,struct cact_val)
+cact_native_func	src/proc.c	/^typedef struct cact_val (*cact_native_func)(struct cactus *, struct cact_val);$/;"	t	typeref:struct:cact_val (*)(struct cactus *,struct cact_val)	file:
+cact_obj	include/cactus/obj.h	/^struct cact_obj {$/;"	s
+cact_obj	include/obj.h	/^struct cact_obj {$/;"	s
+cact_obj_type	include/cactus/obj.h	/^enum cact_obj_type {$/;"	g
+cact_obj_type	include/obj.h	/^enum cact_obj_type {$/;"	g
+cact_pair	include/cactus/pair.h	/^typedef struct cact_pair {$/;"	s
+cact_pair	include/cactus/pair.h	/^} cact_pair;$/;"	t	typeref:struct:cact_pair
+cact_pair	include/pair.h	/^typedef struct cact_pair {$/;"	s
+cact_pair	include/pair.h	/^} cact_pair;$/;"	t	typeref:struct:cact_pair
+cact_proc	include/cactus/proc.h	/^typedef struct cact_proc {$/;"	s
+cact_proc	include/cactus/proc.h	/^} cact_proc;$/;"	t	typeref:struct:cact_proc
+cact_proc	include/proc.h	/^typedef struct cact_proc {$/;"	s
+cact_proc	include/proc.h	/^} cact_proc;$/;"	t	typeref:struct:cact_proc
+cact_proc	src/proc.c	/^struct cact_proc {$/;"	s	file:
+cact_proc_apply	src/proc.c	/^cact_proc_apply(struct cactus *cact, cact_proc *clo, cact_val args)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,cact_proc * clo,cact_val args)
+cact_read	src/read.c	/^cact_read(struct cactus* cact, struct cact_val* ret) $/;"	f	typeref:enum:cact_read_status	signature:(struct cactus * cact,struct cact_val * ret)
+cact_read_blank_test	tests/read_test.c	/^static char *cact_read_blank_test() {$/;"	f	typeref:typename:char *	file:
+cact_read_boolean_test	tests/read_test.c	/^static char *cact_read_boolean_test() {$/;"	f	typeref:typename:char *	file:
+cact_read_ident_test	tests/read_test.c	/^static char *cact_read_ident_test() {$/;"	f	typeref:typename:char *	file:
+cact_read_int_test	tests/read_test.c	/^static char *cact_read_int_test() {$/;"	f	typeref:typename:char *	file:
+cact_read_list_test	tests/read_test.c	/^static char *cact_read_list_test() {$/;"	f	typeref:typename:char *	file:
+cact_read_null_test	tests/read_test.c	/^static char *cact_read_null_test() {$/;"	f	typeref:typename:char *	file:
+cact_read_quote_test	tests/read_test.c	/^cact_read_quote_test()$/;"	f	typeref:typename:char *	file:
+cact_read_status	include/read.h	/^enum cact_read_status {$/;"	g
+cact_read_status	src/read.c	/^enum cact_read_status {$/;"	g	file:
+cact_read_string_test	tests/read_test.c	/^static char *cact_read_string_test() {$/;"	f	typeref:typename:char *	file:
+cact_read_whitespace_test	tests/read_test.c	/^static char *cact_read_whitespace_test() {$/;"	f	typeref:typename:char *	file:
+cact_record_inst	include/rec.h	/^struct cact_record_inst {$/;"	s
+cact_set_car	lib/pair.c	/^cact_set_car(struct cactus *cact, struct cact_val p, struct cact_val x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val p,struct cact_val x)
+cact_set_car	src/pair.c	/^cact_set_car(struct cactus *cact, struct cact_val p, struct cact_val x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val p,struct cact_val x)
+cact_set_cdr	lib/pair.c	/^cact_set_cdr(struct cactus *cact, struct cact_val p, struct cact_val x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val p,struct cact_val x)
+cact_set_cdr	src/pair.c	/^cact_set_cdr(struct cactus *cact, struct cact_val p, struct cact_val x)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val p,struct cact_val x)
+cact_store	include/cactus/store.h	/^struct cact_store {$/;"	s
+cact_store	include/store.h	/^struct cact_store {$/;"	s
+cact_store	src/store.c	/^struct cact_store {$/;"	s	file:
+cact_store_allocate	src/store.c	/^cact_store_allocate(struct cact_store *store)$/;"	f	typeref:struct:cact_obj *	signature:(struct cact_store * store)
+cact_store_data	include/cactus/store.h	/^struct cact_store_data {$/;"	s
+cact_store_data	include/store.h	/^struct cact_store_data {$/;"	s
+cact_store_data	src/store.c	/^struct cact_store_data {$/;"	s	file:
+cact_store_init	src/store.c	/^cact_store_init(struct cact_store *store)$/;"	f	typeref:typename:void	signature:(struct cact_store * store)
+cact_str_coords	include/read.h	/^struct cact_str_coords {$/;"	s
+cact_str_coords	src/read.c	/^struct cact_str_coords {$/;"	s	file:
+cact_str_coords_init	src/read.c	/^void cact_str_coords_init(struct cact_str_coords *cds)$/;"	f	typeref:typename:void	signature:(struct cact_str_coords * cds)
+cact_str_coords_push	src/read.c	/^void cact_str_coords_push(struct cact_str_coords *cds, int c)$/;"	f	typeref:typename:void	signature:(struct cact_str_coords * cds,int c)
+cact_string	include/str.h	/^typedef struct cact_string {$/;"	s
+cact_string	include/str.h	/^} cact_string;$/;"	t	typeref:struct:cact_string
+cact_symbol	include/cactus/sym.h	/^typedef struct cact_symbol {$/;"	s
+cact_symbol	include/cactus/sym.h	/^} cact_symbol;$/;"	t	typeref:struct:cact_symbol
+cact_symbol	include/sym.h	/^typedef struct cact_symbol {$/;"	s
+cact_symbol	include/sym.h	/^} cact_symbol;$/;"	t	typeref:struct:cact_symbol
+cact_token	include/read.h	/^enum cact_token {$/;"	g
+cact_token	src/read.c	/^enum cact_token {$/;"	g	file:
+cact_type	include/cactus/val.h	/^enum cact_type {$/;"	g
+cact_type	include/sexp.h	/^typedef enum cact_type {$/;"	g
+cact_type	include/sexp.h	/^} cact_type;$/;"	t	typeref:enum:cact_type
+cact_type	src/sexp.c	/^enum cact_type {$/;"	g	file:
+cact_type_str	src/sexp.c	/^cact_type_str(cact_val x)$/;"	f	typeref:typename:const char *	signature:(cact_val x)
+cact_unpack_args	src/builtin.c	/^cact_unpack_args(struct cactus *cact, struct cact_val arglist, const char *format, ...)$/;"	f	typeref:typename:int	signature:(struct cactus * cact,struct cact_val arglist,const char * format,...)
+cact_val	include/cactus/val.h	/^struct cact_val {$/;"	s
+cact_val	include/sexp.h	/^struct cact_val {$/;"	s
+cact_val	include/sexp.h	/^typedef struct cact_val cact_val;$/;"	t	typeref:struct:cact_val
+cact_val	src/sexp.c	/^struct cact_val {$/;"	s	file:
+cact_val_eq	src/sexp.c	/^cact_val_eq(cact_val l, cact_val r)$/;"	f	typeref:typename:EXPORT bool	signature:(cact_val l,cact_val r)
+cact_val_equal	src/sexp.c	/^cact_val_equal(cact_val l, cact_val r)$/;"	f	typeref:typename:EXPORT bool	signature:(cact_val l,cact_val r)
+cact_val_eqv	src/sexp.c	/^cact_val_eqv(cact_val l, cact_val r)$/;"	f	typeref:typename:EXPORT bool	signature:(cact_val l,cact_val r)
+cactus	include/cactus/core.h	/^struct cactus {$/;"	s
+cactus	include/core.h	/^struct cactus {$/;"	s
+cactus	src/core.c	/^struct cactus {$/;"	s	file:
+cactus_op_defn	src/vm.c	/^struct cactus_op_defn {$/;"	s	file:
+cactus_vm_op	src/vm.c	/^enum cactus_vm_op {$/;"	g	file:
+car	include/cactus/pair.h	/^	struct cact_val car;$/;"	m	struct:cact_pair	typeref:struct:cact_val
+car	include/pair.h	/^	struct cact_val *car;$/;"	m	struct:cact_pair	typeref:struct:cact_val *
+car_cdr_cons_test	tests/sexp_test.c	/^static char *car_cdr_cons_test()$/;"	f	typeref:typename:char *	file:
+cdr	include/cactus/pair.h	/^	struct cact_val cdr;$/;"	m	struct:cact_pair	typeref:struct:cact_val
+cdr	include/pair.h	/^	struct cact_val *cdr;$/;"	m	struct:cact_pair	typeref:struct:cact_val *
+character	include/cactus/val.h	/^        char      character;$/;"	m	union:cact_val::__anon88941c43010a	typeref:typename:char
+character	include/sexp.h	/^        char character;$/;"	m	union:cact_val::__anon6ad07e4e010a	typeref:typename:char
+character	src/sexp.c	/^        char character;$/;"	m	union:cact_val::__anon78e6796d010a	typeref:typename:char	file:
+col	include/read.h	/^    int col;$/;"	m	struct:cact_str_coords	typeref:typename:int
+col	src/read.c	/^    int col;$/;"	m	struct:cact_str_coords	typeref:typename:int	file:
+coords	include/read.h	/^    struct cact_str_coords coords;$/;"	m	struct:cact_lexeme	typeref:struct:cact_str_coords
+coords	include/read.h	/^    struct cact_str_coords coords;$/;"	m	struct:cact_lexer	typeref:struct:cact_str_coords
+coords	src/read.c	/^    struct cact_str_coords coords;$/;"	m	struct:cact_lexeme	typeref:struct:cact_str_coords	file:
+coords	src/read.c	/^    struct cact_str_coords coords;$/;"	m	struct:cact_lexer	typeref:struct:cact_str_coords	file:
+ctx	include/cactus/obj.h	/^    struct cact_val ctx;$/;"	m	struct:cact_error	typeref:struct:cact_val
+ctx	include/obj.h	/^    struct cact_val ctx;$/;"	m	struct:cact_error	typeref:struct:cact_val
+cur	include/read.h	/^    char *cur;$/;"	m	struct:cact_lexer	typeref:typename:char *
+cur	src/read.c	/^    char *cur;$/;"	m	struct:cact_lexer	typeref:typename:char *	file:
+current_env	include/cactus/core.h	/^	struct cact_env *current_env;$/;"	m	struct:cactus	typeref:struct:cact_env *
+current_env	include/core.h	/^	struct cact_env *current_env;$/;"	m	struct:cactus	typeref:struct:cact_env *
+current_env	src/core.c	/^	cact_env *current_env;$/;"	m	struct:cactus	typeref:typename:cact_env *	file:
+data	include/cactus/store.h	/^    void *data;$/;"	m	struct:cact_arena	typeref:typename:void *
+data	include/store.h	/^    void *data;$/;"	m	struct:cact_arena	typeref:typename:void *
+data	src/store.c	/^    void *data;$/;"	m	struct:cact_arena	typeref:typename:void *	file:
+debug_h_INCLUDED	include/debug.h	/^#define debug_h_INCLUDED$/;"	d
+define_sym	src/globals.c	/^cact_symbol define_sym;$/;"	v	typeref:typename:cact_symbol
+design goals	README.md	/^## design goals$/;"	s
+die	src/utils.c	/^void die(const char *fmt, ...)$/;"	f	typeref:typename:void
+element_sz	include/cactus/store.h	/^    size_t element_sz;$/;"	m	struct:cact_arena	typeref:typename:size_t
+element_sz	include/store.h	/^    size_t element_sz;$/;"	m	struct:cact_arena	typeref:typename:size_t
+element_sz	src/store.c	/^    size_t element_sz;$/;"	m	struct:cact_arena	typeref:typename:size_t	file:
+env	include/cactus/obj.h	/^	    struct cact_env env;$/;"	m	union:cact_obj::__anon8815f49b010a	typeref:struct:cact_env
+env	include/cactus/proc.h	/^    struct cact_env *env;$/;"	m	struct:cact_proc	typeref:struct:cact_env *
+env	include/obj.h	/^	    struct cact_env env;$/;"	m	union:cact_obj::__anona5db0e29010a	typeref:struct:cact_env
+env	include/proc.h	/^    struct cact_env *env;$/;"	m	struct:cact_proc	typeref:struct:cact_env *
+env	src/proc.c	/^    cact_env *env;$/;"	m	struct:cact_proc	typeref:typename:cact_env *	file:
+err	include/cactus/obj.h	/^	    struct cact_error err;$/;"	m	union:cact_obj::__anon8815f49b010a	typeref:struct:cact_error
+err	include/obj.h	/^	    struct cact_error err;$/;"	m	union:cact_obj::__anona5db0e29010a	typeref:struct:cact_error
+eval_lambda_test	tests/eval_test.c	/^char *eval_lambda_test() {$/;"	f	typeref:typename:char *
+eval_tests	tests/eval_test.c	/^char *eval_tests() {$/;"	f	typeref:typename:char *
+expected	tests/boolean_test.c	/^	    bool expected;$/;"	m	struct:is_boolean_test::__anon5e420ed70208	typeref:typename:bool	file:
+expected	tests/boolean_test.c	/^	    bool expected;$/;"	m	struct:not_test::__anon5e420ed70108	typeref:typename:bool	file:
+expecttok	src/read.c	/^expecttok(struct cact_lexer *l, enum cact_token t)$/;"	f	typeref:typename:int	signature:(struct cact_lexer * l,enum cact_token t)
+fatalx	include/array.h	/^#define fatalx(/;"	d
+fixnum	include/cactus/val.h	/^        long      fixnum;$/;"	m	union:cact_val::__anon88941c43010a	typeref:typename:long
+fixnum	include/sexp.h	/^        long fixnum;$/;"	m	union:cact_val::__anon6ad07e4e010a	typeref:typename:long
+fixnum	src/sexp.c	/^        long fixnum;$/;"	m	union:cact_val::__anon78e6796d010a	typeref:typename:long	file:
+flonum	include/cactus/val.h	/^        double    flonum;$/;"	m	union:cact_val::__anon88941c43010a	typeref:typename:double
+flonum	include/sexp.h	/^        double flonum;$/;"	m	union:cact_val::__anon6ad07e4e010a	typeref:typename:double
+flonum	src/sexp.c	/^        double flonum;$/;"	m	union:cact_val::__anon78e6796d010a	typeref:typename:double	file:
+fn	include/builtin.h	/^    cact_native_func fn;$/;"	m	struct:cact_builtin	typeref:typename:cact_native_func
+fn	include/cactus/core.h	/^    cact_native_func fn;$/;"	m	struct:cact_builtin	typeref:typename:cact_native_func
+fn	src/builtin.c	/^    cact_native_func fn;$/;"	m	struct:cact_builtin	typeref:typename:cact_native_func	file:
+fnv1a_hash	include/table.h	/^fnv1a_hash(const char* key, const size_t length) $/;"	f	typeref:typename:unsigned int	signature:(const char * key,const size_t length)
+fprint_list	src/write.c	/^fprint_list(FILE *f, cact_val x)$/;"	f	typeref:typename:int
+fprint_obj	src/write.c	/^fprint_obj(FILE *f, struct cact_val x)$/;"	f	typeref:typename:int	file:
+fprint_sexp	src/write.c	/^fprint_sexp(FILE *f, cact_val x)$/;"	f	typeref:typename:int
+globals_h_INCLUDED	include/globals.h	/^#define globals_h_INCLUDED$/;"	d
+i	include/cactus/obj.h	/^}i;$/;"	v	typeref:enum:cact_obj_type
+id	t/id.l	/^(define id$/;"	f
+if_sym	src/globals.c	/^cact_symbol if_sym;$/;"	v	typeref:typename:cact_symbol
+installation	README.md	/^## installation$/;"	s
+interned_syms	include/cactus/core.h	/^	struct cact_symbol_table interned_syms;$/;"	m	struct:cactus	typeref:struct:cact_symbol_table
+interned_syms	include/core.h	/^	struct cact_symbol_table interned_syms;$/;"	m	struct:cactus	typeref:struct:cact_symbol_table
+interned_syms	src/core.c	/^	cact_symbol_table interned_syms;$/;"	m	struct:cactus	typeref:typename:cact_symbol_table	file:
+is_boolean_test	tests/boolean_test.c	/^is_boolean_test()$/;"	f	typeref:typename:char *	file:
+is_ident	src/read.c	/^is_ident(int i)$/;"	f	typeref:typename:int	signature:(int i)
+is_nil_test	tests/sexp_test.c	/^static char *is_nil_test()$/;"	f	typeref:typename:char *	file:
+is_self_evaluating	lib/eval.c	/^is_self_evaluating(struct cact_val x)$/;"	f	typeref:typename:bool	file:	signature:(struct cact_val x)
+is_self_evaluating	src/eval.c	/^is_self_evaluating(struct cact_val x)$/;"	f	typeref:typename:bool	file:
+lambda_sym	src/globals.c	/^cact_symbol lambda_sym;$/;"	v	typeref:typename:cact_symbol
+length	src/pair.c	/^unsigned int length(cact_val *l) {$/;"	f	typeref:typename:unsigned int	signature:(cact_val * l)
+lexer	include/cactus/core.h	/^	struct cact_lexer lexer;$/;"	m	struct:cactus	typeref:struct:cact_lexer
+lexer	include/core.h	/^	struct cact_lexer lexer;$/;"	m	struct:cactus	typeref:struct:cact_lexer
+lexer	src/core.c	/^	cact_lexer lexer;$/;"	m	struct:cactus	typeref:typename:cact_lexer	file:
+lextobool	src/read.c	/^lextobool(struct cact_lexeme lx) $/;"	f	typeref:struct:cact_val	signature:(struct cact_lexeme lx)
+lextoint	src/read.c	/^lextoint(struct cact_lexeme lx)$/;"	f	typeref:struct:cact_val	signature:(struct cact_lexeme lx)
+lextostr	src/read.c	/^lextostr(struct cact_lexeme lx)$/;"	f	typeref:struct:cact_val	signature:(struct cact_lexeme lx)
+lextosym	src/read.c	/^lextosym(struct cactus *cact, struct cact_lexeme lx)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_lexeme lx)
+line	include/read.h	/^    int line;$/;"	m	struct:cact_str_coords	typeref:typename:int
+line	src/read.c	/^    int line;$/;"	m	struct:cact_str_coords	typeref:typename:int	file:
+list	include/cactus/env.h	/^    struct cact_val list;$/;"	m	struct:cact_env	typeref:struct:cact_val
+list	include/env.h	/^    struct cact_val list;$/;"	m	struct:cact_env	typeref:struct:cact_val
+list	src/env.c	/^    cact_val list;$/;"	m	struct:cact_env	typeref:typename:cact_val	file:
+main	main.c	/^int main(int argc, char *argv[])$/;"	f	typeref:typename:int	signature:(int argc,char * argv[])
+main	tests/fulltest.c	/^int main(int argc, char **argv) {$/;"	f	typeref:typename:int
+marked	include/cactus/store.h	/^    int marked;$/;"	m	struct:cact_store_data	typeref:typename:int
+marked	include/store.h	/^    int marked;$/;"	m	struct:cact_store_data	typeref:typename:int
+marked	src/store.c	/^    int marked;$/;"	m	struct:cact_store_data	typeref:typename:int	file:
+msg	include/cactus/obj.h	/^    char *msg;$/;"	m	struct:cact_error	typeref:typename:char *
+msg	include/obj.h	/^    char *msg;$/;"	m	struct:cact_error	typeref:typename:char *
+mu_assert	tests/minunit.h	/^#define mu_assert(/;"	d
+mu_assert_equal	tests/minunit.h	/^#define mu_assert_equal(/;"	d
+mu_run_test	tests/minunit.h	/^#define mu_run_test(/;"	d
+name	include/builtin.h	/^    char* name;$/;"	m	struct:cact_builtin	typeref:typename:char *
+name	include/cactus/core.h	/^    char* name;$/;"	m	struct:cact_builtin	typeref:typename:char *
+name	src/builtin.c	/^    char* name;$/;"	m	struct:cact_builtin	typeref:typename:char *	file:
+nativefn	include/cactus/proc.h	/^    cact_native_func nativefn;$/;"	m	struct:cact_proc	typeref:typename:cact_native_func
+nativefn	include/proc.h	/^    cact_native_func nativefn;$/;"	m	struct:cact_proc	typeref:typename:cact_native_func
+nativefn	src/proc.c	/^    cact_native_func nativefn;$/;"	m	struct:cact_proc	typeref:typename:cact_native_func	file:
+next	src/store.c	/^    struct cact_arena *next;$/;"	m	struct:cact_arena	typeref:struct:cact_arena *	file:
+nextlex	src/read.c	/^nextlex(struct cact_lexer* l)$/;"	f	typeref:struct:cact_lexeme	signature:(struct cact_lexer * l)
+not_test	tests/boolean_test.c	/^not_test()$/;"	f	typeref:typename:char *	file:
+notdblq	src/read.c	/^notdblq(int c) $/;"	f	typeref:typename:int	signature:(int c)
+notnl	src/read.c	/^int notnl(int c) {$/;"	f	typeref:typename:int	signature:(int c)
+object	include/cactus/val.h	/^        struct cact_obj *object;$/;"	m	union:cact_val::__anon88941c43010a	typeref:struct:cact_obj *
+object	include/sexp.h	/^        struct cact_obj *object;$/;"	m	union:cact_val::__anon6ad07e4e010a	typeref:struct:cact_obj *
+object	src/sexp.c	/^        struct cact_obj *object;$/;"	m	union:cact_val::__anon78e6796d010a	typeref:struct:cact_obj *	file:
+occupied_set	include/cactus/store.h	/^    uint64_t occupied_set; \/* A bitset *\/$/;"	m	struct:cact_arena	typeref:typename:uint64_t
+occupied_set	include/store.h	/^    uint64_t occupied_set; \/* A bitset *\/$/;"	m	struct:cact_arena	typeref:typename:uint64_t
+occupied_set	src/store.c	/^    uint64_t occupied_set; \/* A bitset *\/$/;"	m	struct:cact_arena	typeref:typename:uint64_t	file:
+op_defs	src/vm.c	/^struct cactus_op_defn op_defs = {$/;"	v	typeref:struct:cactus_op_defn	file:
+pair	include/cactus/obj.h	/^	    struct cact_pair pair;$/;"	m	union:cact_obj::__anon8815f49b010a	typeref:struct:cact_pair
+pair	include/obj.h	/^	    struct cact_pair pair;$/;"	m	union:cact_obj::__anona5db0e29010a	typeref:struct:cact_pair
+pair_tests	tests/sexp_test.c	/^static char *pair_tests()$/;"	f	typeref:typename:char *	file:
+parent	include/cactus/env.h	/^    struct cact_env *parent;$/;"	m	struct:cact_env	typeref:struct:cact_env *
+parent	include/env.h	/^    struct cact_env *parent;$/;"	m	struct:cact_env	typeref:struct:cact_env *
+parent	src/env.c	/^    struct cact_env *parent;$/;"	m	struct:cact_env	typeref:struct:cact_env *	file:
+peekistok	src/read.c	/^peekistok(struct cact_lexer *l, enum cact_token t)$/;"	f	typeref:typename:int	signature:(struct cact_lexer * l,enum cact_token t)
+peeklex	src/read.c	/^peeklex(struct cact_lexer *l)$/;"	f	typeref:struct:cact_lexeme	signature:(struct cact_lexer * l)
+place	include/cactus/store.h	/^    size_t place;$/;"	m	struct:cact_store_data	typeref:typename:size_t
+place	include/store.h	/^    size_t place;$/;"	m	struct:cact_store_data	typeref:typename:size_t
+place	src/store.c	/^    size_t place;$/;"	m	struct:cact_store_data	typeref:typename:size_t	file:
+print_env	lib/env.c	/^print_env(cact_env *e)$/;"	f	typeref:typename:void	signature:(cact_env * e)
+print_env	src/env.c	/^print_env(cact_env *e)$/;"	f	typeref:typename:void	signature:(cact_env * e)
+print_list	src/write.c	/^print_list(cact_val x) {$/;"	f	typeref:typename:int
+print_sexp	src/write.c	/^print_sexp(cact_val x) {$/;"	f	typeref:typename:int
+printlex	src/read.c	/^printlex(struct cact_lexeme lx)$/;"	f	typeref:typename:void	signature:(struct cact_lexeme lx)
+printtokstream	src/read.c	/^printtokstream(struct cact_lexer *l)$/;"	f	typeref:typename:void	signature:(struct cact_lexer * l)
+proc	include/cactus/obj.h	/^	    struct cact_proc proc;$/;"	m	union:cact_obj::__anon8815f49b010a	typeref:struct:cact_proc
+proc	include/obj.h	/^	    struct cact_proc proc;$/;"	m	union:cact_obj::__anona5db0e29010a	typeref:struct:cact_proc
+qdirname	.do_built.dir/redo	/^qdirname() ($/;"	f
+qdirname	.do_built.dir/redo-ifchange	/^qdirname() ($/;"	f
+qdirname	.do_built.dir/redo-whichdo	/^qdirname() ($/;"	f
+qdirname	do	/^qdirname() ($/;"	f
+quote_sym	src/globals.c	/^cact_symbol quote_sym;$/;"	v	typeref:typename:cact_symbol
+read_tests	tests/read_test.c	/^char *read_tests() {$/;"	f	typeref:typename:char *
+readlist	src/read.c	/^readlist(struct cactus *cact, struct cact_val *r) $/;"	f	typeref:typename:int	signature:(struct cactus * cact,struct cact_val * r)
+repl	main.c	/^repl(struct cactus *cact, FILE *f)$/;"	f	typeref:typename:int	signature:(struct cactus * cact,FILE * f)
+root_env	include/cactus/core.h	/^	struct cact_env *root_env;$/;"	m	struct:cactus	typeref:struct:cact_env *
+root_env	include/core.h	/^	struct cact_env *root_env;$/;"	m	struct:cactus	typeref:struct:cact_env *
+root_env	src/core.c	/^	cact_env *root_env;$/;"	m	struct:cactus	typeref:typename:cact_env *	file:
+set_sym	src/globals.c	/^cact_symbol set_sym;$/;"	v	typeref:typename:cact_symbol
+sexp_h_INCLUDED	include/cactus/val.h	/^#define sexp_h_INCLUDED$/;"	d
+sexp_tests	tests/sexp_test.c	/^char *sexp_tests()$/;"	f	typeref:typename:char *
+slurp	src/utils.c	/^char* slurp(FILE *f)$/;"	f	typeref:typename:char *
+spec	include/rec.h	/^	struct cact_record_spec *spec;$/;"	m	struct:cact_record_inst	typeref:struct:cact_record_spec *
+special_begin	lib/eval.c	/^special_begin(struct cactus *cact, struct cact_val args)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val args)
+special_begin	src/eval.c	/^special_begin(struct cactus *cact, struct cact_val args)$/;"	f	typeref:struct:cact_val
+special_define	lib/eval.c	/^special_define(struct cactus *cact, struct cact_val args)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val args)
+special_define	src/eval.c	/^special_define(struct cactus *cact, struct cact_val args)$/;"	f	typeref:struct:cact_val
+special_if	lib/eval.c	/^special_if(struct cactus *cact, struct cact_val args)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val args)
+special_if	src/eval.c	/^special_if(struct cactus *cact, struct cact_val args)$/;"	f	typeref:struct:cact_val
+special_lambda	lib/eval.c	/^special_lambda(struct cactus *cact, struct cact_val args)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val args)
+special_lambda	src/eval.c	/^special_lambda(struct cactus *cact, struct cact_val args)$/;"	f	typeref:struct:cact_val
+special_quote	lib/eval.c	/^special_quote(struct cactus *cact, struct cact_val args)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val args)
+special_quote	src/eval.c	/^special_quote(struct cactus *cact, struct cact_val args)$/;"	f	typeref:struct:cact_val
+special_set_bang	lib/eval.c	/^special_set_bang(struct cactus *cact, struct cact_val args)$/;"	f	typeref:struct:cact_val	signature:(struct cactus * cact,struct cact_val args)
+special_set_bang	src/eval.c	/^special_set_bang(struct cactus *cact, struct cact_val args)$/;"	f	typeref:struct:cact_val
+st	include/read.h	/^    char *st;$/;"	m	struct:cact_lexeme	typeref:typename:char *
+st	include/read.h	/^    const char *st;$/;"	m	struct:cact_lexer	typeref:typename:const char *
+st	src/read.c	/^    char *st;$/;"	m	struct:cact_lexeme	typeref:typename:char *	file:
+st	src/read.c	/^    const char *st;$/;"	m	struct:cact_lexer	typeref:typename:const char *	file:
+store	include/cactus/core.h	/^	struct cact_store store;$/;"	m	struct:cactus	typeref:struct:cact_store
+store	include/core.h	/^	struct cact_store store;$/;"	m	struct:cactus	typeref:struct:cact_store
+store	src/core.c	/^	cact_store store;$/;"	m	struct:cactus	typeref:typename:cact_store	file:
+store_data	include/cactus/obj.h	/^    struct cact_store_data store_data;$/;"	m	struct:cact_obj	typeref:struct:cact_store_data
+store_data	include/obj.h	/^    struct cact_store_data store_data;$/;"	m	struct:cact_obj	typeref:struct:cact_store_data
+str	include/cactus/obj.h	/^	    struct cact_string str;$/;"	m	union:cact_obj::__anon8815f49b010a	typeref:struct:cact_string
+str	include/obj.h	/^	    struct cact_string str;$/;"	m	union:cact_obj::__anona5db0e29010a	typeref:struct:cact_string
+str	include/str.h	/^    char *str;$/;"	m	struct:cact_string	typeref:typename:char *
+str_h_INCLUDED	include/str.h	/^#define str_h_INCLUDED$/;"	d
+strslice	src/utils.c	/^char *strslice(const char *str, const char *end)$/;"	f	typeref:typename:char *
+strword	src/utils.c	/^char* strword(const char *str, char **end)$/;"	f	typeref:typename:char *
+sym	include/cactus/sym.h	/^    char* sym;$/;"	m	struct:cact_symbol	typeref:typename:char *
+sym	include/obj.h	/^	    struct cact_symbol sym;$/;"	m	union:cact_obj::__anona5db0e29010a	typeref:struct:cact_symbol
+sym	include/sym.h	/^    char* sym;$/;"	m	struct:cact_symbol	typeref:typename:char *
+sym_h_INCLUDED	include/cactus/sym.h	/^#define sym_h_INCLUDED$/;"	d
+sym_h_INCLUDED	include/sym.h	/^#define sym_h_INCLUDED$/;"	d
+symbol	include/sexp.h	/^        struct cact_symbol *symbol;$/;"	m	union:cact_val::__anon6ad07e4e010a	typeref:struct:cact_symbol *
+symbol	src/sexp.c	/^        struct cact_symbol *symbol;$/;"	m	union:cact_val::__anon78e6796d010a	typeref:struct:cact_symbol *	file:
+sz	include/read.h	/^    size_t sz;$/;"	m	struct:cact_lexeme	typeref:typename:size_t
+sz	src/read.c	/^    size_t sz;$/;"	m	struct:cact_lexeme	typeref:typename:size_t	file:
+t	include/read.h	/^    enum cact_token t;$/;"	m	struct:cact_lexeme	typeref:enum:cact_token
+t	src/read.c	/^    enum cact_token t;$/;"	m	struct:cact_lexeme	typeref:enum:cact_token	file:
+table_cmp_fn	include/table.h	/^typedef unsigned int (*table_cmp_fn)(void *, void *);$/;"	t	typeref:typename:unsigned int (*)(void *,void *)
+table_hash_fn	include/table.h	/^typedef unsigned int (*table_hash_fn)(void *);$/;"	t	typeref:typename:unsigned int (*)(void *)
+table_string_cmp	include/table.h	/^table_string_cmp(void *a, void *b)$/;"	f	typeref:typename:unsigned int	signature:(void * a,void * b)
+table_string_hash	include/table.h	/^table_string_hash(void *key)$/;"	f	typeref:typename:unsigned int	signature:(void * key)
+tests_run	tests/fulltest.c	/^int tests_run = 0;$/;"	v	typeref:typename:int
+thing	tests/boolean_test.c	/^	    cact_val *thing;$/;"	m	struct:is_boolean_test::__anon5e420ed70208	typeref:typename:cact_val *	file:
+thing	tests/boolean_test.c	/^	    cact_val *thing;$/;"	m	struct:not_test::__anon5e420ed70108	typeref:typename:cact_val *	file:
+type	include/cactus/obj.h	/^    enum cact_obj_type type;$/;"	m	struct:cact_obj	typeref:enum:cact_obj_type
+type	include/cactus/val.h	/^    enum cact_type type;$/;"	m	struct:cact_val	typeref:enum:cact_type
+type	include/obj.h	/^    enum cact_obj_type type;$/;"	m	struct:cact_obj	typeref:enum:cact_obj_type
+type	include/sexp.h	/^    enum cact_type type;$/;"	m	struct:cact_val	typeref:enum:cact_type
+type	src/sexp.c	/^    enum cact_type type;$/;"	m	struct:cact_val	typeref:enum:cact_type	file:
+unpack_typecheck	src/builtin.c	/^unpack_typecheck(const struct cact_val arg, const char c)$/;"	f	typeref:typename:bool	signature:(const struct cact_val arg,const char c)
+values	include/rec.h	/^	struct cact_val *values;$/;"	m	struct:cact_record_inst	typeref:struct:cact_val *
+verbosity	main.c	/^int verbosity = 0;$/;"	v	typeref:typename:int
+what is actually supported	README.md	/^## what is actually supported $/;"	s
+write_h_INCLUDED	include/cactus/write.h	/^#define write_h_INCLUDED$/;"	d
+write_h_INCLUDED	include/write.h	/^#define write_h_INCLUDED$/;"	d
+xcalloc	src/xmalloc.c	/^xcalloc(size_t nmemb, size_t size)$/;"	f	typeref:typename:void *
+xfree	src/xmalloc.c	/^xfree(void *ptr)$/;"	f	typeref:typename:void
+xmalloc	src/xmalloc.c	/^xmalloc(size_t sz)$/;"	f	typeref:typename:void *
+xrealloc	src/xmalloc.c	/^xrealloc(void *ptr, size_t sz)$/;"	f	typeref:typename:void *
+🌵 cactus	README.md	/^# 🌵 cactus$/;"	c

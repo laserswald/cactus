@@ -1,14 +1,19 @@
-#include "pair.h"
+
+#include "cactus/core.h"
+#include "cactus/store.h"
+#include "cactus/pair.h"
 
 /* Create a pair. */
 struct cact_val 
 cact_cons(struct cactus *cact, struct cact_val a, struct cact_val d)
 {
 	struct cact_val v;
-	v.t = CACT_TYPE_OBJECT;
-	v.obj = cact_store_allocate(&cact->store);
-	v.obj->as.pair.car = a;
-	v.obj->as.pair.cdr = d;
+	v.type = CACT_TYPE_OBJ;
+	struct cact_obj *p = cact_store_allocate(&cact->store);
+	p->type = CACT_OBJ_PAIR;
+	p->as.pair.car = a;
+	p->as.pair.cdr = d;
+	v.as.object = p;
     return v;
 }
 
@@ -20,7 +25,7 @@ cact_car(struct cactus *cact, struct cact_val x)
         return cact_make_error(cact, "Not a pair: ", x);
     }
 
-    struct cact_pair p = x.obj->as.pair;
+    struct cact_pair p = x.as.object->as.pair;
     return p.car;
 }
 
@@ -32,7 +37,7 @@ cact_cdr(struct cactus *cact, struct cact_val x)
         return cact_make_error(cact, "Not a pair: ", x);
     }
 
-    struct cact_pair p = x.obj->as.pair;
+    struct cact_pair p = x.as.object->as.pair;
     return p.cdr;
 }
 
@@ -44,7 +49,7 @@ cact_set_car(struct cactus *cact, struct cact_val p, struct cact_val x)
         return cact_make_error(cact, "Not a pair: ", x);
     }
 
-    struct cact_pair p = x.obj->as.pair;
+    struct cact_pair p = x.as.object->as.pair;
     p.car = x;
 }
 
@@ -56,7 +61,7 @@ cact_set_cdr(struct cactus *cact, struct cact_val p, struct cact_val x)
         return cact_make_error(cact, "Not a pair: ", p);
     }
 
-    struct cact_pair p = x.obj->as.pair;
+    struct cact_pair p = x.as.object->as.pair;
     p.cdr = x;
 }
 
@@ -105,40 +110,9 @@ cact_append(struct cactus *cact, struct cact_val *l, struct cact_val *x)
     return l;
 }
 
-
-cact_val *
-lookup(cact_env *e, cact_val *key)
+unsigned int 
+cact_length(cact_val *l) 
 {
-    if (!e) return NULL;
-
-    cact_val *found_kv = assoc(key, e->list);
-
-    if (!found_kv && e->parent) {
-        found_kv = lookup(e->parent, key);
-    }
-
-    if (!found_kv) {
-        return NULL;
-    }
-
-    return found_kv;
-}
-
-void
-define(cact_env *e, cact_val *key, cact_val *val)
-{
-    if (!e)
-        return;
-
-    cact_val *found_kv = lookup(e, key);
-
-    if (found_kv) {
-        found_kv->p.cdr = val;
-    } else {
-        e->list = acons(key, val, e->list);
-    }
-}
-unsigned int length(cact_val *l) {
     unsigned int len = 0;
     LIST_FOR_EACH(l, p) {
         len++;

@@ -1,16 +1,17 @@
-#include "eval.h"
 
-#include "debug.h"
-#include "utils.h"
+#include "cactus/eval.h"
 
-#include "sexp.h"
-#include "sym.h"
-#include "env.h"
-#include "proc.h"
-#include "bool.h"
-#include "number.h"
-#include "builtin.h"
-#include "write.h"
+#include "cactus/internal/debug.h"
+#include "cactus/internal/utils.h"
+
+#include "cactus/val.h"
+#include "cactus/sym.h"
+#include "cactus/env.h"
+#include "cactus/proc.h"
+#include "cactus/bool.h"
+#include "cactus/num.h"
+#include "cactus/core.h"
+#include "cactus/write.h"
 
 struct cact_val 
 special_quote(struct cactus *cact, struct cact_val args)

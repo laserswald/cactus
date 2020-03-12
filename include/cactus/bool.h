@@ -1,7 +1,7 @@
 #ifndef __CACT_BOOL_H__
 #define __CACT_BOOL_H__
 
-#include "sexp.h"
+#include "cactus/val.h"
 
 DEFINE_VALUE_CONV(CACT_TYPE_BOOL, bool,   cact_to_bool,   boolean)
 DEFINE_VALUE_CHECK(cact_is_bool,   CACT_TYPE_BOOL)

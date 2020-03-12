@@ -1,7 +1,7 @@
 #ifndef sym_h_INCLUDED
 #define sym_h_INCLUDED
 
-#include "table.h"
+#include "cactus/internal/table.h"
 
 struct cactus;
 

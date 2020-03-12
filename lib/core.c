@@ -1,8 +1,7 @@
-#include "debug.h"
-#include "utils.h"
-#include "builtin.h"
+#include "cactus/core.h"
 
-#include "core.h"
+#include "cactus/internal/debug.h"
+#include "cactus/internal/utils.h"
 
 void
 cact_init(struct cactus *cact)

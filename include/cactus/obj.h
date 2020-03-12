@@ -1,13 +1,11 @@
 #ifndef CACT_OBJ_H
 #define CACT_OBJ_H
 
-#include "proc.h"
-#include "str.h"
-#include "sym.h"
-#include "pair.h"
-#include "env.h"
-#include "err.h"
-#include "store.h"
+#include "cactus/pair.h"
+#include "cactus/str.h"
+#include "cactus/proc.h"
+#include "cactus/env.h"
+#include "cactus/store.h"
 
 struct cact_store_data;
 
@@ -39,6 +37,8 @@ struct cact_error {
     struct cact_val ctx;
 };
 
+struct cact_store_data;
+
 /* A value that has an associated heap component. */
 struct cact_obj {
     struct cact_store_data store_data;
@@ -46,7 +46,6 @@ struct cact_obj {
     union {
 	    struct cact_pair pair;
 	    struct cact_string str;
-	    struct cact_symbol sym;
 	    struct cact_proc proc;
 	    struct cact_env env;
 	    struct cact_error err;
@@ -81,14 +80,12 @@ funcname(cact_val x) { \
 
 DEFINE_OBJECT_CONVERSION(CACT_OBJ_PAIR,        struct cact_pair,   cact_to_pair,      pair)
 DEFINE_OBJECT_CONVERSION(CACT_OBJ_STRING,      struct cact_string, cact_to_string,    str)
-DEFINE_OBJECT_CONVERSION(CACT_OBJ_SYMBOL,      struct cact_symbol, cact_to_sym,       sym)
 DEFINE_OBJECT_CONVERSION(CACT_OBJ_PROCEDURE,   struct cact_proc,   cact_to_procedure, proc)
 DEFINE_OBJECT_CONVERSION(CACT_OBJ_ENVIRONMENT, struct cact_env,    cact_to_env,       env)
 DEFINE_OBJECT_CONVERSION(CACT_OBJ_ERROR,       struct cact_error,  cact_to_error,     err)
 
 DEFINE_OBJECT_CHECK(cact_is_pair, CACT_OBJ_PAIR)
 DEFINE_OBJECT_CHECK(cact_is_string, CACT_OBJ_STRING)
-DEFINE_OBJECT_CHECK(cact_is_symbol, CACT_OBJ_SYMBOL)
 DEFINE_OBJECT_CHECK(cact_is_procedure, CACT_OBJ_PROCEDURE)
 DEFINE_OBJECT_CHECK(cact_is_env, CACT_OBJ_ENVIRONMENT)
 DEFINE_OBJECT_CHECK(cact_is_error, CACT_OBJ_ERROR)

@@ -8,18 +8,9 @@
 #include <stdbool.h>
 #include <ctype.h>
 
-#include "core.h"
-#include "globals.h"
-#include "debug.h"
-#include "sexp.h"
-#include "utils.h"
-#include "xmalloc.h"
-#include "read.h"
-#include "write.h"
-#include "env.h"
-#include "sym.h"
-#include "eval.h"
-#include "builtin.h"
+#include "cactus/core.h"
+#include "cactus/eval.h"
+#include "cactus/write.h"
 
 int verbosity = 0;
 
@@ -27,19 +18,11 @@ int verbosity = 0;
 
 #define PROMPT "cactus> "
 
-void
-dbg(cact_val *x)
-{
-    printf("; debug: ");
-    print_sexp(x);
-    puts("");
-}
-
 int
 repl(struct cactus *cact, FILE *f)
 {
     char line[256];
-    struct cact_val *x;
+    struct cact_val x;
 
     printf(PROMPT);
     while (fgets(line, sizeof line, f) != NULL) {
@@ -58,12 +41,9 @@ int main(int argc, char *argv[])
     int result = EXIT_SUCCESS;
     FILE *infile = NULL;
 
-    DBG("Starting.\n");
-
     cact_init(&cact);
 
     if (argc == 2) {
-        DBG("Reading file.\n");
         infile = fopen(argv[1], "r");
         if (! infile) {
             perror("Could not run file");
@@ -76,7 +56,6 @@ int main(int argc, char *argv[])
             exit(1);
         }
     } else {
-	    DBG("Starting REPL.\n");
 	    result = repl(&cact, stdin);
     }
 
