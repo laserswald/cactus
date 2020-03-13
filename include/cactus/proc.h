@@ -9,18 +9,25 @@ struct cactus;
 typedef struct cact_val (*cact_native_func)(struct cactus *, struct cact_val);
 
 /* A procedure object. */
-typedef struct cact_proc {
+struct cact_proc {
     struct cact_env *env;
     struct cact_val argl;
     struct cact_val body;
     cact_native_func nativefn;
-} cact_proc;
+};
 
-struct cact_val cact_make_procedure(struct cactus *, cact_env *e, cact_val args, cact_val body);
+DEFINE_OBJECT_CONVERSION(CACT_OBJ_PROCEDURE, struct cact_proc*, cact_to_procedure, proc)
+DEFINE_OBJECT_CHECK(cact_is_procedure, CACT_OBJ_PROCEDURE)
+
+/* Create a new user-defined procedure. */
+struct cact_val cact_make_procedure(struct cactus *, struct cact_env *e, 
+    struct cact_val args, struct cact_val body);
+
+/* Create a new native C procedure. */
 struct cact_val cact_make_native_proc(struct cactus *, cact_native_func);
 
 /* Apply the procedure with the given arguments. */
-cact_val cact_proc_apply(struct cactus *, cact_proc*, cact_val);
+struct cact_val cact_proc_apply(struct cactus *, struct cact_proc *, struct cact_val);
 
 #endif // CACT_PROC_H
 

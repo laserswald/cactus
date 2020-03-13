@@ -1,12 +1,16 @@
-#include "sexp.h"
-#include "eval.h"
-#include "builtin.h"
-#include "write.h"
-#include "env.h"
+
+#include "cactus/proc.h"
+
+#include "cactus/core.h"
+#include "cactus/val.h"
+#include "cactus/pair.h"
+#include "cactus/store.h"
+#include "cactus/write.h"
+#include "cactus/eval.h"
 
 /* Create a procedure. */
-cact_val
-cact_make_procedure(struct cactus *cact, cact_env *e, cact_val argl, cact_val body)
+struct cact_val
+cact_make_procedure(struct cactus *cact, struct cact_env *e, struct cact_val argl, struct cact_val body)
 {
     struct cact_val proc;
     proc.type = CACT_TYPE_OBJ;
@@ -20,7 +24,7 @@ cact_make_procedure(struct cactus *cact, cact_env *e, cact_val argl, cact_val bo
 
 /* Apply a procedure given the arguments and the environment. */
 struct cact_val
-cact_proc_apply(struct cactus *cact, cact_proc *clo, cact_val args)
+cact_proc_apply(struct cactus *cact, struct cact_proc *clo, struct cact_val args)
 {
     if (clo->nativefn) {
         return clo->nativefn(cact, args);
@@ -28,18 +32,18 @@ cact_proc_apply(struct cactus *cact, cact_proc *clo, cact_val args)
         struct cact_env *params_env = malloc(sizeof(struct cact_env));
         cact_env_init(params_env, clo->env);
 
-        cact_val current_arg = args;
-        CACT_LIST_FOR_EACH_ITEM(param, clo->argl) {
+        struct cact_val current_arg = args;
+        CACT_LIST_FOR_EACH_ITEM(cact, param, clo->argl) {
             if (cact_is_null(current_arg)) {
                 fprintf(stderr, "Not enough arguments!");
                 fprint_sexp(stderr, args);
                 abort();
             }
-            cact_env_define(cact, params_env, param, cact_eval(cact, cact_car(current_arg)));
-            current_arg = cact_cdr(current_arg);
+            cact_env_define(cact, params_env, param, cact_eval(cact, cact_car(cact, current_arg)));
+            current_arg = cact_cdr(cact, current_arg);
         }
         cact->current_env = params_env;
-        struct cact_val ret = cact_builtin_begin(cact, clo->body);
+        struct cact_val ret = cact_eval_list(cact, clo->body);
         cact->current_env = cact->current_env->parent;
         free(params_env);
         return ret;

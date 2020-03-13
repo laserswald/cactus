@@ -34,9 +34,14 @@ void cact_init(struct cactus *);
 /* Finalize a cactus interpreter. */
 void cact_finish(struct cactus *);
 
-void cact_def_global(struct cactus *, char *, struct cact_val);
+/* Define any value in the global default namespace */
+void cact_define(struct cactus *, const char *, struct cact_val);
 
-void cact_make_builtins(struct cactus *cact, struct cact_builtin *builtins, size_t len);
+/* Define a native procedure in the global default namespace */
+void cact_define_builtin(struct cactus *, const char *, cact_native_func);
+
+/* Define a set of procedures in the global default namespace */
+void cact_define_builtin_array(struct cactus *cact, struct cact_builtin *builtins, size_t len);
 
 #endif // __CACT_CORE_H__
 

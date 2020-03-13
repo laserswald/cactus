@@ -18,20 +18,25 @@ cact_init(struct cactus *cact)
 }
 
 void
-cact_def_global(struct cactus *cact, char *name, struct cact_val val)
+cact_define(struct cactus *cact, char *name, struct cact_val val)
 {
-    struct cact_val sym = cact_get_symbol(cact, name);
-    cact_env_define(cact, cact->root_env, sym, val);
+	struct cact_val sym = cact_get_symbol(cact, name);
+	cact_env_define(cact, cact->root_env, sym, val);
 }
 
 void
-cact_make_builtins(struct cactus *cact, struct cact_builtin *builtins, size_t len) 
+cact_define_builtin(struct cactus *cact, const char *name, cact_native_func fn)
 {
-    size_t i;
-    for (i = 0; i < len; i++) {
-	    struct cact_val builtin = cact_make_native_proc(cact, builtins[i].fn);
-	    cact_def_global(cact, builtins[i].name, builtin);
-    }
+	cact_define(cact, name, cact_make_native_proc(cact, fn));
+}
+
+void
+cact_define_builtin_array(struct cactus *cact, struct cact_builtin *builtins, size_t len) 
+{
+	size_t i;
+	for (i = 0; i < len; i++) {
+		cact_define_builtin(cact, builtins[i].name, builtins[i].fn);
+	}
 }
 
 /* Finalize a cactus interpreter. */
