@@ -3,20 +3,24 @@
 #include <assert.h>
 #include <string.h>
 
-#include "core.h"
-#include "read.h"
-#include "debug.h"
-#include "sexp.h"
-#include "utils.h"
-#include "sym.h"
-#include "str.h"
+#include "cactus/core.h"
+#include "cactus/read.h"
+#include "cactus/val.h"
+#include "cactus/sym.h"
+#include "cactus/str.h"
+#include "cactus/pair.h"
 
-void cact_str_coords_init(struct cact_str_coords *cds)
+#include "cactus/internal/debug.h"
+#include "cactus/internal/utils.h"
+
+void 
+cact_str_coords_init(struct cact_str_coords *cds)
 {
 	memset(cds, 0, sizeof(struct cact_str_coords));
 }
 
-void cact_str_coords_push(struct cact_str_coords *cds, int c)
+void 
+cact_str_coords_push(struct cact_str_coords *cds, int c)
 {
 	cds->bytes++;
 	if (c == '\n') {
@@ -266,7 +270,7 @@ lextosym(struct cactus *cact, struct cact_lexeme lx)
 
 /* Convert a lexeme to an integer. */
 struct cact_val
-lextoint(struct cact_lexeme lx)
+lextoint(struct cactus *cact, struct cact_lexeme lx)
 {
 	char *end = lx.st;
 	long i = strtol(lx.st, &end, 10);
@@ -275,21 +279,21 @@ lextoint(struct cact_lexeme lx)
 
 /* Convert a lexeme to a string. */
 struct cact_val
-lextostr(struct cact_lexeme lx)
+lextostr(struct cactus *cact, struct cact_lexeme lx)
 {
-	return cact_make_string(strslice(lx.st + 1, &lx.st[lx.sz - 1]));
+	return cact_make_string(cact, strslice(lx.st + 1, &lx.st[lx.sz - 1]));
 }
 
 /* Convert a lexeme to a boolean. */
 struct cact_val
-lextobool(struct cact_lexeme lx) 
+lextobool(struct cactus *cact, struct cact_lexeme lx) 
 {
 	if (strncmp(lx.st, "#t", 2) == 0 || strncmp(lx.st, "#true", 5) == 0) {
 		return CACT_BOOL_VAL(true);
 	} else if (strncmp(lx.st, "#f", 2) == 0 || strncmp(lx.st, "#false", 6) == 0) {
 		return CACT_BOOL_VAL(false);
 	}
-	return cact_make_error("Improperly formatted boolean.", CACT_NULL_VAL);
+	return cact_make_error(cact, "Improperly formatted boolean.", CACT_NULL_VAL);
 }
 
 /* Read a list from the given lexer and fill the cact_val with it. */
@@ -303,20 +307,20 @@ readlist(struct cactus *cact, struct cact_val *r)
 	struct cact_lexeme open_paren = peeklex(l);
 
 	if (open_paren.t != CACT_TOKEN_OPEN_PAREN) {
-		*r = cact_make_error("readlist: somehow didn't get open paren", CACT_NULL_VAL);
+		*r = cact_make_error(cact, "readlist: somehow didn't get open paren", CACT_NULL_VAL);
 		return CACT_READ_OTHER_ERROR;
 	}
 
 	nextlex(l);
 
 	while (! peekistok(l, CACT_TOKEN_CLOSE_PAREN) && peeklex(l).t > 0) {
-		cact_val e;
+		struct cact_val e;
 		status = cact_read(cact, &e);
 		if (status != CACT_READ_OK) {
 			return status;
 		}
 		if (cact_is_undef(e)) {
-			*r = cact_make_error("Unexpected ending", CACT_NULL_VAL);
+			*r = cact_make_error(cact, "Unexpected ending", CACT_NULL_VAL);
 			return CACT_READ_OTHER_ERROR;
 		}
 		*r = cact_append(cact, *r, e);
@@ -325,8 +329,9 @@ readlist(struct cactus *cact, struct cact_val *r)
 
 	if (! expecttok(l, CACT_TOKEN_CLOSE_PAREN)) {
 		*r = cact_make_error(
+			cact,
 			"readlist: somehow didn't get close paren", 
-			cact_make_pair(
+			cact_cons(
 				cact,
 				CACT_FIX_VAL(open_paren.coords.line),
 				CACT_FIX_VAL(open_paren.coords.col)
@@ -367,17 +372,17 @@ cact_read(struct cactus* cact, struct cact_val* ret)
 			nextlex(l);
 			break;
 		case CACT_TOKEN_BOOLEAN:
-			*ret = lextobool(lx);
+			*ret = lextobool(cact, lx);
 			status = CACT_READ_OK;
 			nextlex(l);
 			break;
 		case CACT_TOKEN_INTEGER:
-			*ret = lextoint(lx);
+			*ret = lextoint(cact, lx);
 			status = CACT_READ_OK;
 			nextlex(l);
 			break;
 		case CACT_TOKEN_STRING:
-			*ret = lextostr(lx);
+			*ret = lextostr(cact, lx);
 			status = CACT_READ_OK;
 			nextlex(l);
 			break;
@@ -392,10 +397,10 @@ cact_read(struct cactus* cact, struct cact_val* ret)
 
 		case CACT_TOKEN_SINGLE_QUOTE:
 			nextlex(l);
-			cact_val quoted;
+			struct cact_val quoted;
 			status = cact_read(cact, &quoted);
-			cact_val q = cact_get_symbol(cact, "quote");
-			*ret = cact_make_pair(cact, q, quoted);
+			struct cact_val q = cact_get_symbol(cact, "quote");
+			*ret = cact_cons(cact, q, quoted);
 			status = CACT_READ_OK;
 			break;
 

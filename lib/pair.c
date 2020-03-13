@@ -45,12 +45,12 @@ cact_cdr(struct cactus *cact, struct cact_val x)
 struct cact_val 
 cact_set_car(struct cactus *cact, struct cact_val p, struct cact_val x)
 {
-    if (! cact_is_pair(x)) {
-        return cact_make_error(cact, "Not a pair: ", x);
+    if (! cact_is_pair(p)) {
+        return cact_make_error(cact, "Not a pair: ", p);
     }
 
-    struct cact_pair p = x.as.object->as.pair;
-    p.car = x;
+    p.as.object->as.pair.car = x;
+    return CACT_UNDEF_VAL;
 }
 
 /* Set the cdr of a pair. */
@@ -61,60 +61,62 @@ cact_set_cdr(struct cactus *cact, struct cact_val p, struct cact_val x)
         return cact_make_error(cact, "Not a pair: ", p);
     }
 
-    struct cact_pair p = x.as.object->as.pair;
-    p.cdr = x;
+    p.as.object->as.pair.cdr = x;
+    return CACT_UNDEF_VAL;
 }
 
 /* Add a key and value to an association list. */
 struct cact_val
-cact_list_acons(struct cactus *cact, cact_val key, cact_val val, cact_val alist)
+cact_list_acons(struct cactus *cact, struct cact_val key, struct cact_val val, struct cact_val alist)
 {
-    cact_val *pair = cact_cons(key, val);
-    return cons(pair, alist);
+    struct cact_val pair = cact_cons(cact, key, val);
+    return cact_cons(cact, pair, alist);
 }
 
 /* Lookup the value associated with the key in the alist. */
 struct cact_val
-cact_assoc(cact_val *key, cact_val *alist)
+cact_assoc(struct cactus *cact, struct cact_val key, struct cact_val alist)
 {
-    if (! alist) {
-        return NULL;
+    if (cact_is_null(alist)) {
+        return CACT_NULL_VAL;
     }
 
-    cact_val* fst = car(alist);
-    if (is_error(fst)) {
+    struct cact_val fst = cact_car(cact, alist);
+    if (cact_is_error(fst)) {
         return fst;
     }
 
-    cact_pair kv = to_pair(fst, "assoc");
+    struct cact_pair kv = cact_to_pair(fst, "assoc");
 
     if (cact_val_equal(kv.car, key)) {
-        return car(alist);
+        return cact_car(cact, alist);
     }
 
-    return assoc(key, cdr(alist));
+    return cact_assoc(cact, key, cact_cdr(cact, alist));
 }
 
 struct cact_val
-cact_append(struct cactus *cact, struct cact_val *l, struct cact_val *x)
+cact_append(struct cactus *cact, struct cact_val l, struct cact_val x)
 {
-    if (!l)
-        return cons(x, NULL);
+	assert(cact);
 
-    cact_val *e = l;
+    if (cact_is_null(l))
+        return cact_cons(cact, x, CACT_NULL_VAL);
 
-    while (cdr(e))
-        e = cdr(e);
+    struct cact_val e = l;
 
-    e->p.cdr = cons(x, NULL);
+    while (! cact_is_null(cact_cdr(cact, e)))
+        e = cact_cdr(cact, e);
+
+    cact_set_cdr(cact, e, cact_cons(cact, x, CACT_NULL_VAL));
     return l;
 }
 
 unsigned int 
-cact_length(cact_val *l) 
+cact_length(struct cactus *cact, struct cact_val l) 
 {
     unsigned int len = 0;
-    LIST_FOR_EACH(l, p) {
+    CACT_LIST_FOR_EACH_ITEM(cact, ignore, l) {
         len++;
     }
     return len;

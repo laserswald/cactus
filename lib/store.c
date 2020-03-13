@@ -1,10 +1,10 @@
 
-#include "store.h"
-#include "xmalloc.h"
+#include "cactus/store.h"
+#include "cactus/pair.h"
+#include "cactus/proc.h"
+#include "cactus/env.h"
 
-#include "pair.h"
-#include "proc.h"
-#include "env.h"
+#include "cactus/internal/xmalloc.h"
 
 /*
  * Arena operations.
@@ -67,7 +67,7 @@ cact_arena_set_init(struct cact_arena_set *set, size_t elt_sz)
 	ARRAY_ADD(set, initial_arena);
 }
 
-void *
+struct cact_obj *
 cact_arena_set_allocate(struct cact_arena_set *set)
 {
 	int i;
@@ -80,7 +80,7 @@ cact_arena_set_allocate(struct cact_arena_set *set)
     if (i == ARRAY_LENGTH(set)) {
         // Allocate new arena
 	    struct cact_arena new_arena;
-	    new_arena.element_sz = elt_sz;
+	    new_arena.element_sz = (ARRAY_ITEM(set, 1)).element_sz;
 	    new_arena.data = xcalloc(64, new_arena.element_sz);
 	    new_arena.occupied_set = 0;
 
@@ -89,7 +89,12 @@ cact_arena_set_allocate(struct cact_arena_set *set)
 
 	struct cact_arena *arena = &ARRAY_ITEM(set, i);
 
-	return cact_arena_get_next(arena);
+    size_t slot = cact_arena_next_open(arena);
+	struct cact_obj *object = cact_arena_get_next(arena);
+	object->store_data.arena = arena;
+	object->store_data.place = slot;
+
+	return object;
 }
 
 /*
@@ -107,6 +112,14 @@ cact_store_init(struct cact_store *store)
 struct cact_obj *
 cact_store_allocate(struct cact_store *store, enum cact_obj_type type)
 {
-	return cact_arena_set_allocate(&store->arenas[type]);
+	struct cact_obj *object;
+	object = cact_arena_set_allocate(&store->arenas[type]);
+	object->type = type;
+	return object;
+}
+
+void
+cact_store_destroy(struct cact_store *store, struct cact_obj *obj)
+{
 }
 

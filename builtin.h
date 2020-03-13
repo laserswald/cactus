@@ -3,11 +3,6 @@
 
 #include "proc.h"
 
-struct cact_builtin {
-    char* name;
-    cact_native_func fn;
-};
-
 #define BUILTIN_FUNC(name) \
 	struct cact_val name(struct cactus *, struct cact_val)
 
