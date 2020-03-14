@@ -7,7 +7,6 @@
 enum cact_obj_type {
 	CACT_OBJ_PAIR,
 	CACT_OBJ_STRING,
-	CACT_OBJ_SYMBOL,
 	CACT_OBJ_PROCEDURE,
 	CACT_OBJ_ENVIRONMENT,
 	CACT_OBJ_ERROR,
@@ -24,6 +23,8 @@ enum cact_obj_type {
 
 	/* TODO: Symbols*/
 };
+
+#include "cactus/store.h"
 
 /* A value that has an associated heap component. */
 struct cact_obj {

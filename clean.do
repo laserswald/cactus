@@ -1,1 +1,1 @@
-rm -f cactus *.o fulltest *.a tags
+rm -f cactus lib/*.o *.o fulltest *.a tags

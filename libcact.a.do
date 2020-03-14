@@ -4,8 +4,10 @@ DEPS="
 	lib/bool.o
 	lib/core.o
 	lib/env.o
+	lib/err.o
 	lib/eval.o
 	lib/number.o
+	lib/obj.o
 	lib/pair.o
 	lib/port.o
 	lib/proc.o
@@ -18,7 +20,6 @@ DEPS="
 	lib/utils.o
 	lib/val.o
 	lib/vec.o
-	lib/vm.o
 	lib/write.o
 	lib/xmalloc.o
 "

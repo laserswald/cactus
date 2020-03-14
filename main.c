@@ -11,6 +11,7 @@
 #include "cactus/core.h"
 #include "cactus/eval.h"
 #include "cactus/write.h"
+#include "cactus/err.h"
 
 int verbosity = 0;
 

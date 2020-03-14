@@ -7,16 +7,15 @@
 #include "cactus/val.h"
 #include "cactus/store.h"
 #include "cactus/core.h"
+#include "cactus/pair.h"
 
 /* Create an environment. */
 struct cact_val
-cact_make_env(struct cactus *cact, cact_env *parent)
+cact_make_env(struct cactus *cact, struct cact_env *parent)
 {
-	cact_val v;
-	v.type = CACT_TYPE_OBJ;
-	v.as.object = cact_store_allocate(&cact->store);
-	cact_env_init(&v.as.object->as.env, parent);
-    return v;
+	struct cact_env *env = (struct cact_env *)cact_store_allocate(&cact->store, CACT_OBJ_ENVIRONMENT);
+	cact_env_init(env, parent);
+    return CACT_OBJ_VAL((struct cact_obj *) env);
 }
 
 void
@@ -29,19 +28,19 @@ cact_env_init(struct cact_env *e, struct cact_env *parent)
  * Look up the key in the environment and return it, or raise an error
  */
 struct cact_val
-cact_env_lookup(struct cact_env *e, struct cact_val key)
+cact_env_lookup(struct cactus *cact, struct cact_env *e, struct cact_val key)
 {
     if (!e) 
 	    return CACT_NULL_VAL;
 
-    struct cact_val found_kv = cact_assoc(key, e->list);
+    struct cact_val found_kv = cact_assoc(cact, key, e->list);
 
     if (cact_is_null(found_kv) && e->parent) {
-        found_kv = cact_env_lookup(e->parent, key);
+        found_kv = cact_env_lookup(cact, e->parent, key);
     }
 
     if (cact_is_null(found_kv)) {
-        return cact_make_error("Symbol not defined", key);
+        return cact_make_error(cact, "Symbol not defined", key);
     }
 
     return found_kv;
@@ -52,40 +51,40 @@ cact_env_lookup(struct cact_env *e, struct cact_val key)
  * assignment.
  */
 int 
-cact_env_define(struct cactus *cact, cact_env *e, cact_val key, cact_val val)
+cact_env_define(struct cactus *cact, struct cact_env *e, struct cact_val key, struct cact_val val)
 {
     if (!e)
         return -1;
 
-    cact_val found_kv = cact_assoc(key, e->list);
+    struct cact_val found_kv = cact_assoc(cact, key, e->list);
 
     if (cact_is_null(found_kv)) {
         return -2;
     }
 
-    e->list = cact_acons(cact, key, val, e->list);
+    e->list = cact_list_acons(cact, key, val, e->list);
 
     return 0;
 }
 
 /* Assign the key to the value, ensuring the key already exists. */
 int 
-cact_env_set(cact_env *e, cact_val key, cact_val val)
+cact_env_set(struct cactus *cact, struct cact_env *e, struct cact_val key, struct cact_val val)
 {
     if (!e)
         return -1;
 
-    cact_val found_kv = cact_env_lookup(e, key);
+    struct cact_val found_kv = cact_env_lookup(cact, e, key);
 
     if (cact_is_null(found_kv)) return -2;
 
-    cact_set_cdr(found_kv, val);
+    cact_set_cdr(cact, found_kv, val);
 
     return 0;
 }
 
 void
-print_env(cact_env *e)
+print_env(struct cact_env *e)
 {
     if (!e)
         return;

@@ -1,17 +1,20 @@
 
 #include "cactus/eval.h"
 
-#include "cactus/internal/debug.h"
-#include "cactus/internal/utils.h"
+#include "cactus/core.h"
+#include "cactus/write.h"
 
 #include "cactus/val.h"
 #include "cactus/sym.h"
+#include "cactus/str.h"
 #include "cactus/env.h"
 #include "cactus/proc.h"
 #include "cactus/bool.h"
 #include "cactus/num.h"
-#include "cactus/core.h"
-#include "cactus/write.h"
+#include "cactus/err.h"
+
+#include "cactus/internal/debug.h"
+#include "cactus/internal/utils.h"
 
 struct cact_val 
 special_quote(struct cactus *cact, struct cact_val args)
@@ -22,10 +25,10 @@ special_quote(struct cactus *cact, struct cact_val args)
 struct cact_val 
 special_if(struct cactus *cact, struct cact_val args)
 {
-    cact_val cond = cact_car(args);
-    cact_val cseq = cact_cadr(args);
-    cact_val alt = cact_caddr(args);
-    cact_val result = CACT_UNDEF_VAL;
+    struct cact_val cond = cact_car(cact, args);
+    struct cact_val cseq = cact_cadr(cact, args);
+    struct cact_val alt = cact_caddr(cact, args);
+    struct cact_val result = CACT_UNDEF_VAL;
 
     if (cact_is_truthy(cact_eval(cact, cond))) {
         result = cact_eval(cact, cseq);
@@ -39,21 +42,21 @@ special_if(struct cactus *cact, struct cact_val args)
 struct cact_val
 special_define(struct cactus *cact, struct cact_val args)
 {
-    cact_val term = cact_car(args);
-    cact_val defn = cact_cdr(args);
+    struct cact_val term = cact_car(cact, args);
+    struct cact_val defn = cact_cdr(cact, args);
 
-    cact_val value;
+    struct cact_val value;
 
     if (cact_is_symbol(term)) {
         value = cact_eval(cact, defn);
     } else if (cact_is_pair(term)) {
-        cact_val params = cact_cdr(term);
-        term = cact_car(term);
+        struct cact_val params = cact_cdr(cact, term);
+        term = cact_car(cact, term);
         value = cact_make_procedure(cact, cact->current_env, params, defn);
     }
 
     if (cact_env_define(cact, cact->current_env, term, value) < 0) {
-        return cact_make_error("Could not create definition: definition already exists", term);
+        return cact_make_error(cact, "Could not create definition: definition already exists", term);
     }
 
     return CACT_UNDEF_VAL;
@@ -62,8 +65,8 @@ special_define(struct cactus *cact, struct cact_val args)
 struct cact_val 
 special_lambda(struct cactus *cact, struct cact_val args)
 {
-    cact_val lambda_args = cact_car(args);
-    cact_val body = cact_cdr(args);
+    struct cact_val lambda_args = cact_car(cact, args);
+    struct cact_val body = cact_cdr(cact, args);
     return cact_make_procedure(cact, cact->current_env, lambda_args, body);
 }
 
@@ -73,7 +76,7 @@ special_begin(struct cactus *cact, struct cact_val args)
     struct cact_val result = CACT_UNDEF_VAL;
 
     if (cact_is_pair(args)) {
-        CACT_LIST_FOR_EACH_ITEM(expr, args) {
+        CACT_LIST_FOR_EACH_ITEM(cact, expr, args) {
             result = cact_eval(cact, expr);
             PROPAGATE_ERROR(result);
         }
@@ -87,12 +90,12 @@ special_begin(struct cactus *cact, struct cact_val args)
 struct cact_val
 special_set_bang(struct cactus *cact, struct cact_val args)
 {
-    struct cact_val term = cact_car(args);
-    struct cact_val defn = cact_car(cact_cdr(args));
+    struct cact_val term = cact_car(cact, args);
+    struct cact_val defn = cact_cadr(cact, args);
     struct cact_val value = cact_eval(cact, defn);
 
-    if (cact_env_set(cact->current_env, term, value) < 0) {
-        return cact_make_error("Could not assign value: no such variable", term);
+    if (cact_env_set(cact, cact->current_env, term, value) < 0) {
+        return cact_make_error(cact, "Could not assign value: no such variable", term);
     }
 
     return CACT_UNDEF_VAL;
@@ -118,18 +121,17 @@ cact_eval(struct cactus *cact, struct cact_val x)
     }
 
     if (cact_is_symbol(x)) {
-        cact_val found = cact_env_lookup(cact->current_env, x);
+        struct cact_val found = cact_env_lookup(cact, cact->current_env, x);
         if (cact_is_null(found)) {
-            return cact_make_error("No such symbol", x);
+            return cact_make_error(cact, "No such symbol", x);
         }
-        return cact_cdr(found);
+        return cact_cdr(cact, found);
     }
 
     if (cact_is_pair(x)) {
-        struct cact_val operator = cact_car(x);
-        struct cact_val operands = cact_cdr(x);
-
-        cact_val maybe_procedure = cact_eval(cact, operator);
+        struct cact_val operator = cact_car(cact, x);
+        struct cact_val operands = cact_cdr(cact, x);
+        struct cact_val maybe_procedure = cact_eval(cact, operator);
 
         if (cact_is_error(maybe_procedure)) {
             return maybe_procedure;
@@ -141,17 +143,13 @@ cact_eval(struct cactus *cact, struct cact_val x)
             abort();
         }
 
-        struct cact_proc proc = cact_to_procedure(maybe_procedure, "eval"); 
+        struct cact_proc *proc = cact_to_procedure(maybe_procedure, "eval"); 
 
-        return cact_proc_apply(cact, &proc, operands);
+        return cact_proc_apply(cact, proc, operands);
     }
 
     if (cact_is_error(x)) {
-	    struct cact_error err = cact_to_error(x, "eval");
-        fprintf(stderr, "Error! %s", err.msg);
-        print_list(err.ctx);
-        fprintf(stderr, "\n");
-        abort();
+	    return x;
     }
 
 	fprintf(stderr, "Cannot evaluate, got type %s.\n", cact_type_str(x));
@@ -200,6 +198,20 @@ cact_eval_string(struct cactus *cact, char *s)
         ret = cact_eval(cact, exp);
     }
 STOP_RUNNING:
+    return ret;
+}
+
+struct cact_val
+cact_eval_list(struct cactus *cact, struct cact_val lst)
+{
+    struct cact_val ret;
+
+	ret = CACT_NULL_VAL;
+
+    CACT_LIST_FOR_EACH_ITEM(cact, item, lst) {
+	    ret = cact_eval(cact, item);
+    }
+
     return ret;
 }
 

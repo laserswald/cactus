@@ -1,31 +1,39 @@
 #include <stdio.h>
-#include "../read.h"
-#include "../sexp.h"
-#include "../sym.h"
-#include "../builtin.h"
 #include "minunit.h"
-#include "../utils.h"
+
+#include "cactus/core.h"
+#include "cactus/read.h"
+#include "cactus/val.h"
+#include "cactus/pair.h"
+#include "cactus/sym.h"
+#include "cactus/bool.h"
+#include "cactus/internal/utils.h"
 
 static char*
 not_test()
 {
+	struct cactus cact;
+	cact_init(&cact);
+
     struct {
-	    cact_val *thing;
+	    struct cact_val thing;
 	    bool expected;
     } cases[] = {
-        {NULL, false},
-        {cact_make_boolean(true), false},
-        {cact_make_integer(3), false},
-        {cact_make_pair(cact_make_integer(3), NULL), false},
-        {cact_make_boolean(false), true},
-        {cact_make_symbol("nil"), false},
+        {CACT_NULL_VAL, false},
+        {CACT_BOOL_VAL(true), false},
+        {CACT_FIX_VAL(3), false},
+        {cact_cons(&cact, CACT_FIX_VAL(3), CACT_NULL_VAL), false},
+        {CACT_BOOL_VAL(false), true},
+        {cact_get_symbol(&cact, "nil"), false},
     };
 
     size_t len_cases = LENGTH(cases);
     int i;
     for (i = 0; i < len_cases; i++) {
-	    mu_assert("`not` failed", sexp_not(cases[i].thing)->b == cases[i].expected);
+	    mu_assert("`not` failed", cact_to_bool(cact_bool_not(cases[i].thing), "not_test") == cases[i].expected);
     }
+
+    cact_finish(&cact);
 
 	return 0;
 }
@@ -34,19 +42,19 @@ static char*
 is_boolean_test()
 {
     struct {
-	    cact_val *thing;
+	    struct cact_val thing;
 	    bool expected;
     } cases[] = {
-        {NULL, false},
-        {cact_make_boolean(false), true},
-        {cact_make_boolean(true), true},
-        {cact_make_integer(0), false},
+        {CACT_NULL_VAL, false},
+        {CACT_BOOL_VAL(false), true},
+        {CACT_BOOL_VAL(true), true},
+        {CACT_FIX_VAL(0), false},
     };
 
     size_t len_cases = LENGTH(cases);
     int i;
     for (i = 0; i < len_cases; i++) {
-	    mu_assert("`is_bool` failed", is_bool(cases[i].thing) == cases[i].expected);
+	    mu_assert("`is_bool` failed", cact_is_bool(cases[i].thing) == cases[i].expected);
     }
 
 	return 0;
