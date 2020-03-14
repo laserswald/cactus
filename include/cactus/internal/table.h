@@ -44,17 +44,6 @@ fnv1a_hash(const char* key, const size_t length)
 	return hash;
 } 
 
-static unsigned int
-table_string_hash(void *key)
-{
-	return fnv1a_hash(key, strlen(key));
-}
-
-static unsigned int
-table_string_cmp(void *a, void *b)
-{
-	return strcmp((const char*) a, (const char*) b);
-}
 
 typedef unsigned int (*table_hash_fn)(void *);
 typedef unsigned int (*table_cmp_fn)(void *, void *);
@@ -96,6 +85,7 @@ struct name { \
 
 #define TABLE_SPACE(tab)                 (tab->available)
 #define TABLE_FIND(name, tab, key)	 name##_TABLE_FIND((tab), (key))
+#define TABLE_HAS(name, tab, key)	     (name##_TABLE_FIND((tab), (key)) != NULL)
 #define TABLE_ENTER(name, tab, key, val) name##_TABLE_ENTER(tab, key, val)
 #define TABLE_REMOVE(name, tab, key)	 name##_TABLE_REMOVE(tab, key)
 
@@ -129,6 +119,9 @@ name##_TABLE_FIND_INDEX(struct name *table, keytype key, int what) \
 	if (! table) { \
 		return TABLE_STATUS_ERROR; \
 	} \
+    if (0 == TABLE_SPACE(table)) { \
+        return TABLE_STATUS_NOT_FOUND; \
+    } \
 	uint32_t bucket_idx = (table)->hashfn(key) % TABLE_SPACE(table); \
 	uint32_t current = bucket_idx; \
 	int first_sentinel = -1; \
@@ -237,6 +230,19 @@ name##_TABLE_REMOVE(struct name *h, keytype key) \
 	} \
 	return TABLE_STATUS_OK; \
 }
+
+#define STRING_TABLE_GENERATE(name, valtype) \
+static unsigned int \
+table_string_hash(void *key) \
+{ \
+	return fnv1a_hash(key, strlen(key)); \
+} \
+static unsigned int \
+table_string_cmp(void *a, void *b) \
+{ \
+	return strcmp((const char*) a, (const char*) b); \
+} \
+TABLE_GENERATE(name, const char*, valtype)
 
 #endif // TABLE_H
 

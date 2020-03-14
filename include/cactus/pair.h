@@ -19,11 +19,11 @@ struct cact_val cact_cdr(struct cactus *,struct cact_val);
 struct cact_val cact_set_car(struct cactus *, struct cact_val, struct cact_val);
 struct cact_val cact_set_cdr(struct cactus *, struct cact_val, struct cact_val);
 
-#define cact_cadr(x) 	cact_car(cact_cdr(x))
-#define cact_caddr(x) 	cact_car(cact_cdr(cact_cdr(x)))
+#define cact_cadr(cact, x) 	    cact_car(cact, cact_cdr(cact, x))
+#define cact_caddr(cact, x) 	cact_car(cact, cact_cdr(cact, cact_cdr(cact, x)))
 
 struct cact_val cact_append(struct cactus *, struct cact_val l, struct cact_val x);
-struct cact_val cact_acons(struct cactus *, struct cact_val k, struct cact_val v, struct cact_val alist);
+struct cact_val cact_list_acons(struct cactus *, struct cact_val k, struct cact_val v, struct cact_val alist);
 struct cact_val cact_assoc(struct cactus *, struct cact_val k, struct cact_val alist);
 unsigned int cact_length(struct cactus *, struct cact_val);
 

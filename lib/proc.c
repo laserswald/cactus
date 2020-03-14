@@ -12,14 +12,19 @@
 struct cact_val
 cact_make_procedure(struct cactus *cact, struct cact_env *e, struct cact_val argl, struct cact_val body)
 {
-    struct cact_val proc;
-    proc.type = CACT_TYPE_OBJ;
-    proc.as.object = cact_store_allocate(&cact->store);
-    proc.as.object->type = CACT_OBJ_PROCEDURE;
-    proc.as.object->as.proc.env = e;
-    proc.as.object->as.proc.argl = argl;
-    proc.as.object->as.proc.body = body;
-    return proc;
+	struct cact_proc *proc = cact_store_allocate(&cact->store, CACT_OBJ_PROCEDURE);
+	proc->env = e;
+	proc->argl = argl;
+	proc->body = body;
+    return CACT_OBJ_VAL((struct cact_obj *) proc);
+}
+
+struct cact_val
+cact_make_native_proc(struct cactus *cact, cact_native_func fn)
+{
+	struct cact_proc *nat = cact_store_allocate(&cact->store, CACT_OBJ_PROCEDURE);
+	nat->nativefn = fn;
+    return CACT_OBJ_VAL((struct cact_obj *) nat);
 }
 
 /* Apply a procedure given the arguments and the environment. */
@@ -50,13 +55,4 @@ cact_proc_apply(struct cactus *cact, struct cact_proc *clo, struct cact_val args
     }
 }
 
-struct cact_val
-cact_make_native_proc(struct cactus *cact, cact_native_func fn)
-{
-    struct cact_val nat;
-    nat.type = CACT_TYPE_OBJ;
-    nat.as.object = cact_store_allocate(&cact->store);
-    nat.as.object->as.proc.nativefn = fn;
-    return nat;
-}
 

@@ -1,8 +1,8 @@
 /* file minunit_example.c */
 
 #include <stdio.h>
-#include "../read.h"
-#include "../sexp.h"
+#include "cactus/read.h"
+#include "cactus/val.h"
 #include "../builtin.h"
 #include "minunit.h"
 
@@ -12,12 +12,14 @@ char *read_tests();
 char *sexp_tests();
 char *boolean_tests();
 char *eval_tests();
+char *pair_tests();
 
 static char *all_tests() {
 	mu_run_test(read_tests);
 	mu_run_test(sexp_tests);
 	mu_run_test(boolean_tests);
 	mu_run_test(eval_tests);
+    mu_run_test(pair_tests);
 	return 0;
 }
 

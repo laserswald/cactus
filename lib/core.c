@@ -1,4 +1,5 @@
 #include "cactus/core.h"
+#include "cactus/sym.h"
 
 #include "cactus/internal/debug.h"
 #include "cactus/internal/utils.h"
@@ -7,18 +8,15 @@ void
 cact_init(struct cactus *cact)
 {
 	// Begin by initializing the symbol table
-	TABLE_INIT(&cact->interned_syms, table_string_hash, table_string_cmp);
-
+	cact_symbol_table_init(&cact->interned_syms);
 	cact_store_init(&cact->store);
-
 	cact->root_env = malloc(sizeof(struct cact_env));
 	cact_env_init(cact->root_env, NULL);
-
 	cact->current_env = cact->root_env;
 }
 
 void
-cact_define(struct cactus *cact, char *name, struct cact_val val)
+cact_define(struct cactus *cact, const char *name, struct cact_val val)
 {
 	struct cact_val sym = cact_get_symbol(cact, name);
 	cact_env_define(cact, cact->root_env, sym, val);

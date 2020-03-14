@@ -1,15 +1,16 @@
 #include "cactus/str.h"
 
+#include "cactus/core.h"
+
 /* Create a string. */
-struct cact_val *
-cact_make_string(struct cactus *cact, char *str)
+struct cact_val
+cact_make_string(struct cactus *cact, const char *str)
 {
-	struct cact_val v;
+	struct cact_string *s;
 
-	v.type = CACT_TYPE_OBJ;
-	v.as.object = cact_store_allocate(&cact->store);
-	v.as.object->as.str.str = str;
+	s = (struct cact_string *)cact_store_allocate(&cact->store, CACT_OBJ_STRING);
+	s->str = str;
 
-	return v;
+	return CACT_OBJ_VAL(s);
 }
 

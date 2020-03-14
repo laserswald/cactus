@@ -14,6 +14,7 @@ enum cact_type {
     CACT_TYPE_FLONUM,
     CACT_TYPE_BOOL,
     CACT_TYPE_CHAR,
+    CACT_TYPE_SYM,
     CACT_TYPE_OBJ,
 };
 
@@ -24,6 +25,7 @@ struct cact_val {
         double    flonum;
         bool      boolean;
         char      character;
+        struct cact_symbol *symbol;
         struct cact_obj *object;
     } as;
 };
@@ -34,6 +36,7 @@ struct cact_val {
 #define CACT_FLO_VAL(n)  ((struct cact_val){.type=CACT_TYPE_FLONUM, .as.flonum = (n)})
 #define CACT_BOOL_VAL(p) ((struct cact_val){.type=CACT_TYPE_BOOL, .as.boolean = (p)})
 #define CACT_CHAR_VAL(p) ((struct cact_val){.type=CACT_TYPE_CHAR, .as.character = (p)})
+#define CACT_SYM_VAL(p)  ((struct cact_val){.type=CACT_TYPE_SYM, .as.symbol = (p)})
 #define CACT_OBJ_VAL(p)  ((struct cact_val){.type=CACT_TYPE_OBJ, .as.object = (p)})
 
 const char *cact_val_show_type(enum cact_type t);

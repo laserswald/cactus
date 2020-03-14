@@ -1,14 +1,27 @@
 
 #include "cactus/store.h"
+
 #include "cactus/pair.h"
+#include "cactus/str.h"
+#include "cactus/sym.h"
 #include "cactus/proc.h"
 #include "cactus/env.h"
+#include "cactus/err.h"
 
 #include "cactus/internal/xmalloc.h"
+#include "cactus/internal/utils.h"
 
 /*
  * Arena operations.
  */
+
+void
+cact_arena_init(struct cact_arena *arena, size_t element_sz)
+{
+	arena->element_sz = element_sz;
+	arena->data = xcalloc(64, element_sz);
+	arena->occupied_set = 0;
+}
 
 /* Does this arena have this pointer? */
 bool 
@@ -44,10 +57,15 @@ void *
 cact_arena_get_next(struct cact_arena *arena)
 {
 	size_t open_slot = cact_arena_next_open(arena);
-
+	fprintf(stdout, "open slot: %d\n", open_slot);
 	arena->occupied_set |= (1 << open_slot);
+	return (void*) (((char*)arena->data) + (open_slot * arena->element_sz));
+}
 
-	return (void*) (((char*)arena) + (open_slot * arena->element_sz));
+void
+cact_arena_finish(struct cact_arena *arena)
+{
+	xfree(arena->data);
 }
 
 /*
@@ -58,12 +76,8 @@ void
 cact_arena_set_init(struct cact_arena_set *set, size_t elt_sz)
 {
 	ARRAY_INIT(set);
-
 	struct cact_arena initial_arena;
-	initial_arena.element_sz = elt_sz;
-	initial_arena.data = xcalloc(64, initial_arena.element_sz);
-	initial_arena.occupied_set = 0;
-
+	cact_arena_init(&initial_arena);
 	ARRAY_ADD(set, initial_arena);
 }
 
@@ -97,6 +111,29 @@ cact_arena_set_allocate(struct cact_arena_set *set)
 	return object;
 }
 
+int
+cact_arena_set_clean(struct cact_arena_set *set)
+{
+	int i, count = 0;
+	for (i = 0; i < ARRAY_LENGTH(set); i++) {
+		if (cact_arena_is_full(&ARRAY_ITEM(set, i))) {
+			ARRAY_REMOVE(set, i);
+			count++;
+		}
+	}
+	return count;
+}
+
+void
+cact_arena_set_finish(struct cact_arena_set *set)
+{
+	int i;
+	for (i = 0; i < ARRAY_LENGTH(set); i++) {
+		cact_arena_finish(&ARRAY_ITEM(set, i));
+	}
+	ARRAY_FREE(set);
+}
+
 /*
  * Store operations.
  */
@@ -104,18 +141,44 @@ cact_arena_set_allocate(struct cact_arena_set *set)
 void 
 cact_store_init(struct cact_store *store)
 {
-	cact_arena_set_init(&store->arenas[CACT_OBJ_PAIR], sizeof(struct cact_pair));
-	cact_arena_set_init(&store->arenas[CACT_OBJ_PROCEDURE], sizeof(struct cact_proc));
-	cact_arena_set_init(&store->arenas[CACT_OBJ_ENV], sizeof(struct cact_env));
+	struct {
+		enum cact_obj_type type;
+		size_t size;
+	} set_defs[] = {
+		{CACT_OBJ_PAIR, sizeof(struct cact_pair)},
+		{CACT_OBJ_STRING, sizeof(struct cact_string)},
+		{CACT_OBJ_PROCEDURE, sizeof(struct cact_proc)},
+		{CACT_OBJ_ENVIRONMENT, sizeof(struct cact_env)},
+		{CACT_OBJ_ERROR, sizeof(struct cact_error)},
+	};
+
+	store->sets_len = LENGTH(set_defs);
+	store->arena_sets = xcalloc(store->sets_len, sizeof(struct cact_arena_set));
+
+    int i;
+	for (i = 0; i < store->sets_len; i++) {
+		cact_arena_set_init(&store->arena_sets[set_defs[i].type], set_defs[i].size);
+	}
 }
 
 struct cact_obj *
 cact_store_allocate(struct cact_store *store, enum cact_obj_type type)
 {
 	struct cact_obj *object;
-	object = cact_arena_set_allocate(&store->arenas[type]);
+	object = cact_arena_set_allocate(&store->arena_sets[type]);
 	object->type = type;
 	return object;
+}
+
+void
+cact_store_finish(struct cact_store *store)
+{
+	size_t i;
+	for (i = 0; i < store->sets_len; i++) {
+		cact_arena_set_finish(&store->arena_sets[i]);
+	}
+	xfree(store->arena_sets);
+	store->sets_len = 0;
 }
 
 void

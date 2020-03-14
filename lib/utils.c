@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include <stdarg.h>
 
-#include "xmalloc.h"
+#include "cactus/internal/xmalloc.h"
 
 void die(const char *fmt, ...)
 {
