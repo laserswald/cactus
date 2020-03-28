@@ -3,11 +3,15 @@
 
 #include "cactus/env.h"
 
-#include "cactus/write.h"
 #include "cactus/val.h"
 #include "cactus/store.h"
 #include "cactus/core.h"
-#include "cactus/pair.h"
+#include "cactus/sym.h"
+
+#include "cactus/internal/utils.h"
+#include "cactus/internal/table.h"
+
+TABLE_GENERATE(cact_env_entries, struct cact_symbol *, struct cact_val)
 
 /* Create an environment. */
 struct cact_val
@@ -22,65 +26,66 @@ void
 cact_env_init(struct cact_env *e, struct cact_env *parent)
 {
     e->parent = parent;
+    TABLE_INIT(&e->entries, ptrhash, cact_symbol_cmp);
 }
 
 /* 
- * Look up the key in the environment and return it, or raise an error
+ * Look up the key in the environment and return it, or raise an error.
  */
 struct cact_val
-cact_env_lookup(struct cactus *cact, struct cact_env *e, struct cact_val key)
+cact_env_lookup(struct cactus *cact, struct cact_env *e, struct cact_symbol *key)
 {
-    if (!e) 
-	    return CACT_NULL_VAL;
+	assert(e);
+	assert(key);
 
-    struct cact_val found_kv = cact_assoc(cact, key, e->list);
+	struct cact_val *found = TABLE_FIND(cact_env_entries, &e->entries, key);
 
-    if (cact_is_null(found_kv) && e->parent) {
-        found_kv = cact_env_lookup(cact, e->parent, key);
-    }
+	if (! found) {
+	    if (e->parent) {
+		    return cact_env_lookup(cact, e->parent, key);
+	    } else {
+	        return cact_make_error(cact, "env lookup: no variable with key", CACT_SYM_VAL(key));
+	    }
+	}
 
-    if (cact_is_null(found_kv)) {
-        return cact_make_error(cact, "Symbol not defined", key);
-    }
-
-    return found_kv;
+	return *found;
 }
 
 /*
  * Perform an environment definition, as opposed to an environment
  * assignment.
  */
-int 
-cact_env_define(struct cactus *cact, struct cact_env *e, struct cact_val key, struct cact_val val)
+struct cact_val
+cact_env_define(struct cactus *cact, struct cact_env *e, 
+    struct cact_symbol *key, struct cact_val val)
 {
-    if (!e)
-        return -1;
+	assert(e);
+	assert(key);
 
-    struct cact_val found_kv = cact_assoc(cact, key, e->list);
+	if (TABLE_HAS(cact_env_entries, &e->entries, key)) {
+        return cact_make_error(cact, "cannot define variable, already exists", CACT_SYM_VAL(key));
+	}
 
-    if (cact_is_null(found_kv)) {
-        return -2;
-    }
+	TABLE_ENTER(cact_env_entries, &e->entries, key, val);
 
-    e->list = cact_list_acons(cact, key, val, e->list);
-
-    return 0;
+    return CACT_UNDEF_VAL;
 }
 
 /* Assign the key to the value, ensuring the key already exists. */
-int 
-cact_env_set(struct cactus *cact, struct cact_env *e, struct cact_val key, struct cact_val val)
+struct cact_val
+cact_env_set(struct cactus *cact, struct cact_env *e, 
+    struct cact_symbol *key, struct cact_val val)
 {
-    if (!e)
-        return -1;
+	assert(e);
+	assert(key);
 
-    struct cact_val found_kv = cact_env_lookup(cact, e, key);
+	if (! TABLE_HAS(cact_env_entries, &e->entries, key)) {
+        return cact_make_error(cact, "cannot set nonexistent variable", CACT_SYM_VAL(key));
+	}
 
-    if (cact_is_null(found_kv)) return -2;
+	TABLE_ENTER(cact_env_entries, &e->entries, key, val);
 
-    cact_set_cdr(cact, found_kv, val);
-
-    return 0;
+    return CACT_UNDEF_VAL;
 }
 
 void
@@ -89,10 +94,19 @@ print_env(struct cact_env *e)
     if (!e)
         return;
 
-    printf("cact_environment:");
-    print_list(e->list);
-    puts("");
-    puts("Parent:");
-    print_env(e->parent);
+    struct TABLE_ENTRY(cact_env_entries) *bucket;
+    TABLE_FOREACH_BUCKET(, bucket, &e->entries) {
+        if (bucket->state == TABLE_ENTRY_FILLED) {
+	        printf("%s : ", bucket->key->sym);
+	        print_sexp(bucket->val);
+	        printf("\n");
+        }
+    }
+
+    if (e->parent) {
+	    printf("parent:\n");
+	    print_env(e->parent);
+    }
+
 }
 

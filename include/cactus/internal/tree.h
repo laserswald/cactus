@@ -627,7 +627,6 @@ name##_RB_FIND(struct name *head, struct type *elm)			\
 			tmp = RB_LEFT(tmp, field);			\
 		else if (comp > 0)					\
 			tmp = RB_RIGHT(tmp, field);			\
-    	return NULL; \
 		else							\
 			return (tmp);					\
 	}								\

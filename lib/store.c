@@ -57,7 +57,6 @@ void *
 cact_arena_get_next(struct cact_arena *arena)
 {
 	size_t open_slot = cact_arena_next_open(arena);
-	fprintf(stdout, "open slot: %d\n", open_slot);
 	arena->occupied_set |= (1 << open_slot);
 	return (void*) (((char*)arena->data) + (open_slot * arena->element_sz));
 }
@@ -77,7 +76,7 @@ cact_arena_set_init(struct cact_arena_set *set, size_t elt_sz)
 {
 	ARRAY_INIT(set);
 	struct cact_arena initial_arena;
-	cact_arena_init(&initial_arena);
+	cact_arena_init(&initial_arena, elt_sz);
 	ARRAY_ADD(set, initial_arena);
 }
 

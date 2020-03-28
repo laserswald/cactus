@@ -2,19 +2,21 @@
 #define sym_h_INCLUDED
 
 #include "cactus/val.h"
-#include "cactus/internal/table.h"
+#include "cactus/internal/tree.h"
 
 struct cactus;
 
-typedef struct cact_symbol {
+struct cact_symbol {
     char* sym;
-} cact_symbol;
+    RB_ENTRY(cact_symbol) entry;
+};
 
-STRING_TABLE_DECL(cact_symbol_table, struct cact_symbol)
+RB_HEAD(cact_symbol_table, cact_symbol);
 void cact_symbol_table_init(struct cact_symbol_table *);
 
-int symcmp(cact_symbol *a, cact_symbol *b);
-struct cact_val cact_get_symbol(struct cactus *, const char *);
+struct cact_symbol *cact_get_symbol(struct cactus *, const char *);
+struct cact_val cact_make_symbol(struct cactus *, const char *);
+int cact_symbol_cmp(const void *l, const void *r);
 
 DEFINE_VALUE_CHECK(cact_is_symbol, CACT_TYPE_SYM)
 DEFINE_VALUE_CONV(CACT_TYPE_SYM, struct cact_symbol*, cact_to_symbol, symbol)

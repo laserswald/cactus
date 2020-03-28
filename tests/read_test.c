@@ -11,7 +11,7 @@
 #include "cactus/num.h"
 #include "cactus/str.h"
 
-#include "../builtin.h"
+#include "cactus/builtin.h"
 
 struct cactus cact;
 
@@ -165,8 +165,11 @@ static char *cact_read_list_test() {
 	mu_assert("cact_read not ok when reading list", status == CACT_READ_OK);
 	mu_assert("cact_read did not read a list", cact_is_pair(x));
 
-    CACT_LIST_FOR_EACH_ITEM(&cact, p, x) {
-        mu_assert("cact_read misread a symbol", cact_is_symbol(cact_car(&cact, p)));
+    CACT_LIST_FOR_EACH_PAIR(&cact, p, x) {
+        mu_assert(
+	        "cact_read misread a symbol", 
+	        cact_is_symbol(cact_car(&cact, *p))
+	    );
     }
 
 	string = "(define double (lambda (x) (+ x x)))";

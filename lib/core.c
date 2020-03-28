@@ -18,7 +18,7 @@ cact_init(struct cactus *cact)
 void
 cact_define(struct cactus *cact, const char *name, struct cact_val val)
 {
-	struct cact_val sym = cact_get_symbol(cact, name);
+	struct cact_symbol *sym = cact_get_symbol(cact, name);
 	cact_env_define(cact, cact->root_env, sym, val);
 }
 
