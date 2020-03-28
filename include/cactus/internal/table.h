@@ -45,8 +45,8 @@ fnv1a_hash(const char* key, const size_t length)
 } 
 
 
-typedef unsigned int (*table_hash_fn)(void *);
-typedef unsigned int (*table_cmp_fn)(void *, void *);
+typedef unsigned int (*table_hash_fn)(const void *);
+typedef int (*table_cmp_fn)(const void *, const void *);
 
 #define TABLE_INITIAL_SIZE 8
 
@@ -83,7 +83,7 @@ struct name { \
 #define STRING_TABLE_INIT(name)	  \
 	TABLE_INIT(name, table_string_hash, table_string_cmp)
 
-#define TABLE_SPACE(tab)                 (tab->available)
+#define TABLE_SPACE(tab)                 ((tab)->available)
 #define TABLE_FIND(name, tab, key)	 name##_TABLE_FIND((tab), (key))
 #define TABLE_HAS(name, tab, key)	     (name##_TABLE_FIND((tab), (key)) != NULL)
 #define TABLE_ENTER(name, tab, key, val) name##_TABLE_ENTER(tab, key, val)

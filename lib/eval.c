@@ -16,10 +16,65 @@
 #include "cactus/internal/debug.h"
 #include "cactus/internal/utils.h"
 
+static bool
+is_tagged_pair(struct cactus *cact, const char* tag, struct cact_val x)
+{
+	if (! cact_is_pair(x)) 
+		return false;
+
+	struct cact_val operator = cact_car(cact, x);
+	struct cact_symbol *tagsym = cact_get_symbol(cact, tag);
+
+	if (! cact_is_symbol(operator)) {
+		return false;
+	}
+
+	struct cact_symbol *opsym = cact_to_symbol(operator, "is_tagged_pair");
+
+	return tagsym == opsym;
+}
+
+static bool 
+is_self_evaluating(struct cact_val x)
+{
+    return cact_is_null(x) 
+        || cact_is_bool(x)
+        || cact_is_number(x)
+        || cact_is_procedure(x)
+        || cact_is_string(x)
+        || cact_is_env(x);
+}
+
+static bool
+is_variable(struct cact_val x)
+{
+	return cact_is_symbol(x);
+}
+
+/*
+ * Quotation.
+ */
+
+static bool
+is_quotation(struct cactus *cact, struct cact_val x)
+{
+	return is_tagged_pair(cact, "quote", x) || is_tagged_pair(cact, "quasiquote", x);
+}
+
 struct cact_val 
 special_quote(struct cactus *cact, struct cact_val args)
 {
     return args;
+}
+
+/*
+ * Conditionals.
+ */
+
+static bool
+is_conditional(struct cactus *cact, struct cact_val x)
+{
+	return is_tagged_pair(cact, "if", x);
 }
 
 struct cact_val 
@@ -39,6 +94,12 @@ special_if(struct cactus *cact, struct cact_val args)
     return result;
 }
 
+static bool
+is_definition(struct cactus *cact, struct cact_val x)
+{
+	return is_tagged_pair(cact, "define", x);
+}
+
 struct cact_val
 special_define(struct cactus *cact, struct cact_val args)
 {
@@ -55,11 +116,13 @@ special_define(struct cactus *cact, struct cact_val args)
         value = cact_make_procedure(cact, cact->current_env, params, defn);
     }
 
-    if (cact_env_define(cact, cact->current_env, term, value) < 0) {
-        return cact_make_error(cact, "Could not create definition: definition already exists", term);
-    }
+    return cact_env_define(cact, cact->current_env, cact_to_symbol(term, "special_define"), value);
+}
 
-    return CACT_UNDEF_VAL;
+static bool
+is_lambda(struct cactus *cact, struct cact_val x)
+{
+	return is_tagged_pair(cact, "lambda", x);
 }
 
 struct cact_val 
@@ -68,6 +131,12 @@ special_lambda(struct cactus *cact, struct cact_val args)
     struct cact_val lambda_args = cact_car(cact, args);
     struct cact_val body = cact_cdr(cact, args);
     return cact_make_procedure(cact, cact->current_env, lambda_args, body);
+}
+
+static bool
+is_sequence(struct cactus *cact, struct cact_val x)
+{
+	return is_tagged_pair(cact, "begin", x);
 }
 
 struct cact_val
@@ -87,6 +156,12 @@ special_begin(struct cactus *cact, struct cact_val args)
     return result;
 }
 
+static bool
+is_assignment(struct cactus *cact, struct cact_val x)
+{
+	return is_tagged_pair(cact, "set!", x);
+}
+
 struct cact_val
 special_set_bang(struct cactus *cact, struct cact_val args)
 {
@@ -94,22 +169,13 @@ special_set_bang(struct cactus *cact, struct cact_val args)
     struct cact_val defn = cact_cadr(cact, args);
     struct cact_val value = cact_eval(cact, defn);
 
-    if (cact_env_set(cact, cact->current_env, term, value) < 0) {
-        return cact_make_error(cact, "Could not assign value: no such variable", term);
-    }
-
-    return CACT_UNDEF_VAL;
+    return cact_env_set(cact, cact->current_env, cact_to_symbol(term, "special_set_bang"), value);
 }
 
-static bool 
-is_self_evaluating(struct cact_val x)
+static bool
+is_application(struct cactus *cact, struct cact_val x)
 {
-    return cact_is_null(x) 
-        || cact_is_bool(x)
-        || cact_is_number(x)
-        || cact_is_procedure(x)
-        || cact_is_string(x)
-        || cact_is_env(x);
+    return cact_is_pair(x);
 }
 
 /* Evaluate an expression. */
@@ -120,15 +186,48 @@ cact_eval(struct cactus *cact, struct cact_val x)
         return x;
     }
 
-    if (cact_is_symbol(x)) {
-        struct cact_val found = cact_env_lookup(cact, cact->current_env, x);
-        if (cact_is_null(found)) {
-            return cact_make_error(cact, "No such symbol", x);
-        }
-        return cact_cdr(cact, found);
+    if (is_quotation(cact, x)) {
+	    DBG("quoting thing\n");
+	    return special_quote(cact, cact_cdr(cact, x));
     }
 
-    if (cact_is_pair(x)) {
+    if (is_assignment(cact, x)) {
+	    DBG("assigning thing \n");
+	    return special_set_bang(cact, cact_cdr(cact, x));
+    }
+
+    if (is_definition(cact, x)) {
+	    DBG("defining new thing\n");
+        struct cact_val retval = special_define(cact, cact_cdr(cact, x));
+        print_env(cact->current_env);
+	    return retval;
+    }
+
+    if (is_conditional(cact, x)) {
+	    return special_if(cact, cact_cdr(cact, x));
+    }
+
+    if (is_lambda(cact, x)) {
+	    return special_lambda(cact, cact_cdr(cact, x));
+    }
+
+    if (is_sequence(cact, x)) {
+	    return special_begin(cact, cact_cdr(cact, x));
+    }
+
+    if (is_variable(x)) {
+	    DBG("looking up variable ");
+	    print_sexp(x);
+	    DBG("\n");
+        struct cact_val val = cact_env_lookup(cact, cact->current_env, cact_to_symbol(x, "eval"));
+	    DBG("got value ");
+	    print_sexp(val);
+	    DBG("\n");
+        return val;
+    }
+
+    if (is_application(cact, x)) {
+	    print_env(cact->current_env);
         struct cact_val operator = cact_car(cact, x);
         struct cact_val operands = cact_cdr(cact, x);
         struct cact_val maybe_procedure = cact_eval(cact, operator);
@@ -178,6 +277,9 @@ cact_eval_string(struct cactus *cact, char *s)
         DBG("Reading new sexp. \n");
 
         status = cact_read(cact, &exp);
+        DBG("read sexp: \n");
+        print_sexp(exp);
+        puts("");
         if (status != CACT_READ_OK) {
             switch (status) {
 
@@ -194,8 +296,11 @@ cact_eval_string(struct cactus *cact, char *s)
                 break;
             }
         }
-
+        DBG("evaluating sexp: \n");
         ret = cact_eval(cact, exp);
+        DBG("evaluated, got: \n");
+        print_sexp(ret);
+        puts("");
     }
 STOP_RUNNING:
     return ret;

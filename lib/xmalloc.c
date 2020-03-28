@@ -39,3 +39,11 @@ xcalloc(size_t nmemb, size_t size)
     }
     return data;
 }
+
+void *
+xmemdup(void *thing, size_t size)
+{
+	void *new = xmalloc(size);
+	memcpy(new, thing, size);
+	return new;
+}

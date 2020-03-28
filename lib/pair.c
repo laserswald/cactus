@@ -1,4 +1,6 @@
 
+#include <assert.h>
+
 #include "cactus/core.h"
 #include "cactus/store.h"
 #include "cactus/pair.h"
@@ -99,20 +101,20 @@ cact_append(struct cactus *cact, struct cact_val l, struct cact_val x)
 {
 	assert(cact);
 
-    fprint_sexp(stdout, l);
-
     if (cact_is_null(l))
         return cact_cons(cact, x, CACT_NULL_VAL);
 
-    struct cact_val e = l;
+    if (! cact_is_pair(l))
+	    return cact_make_error(cact, "Tried to append to non-list", CACT_NULL_VAL);
 
-    while (! cact_is_null(cact_cdr(cact, e)))
-        e = cact_cdr(cact, e);
+    struct cact_pair *e = (struct cact_pair*) l.as.object;
 
-    assert(cact_is_null(cact_cdr(cact, e)));
+    while (! cact_is_null(e->cdr)) {
+        e = (struct cact_pair*) e->cdr.as.object;
+    }
 
-    cact_set_cdr(cact, e, cact_cons(cact, x, CACT_NULL_VAL));
-
+    assert(cact_is_null(e->cdr));
+    e->cdr = cact_cons(cact, x, CACT_NULL_VAL);
 
     return l;
 }

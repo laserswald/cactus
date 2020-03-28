@@ -2,6 +2,7 @@
 
 DEPS="
 	lib/bool.o
+	lib/builtin.o
 	lib/core.o
 	lib/env.o
 	lib/err.o

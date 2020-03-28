@@ -27,20 +27,26 @@ struct cact_val cact_list_acons(struct cactus *, struct cact_val k, struct cact_
 struct cact_val cact_assoc(struct cactus *, struct cact_val k, struct cact_val alist);
 unsigned int cact_length(struct cactus *, struct cact_val);
 
+/*
+ * Iterate through an entire list, updating `pair` to point to the current
+ * element.
+ */
 #define CACT_LIST_FOR_EACH_PAIR(cact, pair, list) \
-    struct cact_val pair;\
-    for (pair = list; cact_is_pair(cact, pair); pair = cact_cdr(cact, list))
+    struct cact_val *pair;\
+    for (pair = &list; \
+         cact_is_pair(*pair); \
+         pair = &((struct cact_pair *) pair->as.object)->cdr)
 
 #define CACT_LIST_FOR_EACH_ITEM(cact, item, list) \
-    struct cact_val __list_item_pair__; \
+    struct cact_val *__list_item_pair__; \
     struct cact_val item; \
-    for (__list_item_pair__ = list, item = cact_car(cact, __list_item_pair__); \
+    for (__list_item_pair__ = &list, item = cact_car(cact, *__list_item_pair__); \
          \
-         cact_is_pair(__list_item_pair__); \
+         cact_is_pair(*__list_item_pair__); \
          \
-         __list_item_pair__ = cact_cdr(cact, list), \
-         item = cact_is_pair(__list_item_pair__) \
-            ? cact_car(cact, __list_item_pair__) \
+         __list_item_pair__ = &((struct cact_pair *) __list_item_pair__->as.object)->cdr, \
+         item = cact_is_pair(*__list_item_pair__) \
+            ? cact_car(cact, *__list_item_pair__) \
             : CACT_NULL_VAL) \
 
 

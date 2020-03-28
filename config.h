@@ -1,18 +1,11 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include "eval.h"
-#include "builtin.h"
+#include "cactus/eval.h"
+#include "cactus/builtin.h"
 
-BuiltinTable builtins[] = {
+struct cact_builtin builtins[] = {
 	// The special forms.
-
-    {"define", special_define},
-    {"if", special_if},
-    {"set!", special_set_bang},
-    {"begin", special_begin},
-    {"quote", special_quote},
-    {"lambda", special_lambda},
 
     {"car", cact_builtin_car},
     {"cdr", cact_builtin_cdr},
@@ -30,9 +23,8 @@ BuiltinTable builtins[] = {
     {"display", cact_builtin_display},
     {"newline", cact_builtin_newline},
 
-    {"begin", cact_builtin_begin},
-    {"exit", cact_builtin_exit},
     {"load", cact_builtin_load},
+    {"exit", cact_builtin_exit},
 
     {"number?", cact_builtin_is_number},
     {"+", cact_builtin_plus},

@@ -11,17 +11,17 @@ fprint_list(FILE *f, struct cact_val x)
 	int chars = 0;
     chars += fprintf(f, "(");
     struct cact_val p = x;
-    while (! cact_is_null(p)) {
+    do {
         if (cact_is_pair(p)) {
-            chars += fprint_sexp(f, ((struct cact_pair *)p.as.object)->car);
+            chars += fprint_sexp(f, cact_to_pair(p, "fprint_list")->car);
+			p = cact_to_pair(p, "fprint_list")->cdr;
             chars += fprintf(f, " ");
-			p = ((struct cact_pair *)p.as.object)->cdr;
         } else {
-            chars += fprintf(f, ". ");
             chars += fprint_sexp(f, p);
+            chars += fprintf(f, ". ");
             break;
         }
-    }
+    } while (! cact_is_null(p));
     chars += fprintf(f, ")");
     return chars;
 }

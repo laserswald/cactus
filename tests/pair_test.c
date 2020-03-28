@@ -3,6 +3,7 @@
 #include "cactus/core.h"
 #include "cactus/pair.h"
 #include "cactus/num.h"
+#include "cactus/write.h"
 
 static struct cactus cact;
 
@@ -43,6 +44,7 @@ static char *append_test()
 
     mu_assert("cact_append did not create a new pair", cact_is_pair(pair));
     mu_assert("car of pair was not generated number", cact_to_long(cact_car(&cact, pair), "append_test") == first);
+
     mu_assert("car of pair was not generated number", cact_to_long(cact_car(&cact, cact_cdr(&cact, pair)), "append_test") == second);
     mu_assert("cdr of pair was not nil", cact_is_null(cact_cdr(&cact, cact_cdr(&cact, pair))));
 
@@ -57,6 +59,8 @@ static char *append_test()
     mu_assert("car of pair was not generated number", cact_to_long(cact_car(&cact, cact_cdr(&cact, pair)), "append_test") == second);
     mu_assert("car of pair was not generated number", cact_to_long(cact_car(&cact, cact_cdr(&cact, cact_cdr(&cact, pair))), "append_test") == third);
     mu_assert("cdr of pair was not nil", cact_is_null(cact_cdr(&cact, cact_cdr(&cact, cact_cdr(&cact, pair)))));
+
+    fprintf(stderr, "success!\n");
 
     return NULL;
 }

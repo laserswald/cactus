@@ -13,6 +13,10 @@
 #include "cactus/write.h"
 #include "cactus/err.h"
 
+#include "cactus/internal/utils.h"
+
+#include "config.h"
+
 int verbosity = 0;
 
 /* macros */
@@ -43,6 +47,8 @@ int main(int argc, char *argv[])
     FILE *infile = NULL;
 
     cact_init(&cact);
+
+    cact_define_builtin_array(&cact, builtins, LENGTH(builtins));
 
     if (argc == 2) {
         infile = fopen(argv[1], "r");

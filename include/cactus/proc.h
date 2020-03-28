@@ -3,6 +3,7 @@
 
 #include "cactus/val.h"
 #include "cactus/env.h"
+#include "cactus/obj.h"
 
 struct cactus;
 
@@ -10,6 +11,7 @@ typedef struct cact_val (*cact_native_func)(struct cactus *, struct cact_val);
 
 /* A procedure object. */
 struct cact_proc {
+	struct cact_obj obj;
     struct cact_env *env;
     struct cact_val argl;
     struct cact_val body;

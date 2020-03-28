@@ -265,7 +265,7 @@ struct cact_val
 lextosym(struct cactus *cact, struct cact_lexeme lx)
 {
 	char* sym = strslice(lx.st, &lx.st[lx.sz]);
-	return cact_get_symbol(cact, sym);
+	return cact_make_symbol(cact, sym);
 }
 
 /* Convert a lexeme to an integer. */
@@ -399,7 +399,7 @@ cact_read(struct cactus* cact, struct cact_val* ret)
 			nextlex(l);
 			struct cact_val quoted;
 			status = cact_read(cact, &quoted);
-			struct cact_val q = cact_get_symbol(cact, "quote");
+			struct cact_val q = cact_make_symbol(cact, "quote");
 			*ret = cact_cons(cact, q, quoted);
 			status = CACT_READ_OK;
 			break;

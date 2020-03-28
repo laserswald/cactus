@@ -24,7 +24,7 @@ not_test()
         {CACT_FIX_VAL(3), false},
         {cact_cons(&cact, CACT_FIX_VAL(3), CACT_NULL_VAL), false},
         {CACT_BOOL_VAL(false), true},
-        {cact_get_symbol(&cact, "nil"), false},
+        {cact_make_symbol(&cact, "nil"), false},
     };
 
     size_t len_cases = LENGTH(cases);
