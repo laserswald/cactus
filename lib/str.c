@@ -6,11 +6,11 @@
 struct cact_val
 cact_make_string(struct cactus *cact, const char *str)
 {
-	struct cact_string *s;
+    struct cact_string *s;
 
-	s = (struct cact_string *)cact_store_allocate(&cact->store, CACT_OBJ_STRING);
-	s->str = str;
+    s = (struct cact_string *)cact_store_allocate(&cact->store, CACT_OBJ_STRING);
+    s->str = str;
 
-	return CACT_OBJ_VAL(s);
+    return CACT_OBJ_VAL(s);
 }
 

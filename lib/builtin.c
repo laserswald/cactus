@@ -16,13 +16,16 @@
 #include "cactus/err.h"
 #include "cactus/bool.h"
 
-bool 
+bool
 unpack_typecheck(const struct cact_val arg, const char c)
 {
-	switch (c) {
-	case '.': return true;
-	case 'p': return cact_is_pair(arg);
-	}
+    switch (c)
+    {
+    case '.':
+        return true;
+    case 'p':
+        return cact_is_pair(arg);
+    }
     fprintf(stdout, "cactus: fatal error: could not understand unpack args character '%c'", c);
     abort();
 }
@@ -34,28 +37,36 @@ cact_unpack_args(struct cactus *cact, struct cact_val arglist, const char *forma
     const char *c;
     int cnt = 0;
 
-    if (! cact_is_pair(arglist)) {
-	    fprintf(stdout, "cactus: fatal error: expected pair for argument list");
-	    abort();
+    if (! cact_is_pair(arglist))
+    {
+        fprintf(stdout, "cactus: fatal error: expected pair for argument list");
+        abort();
     }
     struct cact_val current_pair = arglist;
 
     c = format;
     va_start(slots, format);
 
-    while (*c) {
-        if (! cact_is_null(current_pair)) {
-		    struct cact_val current_val = cact_eval(cact, cact_car(cact, current_pair));
-	        struct cact_val *slot = va_arg(slots, struct cact_val*);
+    while (*c != '\0')
+    {
+        if (! cact_is_null(current_pair))
+        {
+            struct cact_val current_val = cact_eval(cact, cact_car(cact, current_pair));
+            struct cact_val *slot = va_arg(slots, struct cact_val*);
 
-		    if (unpack_typecheck(current_val, *c)) {
-		        *slot = current_val;
-		    } else {
+            if (unpack_typecheck(current_val, *c))
+            {
+                *slot = current_val;
+            }
+            else
+            {
                 *slot = cact_make_error(cact, "type checking error", CACT_NULL_VAL);
-		    }
+            }
 
-        } else {
-	        struct cact_val *slot = va_arg(slots, struct cact_val*);
+        }
+        else
+        {
+            struct cact_val *slot = va_arg(slots, struct cact_val*);
             *slot = CACT_NULL_VAL;
         }
 
@@ -66,9 +77,10 @@ cact_unpack_args(struct cactus *cact, struct cact_val arglist, const char *forma
 
     va_end(slots);
 
-    while (! cact_is_null(current_pair)) {
-	    cnt++;
-	    current_pair = cact_cdr(cact, current_pair);
+    while (! cact_is_null(current_pair))
+    {
+        cnt++;
+        current_pair = cact_cdr(cact, current_pair);
     }
 
     return cnt;
@@ -118,19 +130,20 @@ DEFINE_COMPARISON_BUILTIN(cact_builtin_equal, cact_val_equal)
 #undef DEFINE_COMPARISON_BUILTIN
 
 struct cact_val
-cact_builtin_display(struct cactus *cact, struct cact_val args) 
+cact_builtin_display(struct cactus *cact, struct cact_val args)
 {
-	struct cact_val x;
-	if (2 != cact_unpack_args(cact, args, "..", &x)) {
+    struct cact_val x;
+    if (2 != cact_unpack_args(cact, args, "..", &x))
+    {
         return cact_make_error(cact, "Did not get expected number of arguments", args);
-	}
+    }
     PROPAGATE_ERROR(x);
     print_sexp(x);
     return CACT_UNDEF_VAL;
 }
 
 struct cact_val
-cact_builtin_newline(struct cactus *cact, struct cact_val args) 
+cact_builtin_newline(struct cactus *cact, struct cact_val args)
 {
     puts("");
     return CACT_UNDEF_VAL;
@@ -142,39 +155,42 @@ cact_builtin_newline(struct cactus *cact, struct cact_val args)
 
 /* Unpack arguments, and take the car of the list at the first argument */
 struct cact_val
-cact_builtin_car(struct cactus *cact, struct cact_val args) 
+cact_builtin_car(struct cactus *cact, struct cact_val args)
 {
-	struct cact_val l;
+    struct cact_val l;
 
-	if (1 != cact_unpack_args(cact, args, "p", &l)) {
+    if (1 != cact_unpack_args(cact, args, "p", &l))
+    {
         return cact_make_error(cact, "Did not get expected number of arguments", args);
-	}
+    }
     PROPAGATE_ERROR(l);
 
     return cact_car(cact, l);
 }
 
 struct cact_val
-cact_builtin_cdr(struct cactus *cact, struct cact_val args) 
+cact_builtin_cdr(struct cactus *cact, struct cact_val args)
 {
-	struct cact_val l;
+    struct cact_val l;
 
-	if (1 != cact_unpack_args(cact, args, "p", &l)) {
+    if (1 != cact_unpack_args(cact, args, "p", &l))
+    {
         return cact_make_error(cact, "Did not get expected number of arguments", args);
-	}
+    }
     PROPAGATE_ERROR(l);
 
     return cact_cdr(cact, l);
 }
 
 struct cact_val
-cact_builtin_cons(struct cactus *cact, struct cact_val args) 
+cact_builtin_cons(struct cactus *cact, struct cact_val args)
 {
-	struct cact_val a, d;
+    struct cact_val a, d;
 
-	if (2 != cact_unpack_args(cact, args, "..", &a, &d)) {
+    if (2 != cact_unpack_args(cact, args, "..", &a, &d))
+    {
         return cact_make_error(cact, "Did not get expected number of arguments", args);
-	}
+    }
     PROPAGATE_ERROR(a);
     PROPAGATE_ERROR(d);
 
@@ -186,7 +202,8 @@ cact_builtin_plus(struct cactus *cact, struct cact_val args)
 {
     int result = 0;
 
-    CACT_LIST_FOR_EACH_ITEM(cact, addend_expr, args) {
+    CACT_LIST_FOR_EACH_ITEM(cact, addend_expr, args)
+    {
         struct cact_val addend = cact_eval(cact, addend_expr);
         PROPAGATE_ERROR(addend);
         int a = cact_to_long(addend, "+");
@@ -203,12 +220,13 @@ cact_builtin_times(struct cactus *cact, struct cact_val args)
 
     print_sexp(args);
 
-    CACT_LIST_FOR_EACH_ITEM(cact, factor_expr, args) {
+    CACT_LIST_FOR_EACH_ITEM(cact, factor_expr, args)
+    {
         struct cact_val factor = cact_eval(cact, factor_expr);
         PROPAGATE_ERROR(factor);
         int a = cact_to_long(factor, "*");
         result *= a;
-	    printf("TIMES RESULT: %d", result);
+        printf("TIMES RESULT: %d", result);
     }
 
     return CACT_FIX_VAL(result);
@@ -222,7 +240,8 @@ cact_builtin_minus(struct cactus *cact, struct cact_val x)
     struct cact_val rest = cact_cdr(cact, x);
 
     // Fancy word.
-    CACT_LIST_FOR_EACH_ITEM(cact, subtrahend_expr, rest) {
+    CACT_LIST_FOR_EACH_ITEM(cact, subtrahend_expr, rest)
+    {
         struct cact_val subtrahend = cact_eval(cact, subtrahend_expr);
         PROPAGATE_ERROR(subtrahend);
         int a = cact_to_long(subtrahend, "-");
@@ -239,12 +258,14 @@ cact_builtin_divide(struct cactus *cact, struct cact_val x)
 
     struct cact_val rest = cact_cdr(cact, x);
 
-    CACT_LIST_FOR_EACH_ITEM(cact, divisor_expr, rest) {
+    CACT_LIST_FOR_EACH_ITEM(cact, divisor_expr, rest)
+    {
         // Fancy word.
         struct cact_val divisor = cact_eval(cact, divisor_expr);
         PROPAGATE_ERROR(divisor);
         int a = cact_to_long(divisor, "/");
-        if (a == 0) {
+        if (a == 0)
+        {
             return cact_make_error(cact, "Division by zero", CACT_NULL_VAL);
         }
         result /= a;
@@ -253,7 +274,7 @@ cact_builtin_divide(struct cactus *cact, struct cact_val x)
     return CACT_FIX_VAL(result);
 }
 
-struct cact_val 
+struct cact_val
 cact_builtin_exit(struct cactus *cact, struct cact_val x)
 {
     // Invoke any ending things from dynamic-wind
@@ -266,17 +287,20 @@ struct cact_val
 cact_builtin_load(struct cactus *cact, struct cact_val x)
 {
     struct cact_val fname = cact_eval(cact, cact_car(cact, x));
-    if (! cact_is_string(fname)) {
+    if (! cact_is_string(fname))
+    {
         return cact_make_error(cact, "`load` expects a string", x);
     }
 
     FILE *f = fopen(cact_to_string(fname, "load"), "r");
-    if (! f) {
+    if (! f)
+    {
         return cact_make_error(cact, "load: no file found", fname);
     }
 
     struct cact_val result = cact_eval_file(cact, f);
-    if (cact_is_error(result)) {
+    if (cact_is_error(result))
+    {
         return cact_make_error(cact, "load: could not read file", fname);
     }
 
@@ -285,9 +309,9 @@ cact_builtin_load(struct cactus *cact, struct cact_val x)
 
 struct cact_val
 cact_builtin_not(struct cactus *cact, struct cact_val x)
-{ 
-	struct cact_val arg = cact_eval(cact, cact_car(cact, x));
+{
+    struct cact_val arg = cact_eval(cact, cact_car(cact, x));
     PROPAGATE_ERROR(arg);
-	return cact_bool_not(arg);
+    return cact_bool_not(arg);
 }
 
