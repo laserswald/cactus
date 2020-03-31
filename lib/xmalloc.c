@@ -6,7 +6,8 @@ void *
 xrealloc(void *ptr, size_t sz)
 {
     void *data = realloc(ptr, sz);
-    if (NULL == data) {
+    if (NULL == data)
+    {
         perror("Could not allocate memory");
         abort();
     }
@@ -20,10 +21,11 @@ xmalloc(size_t sz)
     return memset(ptr, 0, sz);
 }
 
-void 
+void
 xfree(void *ptr)
 {
-    if (ptr) {
+    if (ptr)
+    {
         free(ptr);
     }
     ptr = NULL;
@@ -33,7 +35,8 @@ void *
 xcalloc(size_t nmemb, size_t size)
 {
     void *data = calloc(nmemb, size);
-    if (NULL == data) {
+    if (NULL == data)
+    {
         perror("Could not allocate memory");
         abort();
     }
@@ -43,7 +46,7 @@ xcalloc(size_t nmemb, size_t size)
 void *
 xmemdup(void *thing, size_t size)
 {
-	void *new = xmalloc(size);
-	memcpy(new, thing, size);
-	return new;
+    void *new = xmalloc(size);
+    memcpy(new, thing, size);
+    return new;
 }

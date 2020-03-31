@@ -7,20 +7,21 @@
 #include "cactus/err.h"
 
 /* Create a pair. */
-struct cact_val 
+struct cact_val
 cact_cons(struct cactus *cact, struct cact_val a, struct cact_val d)
 {
-	struct cact_pair *p = (struct cact_pair *)cact_store_allocate(&cact->store, CACT_OBJ_PAIR);
-	p->car = a;
-	p->cdr = d;
-	return CACT_OBJ_VAL((struct cact_obj *)p);
+    struct cact_pair *p = (struct cact_pair *)cact_store_allocate(&cact->store, CACT_OBJ_PAIR);
+    p->car = a;
+    p->cdr = d;
+    return CACT_OBJ_VAL((struct cact_obj *)p);
 }
 
 /* Get the car of a pair. */
-struct cact_val 
+struct cact_val
 cact_car(struct cactus *cact, struct cact_val x)
 {
-    if (! cact_is_pair(x)) {
+    if (! cact_is_pair(x))
+    {
         return cact_make_error(cact, "Not a pair: ", x);
     }
 
@@ -32,7 +33,8 @@ cact_car(struct cactus *cact, struct cact_val x)
 struct cact_val
 cact_cdr(struct cactus *cact, struct cact_val x)
 {
-    if (! cact_is_pair(x)) {
+    if (! cact_is_pair(x))
+    {
         return cact_make_error(cact, "Not a pair: ", x);
     }
 
@@ -41,10 +43,11 @@ cact_cdr(struct cactus *cact, struct cact_val x)
 }
 
 /* Set the car of a pair. */
-struct cact_val 
+struct cact_val
 cact_set_car(struct cactus *cact, struct cact_val p, struct cact_val x)
 {
-    if (! cact_is_pair(p)) {
+    if (! cact_is_pair(p))
+    {
         return cact_make_error(cact, "Not a pair: ", p);
     }
 
@@ -57,7 +60,8 @@ cact_set_car(struct cactus *cact, struct cact_val p, struct cact_val x)
 struct cact_val
 cact_set_cdr(struct cactus *cact, struct cact_val p, struct cact_val x)
 {
-    if (! cact_is_pair(p)) {
+    if (! cact_is_pair(p))
+    {
         return cact_make_error(cact, "Not a pair: ", p);
     }
 
@@ -78,18 +82,21 @@ cact_list_acons(struct cactus *cact, struct cact_val key, struct cact_val val, s
 struct cact_val
 cact_assoc(struct cactus *cact, struct cact_val key, struct cact_val alist)
 {
-    if (cact_is_null(alist)) {
+    if (cact_is_null(alist))
+    {
         return CACT_NULL_VAL;
     }
 
     struct cact_val fst = cact_car(cact, alist);
-    if (cact_is_error(fst)) {
+    if (cact_is_error(fst))
+    {
         return fst;
     }
 
     struct cact_pair *kv = cact_to_pair(fst, "assoc");
 
-    if (cact_val_equal(kv->car, key)) {
+    if (cact_val_equal(kv->car, key))
+    {
         return cact_car(cact, alist);
     }
 
@@ -99,17 +106,18 @@ cact_assoc(struct cactus *cact, struct cact_val key, struct cact_val alist)
 struct cact_val
 cact_append(struct cactus *cact, struct cact_val l, struct cact_val x)
 {
-	assert(cact);
+    assert(cact);
 
     if (cact_is_null(l))
         return cact_cons(cact, x, CACT_NULL_VAL);
 
     if (! cact_is_pair(l))
-	    return cact_make_error(cact, "Tried to append to non-list", CACT_NULL_VAL);
+        return cact_make_error(cact, "Tried to append to non-list", CACT_NULL_VAL);
 
     struct cact_pair *e = (struct cact_pair*) l.as.object;
 
-    while (! cact_is_null(e->cdr)) {
+    while (! cact_is_null(e->cdr))
+    {
         e = (struct cact_pair*) e->cdr.as.object;
     }
 
@@ -119,11 +127,12 @@ cact_append(struct cactus *cact, struct cact_val l, struct cact_val x)
     return l;
 }
 
-unsigned int 
-cact_length(struct cactus *cact, struct cact_val l) 
+unsigned int
+cact_length(struct cactus *cact, struct cact_val l)
 {
     unsigned int len = 0;
-    CACT_LIST_FOR_EACH_ITEM(cact, ignore, l) {
+    CACT_LIST_FOR_EACH_ITEM(cact, ignore, l)
+    {
         len++;
     }
     return len;

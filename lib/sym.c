@@ -22,25 +22,26 @@ RB_GENERATE(cact_symbol_table, cact_symbol, entry, cact_symbol_cmp)
 void
 cact_symbol_table_init(struct cact_symbol_table *symtab)
 {
-	RB_INIT(symtab);
+    RB_INIT(symtab);
 }
 
-struct cact_val 
+struct cact_val
 cact_make_symbol(struct cactus *cact, const char *symname)
 {
-	return CACT_SYM_VAL(cact_get_symbol(cact, symname));
+    return CACT_SYM_VAL(cact_get_symbol(cact, symname));
 }
 
 struct cact_symbol *
 cact_get_symbol(struct cactus *cact, const char *symname)
 {
-	struct cact_symbol sym = { .sym = symname };
+    struct cact_symbol sym = { .sym = symname };
 
-	if (! RB_FIND(cact_symbol_table, &cact->interned_syms, &sym)) {
-		RB_INSERT(cact_symbol_table, &cact->interned_syms, 
-		    xmemdup(&sym, sizeof(struct cact_symbol)));
-	}
+    if (! RB_FIND(cact_symbol_table, &cact->interned_syms, &sym))
+    {
+        RB_INSERT(cact_symbol_table, &cact->interned_syms,
+                  xmemdup(&sym, sizeof(struct cact_symbol)));
+    }
 
-	return RB_FIND(cact_symbol_table, &cact->interned_syms, &sym);
+    return RB_FIND(cact_symbol_table, &cact->interned_syms, &sym);
 }
 

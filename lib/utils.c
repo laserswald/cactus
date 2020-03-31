@@ -25,7 +25,8 @@ char* slurp(FILE *f)
     char buffer[64] = {0};
 
     // go linewise
-    while (fgets(buffer, sizeof(buffer), f) != NULL) {
+    while (fgets(buffer, sizeof(buffer), f) != NULL)
+    {
         slurped = xrealloc(slurped, slurplen + 64);
         slurped[slurplen] = '\0';
         slurplen += 64;
@@ -43,20 +44,25 @@ char* strword(const char *str, char **end)
     const char *begin = str;
 
     // Skip whitespace. Coincedentally, isblank checks for space and tab. ;)
-    while (isblank(*begin)) {
+    while (isblank(*begin))
+    {
         begin++;
     }
 
     *end = (char*) begin; // yes, please discard the const
-    while (isgraph(**end)) {
+    while (isgraph(**end))
+    {
         (*end)++;
     }
 
     ptrdiff_t diff = *end - begin;
-    if (diff < 0) {
+    if (diff < 0)
+    {
         fprintf(stderr, "strtoaw: got invalid pointer difference.");
         abort();
-    } else if (diff == 0) {
+    }
+    else if (diff == 0)
+    {
         return word;
     }
 
@@ -73,7 +79,8 @@ char* strword(const char *str, char **end)
 
 char *strslice(const char *str, const char *end)
 {
-    if (!str || !end) {
+    if (!str || !end)
+    {
         return NULL;
     }
     size_t diff = labs(end - str);
