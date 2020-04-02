@@ -25,6 +25,8 @@ struct cact_builtin builtins[] = {
 
     {"load", cact_builtin_load},
     {"exit", cact_builtin_exit},
+    {"interaction-environment", cact_builtin_interaction_environment},
+    {"collect-garbage", cact_builtin_collect_garbage},
 
     {"number?", cact_builtin_is_number},
     {"+", cact_builtin_plus},

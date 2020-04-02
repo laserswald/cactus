@@ -13,11 +13,14 @@ struct cact_pair {
 DEFINE_OBJECT_CONVERSION(CACT_OBJ_PAIR,        struct cact_pair*,   cact_to_pair,      pair)
 DEFINE_OBJECT_CHECK(cact_is_pair, CACT_OBJ_PAIR)
 
-struct cact_val cact_cons(struct cactus*, struct cact_val, struct cact_val); 
+struct cact_val cact_cons(struct cactus*, struct cact_val, struct cact_val);
 struct cact_val cact_car(struct cactus *, struct cact_val);
 struct cact_val cact_cdr(struct cactus *,struct cact_val);
 struct cact_val cact_set_car(struct cactus *, struct cact_val, struct cact_val);
 struct cact_val cact_set_cdr(struct cactus *, struct cact_val, struct cact_val);
+
+void cact_mark_pair(struct cact_obj *);
+void cact_destroy_pair(struct cact_obj *);
 
 #define cact_cadr(cact, x) 	    cact_car(cact, cact_cdr(cact, x))
 #define cact_caddr(cact, x) 	cact_car(cact, cact_cdr(cact, cact_cdr(cact, x)))

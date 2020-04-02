@@ -9,25 +9,25 @@ struct cactus;
 
 enum cact_type {
 	CACT_TYPE_UNDEF,
-    CACT_TYPE_NULL,
-    CACT_TYPE_FIXNUM,
-    CACT_TYPE_FLONUM,
-    CACT_TYPE_BOOL,
-    CACT_TYPE_CHAR,
-    CACT_TYPE_SYM,
-    CACT_TYPE_OBJ,
+	CACT_TYPE_NULL,
+	CACT_TYPE_FIXNUM,
+	CACT_TYPE_FLONUM,
+	CACT_TYPE_BOOL,
+	CACT_TYPE_CHAR,
+	CACT_TYPE_SYM,
+	CACT_TYPE_OBJ,
 };
 
 struct cact_val {
-    enum cact_type type;
-    union {
-        long      fixnum;
-        double    flonum;
-        bool      boolean;
-        char      character;
-        struct cact_symbol *symbol;
-        struct cact_obj *object;
-    } as;
+	enum cact_type type;
+	union {
+		long      fixnum;
+		double    flonum;
+		bool      boolean;
+		char      character;
+		struct cact_symbol *symbol;
+		struct cact_obj *object;
+	} as;
 };
 
 #define CACT_NULL_VAL    ((struct cact_val){.type=CACT_TYPE_NULL})
@@ -71,6 +71,8 @@ bool cact_is_null(struct cact_val);
 bool cact_val_eq(struct cact_val l, struct cact_val r);
 bool cact_val_eqv(struct cact_val l, struct cact_val r);
 bool cact_val_equal(struct cact_val l, struct cact_val r);
+
+void cact_mark_val(struct cact_val);
 
 struct cact_val cact_make_error(struct cactus *, char *msg, struct cact_val irr);
 #define PROPAGATE_ERROR(err) if (cact_is_error(err)) return (err);

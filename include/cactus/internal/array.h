@@ -24,7 +24,7 @@
 #ifndef fatalx
 #include <stdio.h>
 #define fatalx(message) do { fprintf(stderr, "array: %s\n", message); abort(); } while (0)
-#endif 
+#endif
 
 #define ARRAY_INITIALIZER { NULL, 0, 0 }
 
