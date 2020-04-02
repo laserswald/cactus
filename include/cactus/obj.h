@@ -9,16 +9,17 @@ enum cact_obj_type {
 	CACT_OBJ_STRING,
 	CACT_OBJ_PROCEDURE,
 	CACT_OBJ_ENVIRONMENT,
+	CACT_OBJ_CONT,
 	CACT_OBJ_ERROR,
 
-    /* TODO: Ports */
-    /* CACT_OBJ_PORT, */
+	/* TODO: Ports */
+	/* CACT_OBJ_PORT, */
 
-    /* TODO: Vectors */
-    /* CACT_OBJ_VECTOR, */
+	/* TODO: Vectors */
+	/* CACT_OBJ_VECTOR, */
 
 	/* TODO: Record types */
-	/* CACT_OBJ_RECORD_TYPE, */ 
+	/* CACT_OBJ_RECORD_TYPE, */
 	/* CACT_OBJ_RECORD_INST, */
 
 	/* TODO: Symbols*/
@@ -28,7 +29,7 @@ enum cact_obj_type {
 
 /* A value that has an associated heap component. */
 struct cact_obj {
-    enum cact_obj_type type;
+	enum cact_obj_type type;
 	struct cact_store_data store_data;
 };
 

@@ -5,13 +5,16 @@
 
 struct cact_string {
 	struct cact_obj obj;
-    char *str;
+	char *str;
 };
 
 DEFINE_OBJECT_CONVERSION(CACT_OBJ_STRING,      struct cact_string *, cact_to_string,    str)
 DEFINE_OBJECT_CHECK(cact_is_string, CACT_OBJ_STRING)
 
 struct cact_val cact_make_string(struct cactus *, const char *);
+
+void cact_mark_string(struct cact_obj *);
+void cact_destroy_string(struct cact_obj *);
 
 #endif // str_h_INCLUDED
 

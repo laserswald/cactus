@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include <stdio.h>
+#include <stdint.h>
 
 #define LENGTH(arr) (sizeof(arr) / sizeof(arr[0]))
 
@@ -20,13 +21,13 @@ char *strslice(const char *str, const char *end);
 static int
 ptrcmp(const void *a, const void *b)
 {
-	return a - b;
+	return (const char *)a - (const char *)b;
 }
 
-static unsigned int
+static uintptr_t
 ptrhash(const void *a)
 {
-	return (unsigned int)a;
+	return (uintptr_t) a;
 }
 
 #endif // utils_h_INCLUDED

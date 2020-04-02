@@ -24,15 +24,15 @@
 
 /*
  * This file defines a hash table and a hash set.
- * 
+ *
  * A hash table is an implementation of an associative array that uses
  * a hashing function on the given key to index into a normal array with
  * integer indices. This makes lookup for hash tables O(1) in the best case.
- */ 
+ */
 
 /* A relatively good hashing function. */
 static inline unsigned int
-fnv1a_hash(const char* key, const size_t length) 
+fnv1a_hash(const char* key, const size_t length)
 {
 	unsigned int hash = 2166136261u;
 
@@ -42,7 +42,7 @@ fnv1a_hash(const char* key, const size_t length)
 	}
 
 	return hash;
-} 
+}
 
 
 typedef unsigned int (*table_hash_fn)(const void *);
@@ -107,7 +107,7 @@ struct name { \
 	int __table_foreach_idx; \
 	for (__table_foreach_idx = 0, e = &(h)->entries[__table_foreach_idx]; \
 		 __table_foreach_idx < TABLE_SPACE(h); \
-		 __table_foreach_idx++, e = &(h)->entries[__table_foreach_idx]) 
+		 __table_foreach_idx++, e = &(h)->entries[__table_foreach_idx])
 
 /* Generate functions for the hash table. */
 #define TABLE_GENERATE(name, keytype, valtype) \

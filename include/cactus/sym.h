@@ -7,8 +7,8 @@
 struct cactus;
 
 struct cact_symbol {
-    char* sym;
-    RB_ENTRY(cact_symbol) entry;
+	char* sym;
+	RB_ENTRY(cact_symbol) entry;
 };
 
 RB_HEAD(cact_symbol_table, cact_symbol);

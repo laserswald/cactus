@@ -66,7 +66,6 @@ static char *cact_read_ident_test() {
 	int status = CACT_READ_OK;
 	struct cact_val x = CACT_NULL_VAL;
 	char* string = NULL;
-	cact_init(&cact);
 
 	// Identifier
 	string = "identifier";
@@ -82,7 +81,6 @@ static char *cact_read_boolean_test() {
 	int status = CACT_READ_OK;
 	struct cact_val x = CACT_NULL_VAL;
 	char* string = NULL;
-	cact_init(&cact);
 
 	/* True */
 	string = "#t";
@@ -107,7 +105,6 @@ static char *cact_read_int_test() {
 	int status = CACT_READ_OK;
 	struct cact_val x = CACT_NULL_VAL;
 	char* string = NULL;
-	cact_init(&cact);
 
 	// Integer
 	string = "1234";
@@ -123,7 +120,6 @@ static char *cact_read_string_test() {
 	int status = CACT_READ_OK;
 	struct cact_val x = CACT_NULL_VAL;
 	char* string = NULL;
-	cact_init(&cact);
 
 	// cact_string 
 	string = "\"identifier\"";
@@ -140,7 +136,6 @@ static char *cact_read_list_test() {
 	int status = CACT_READ_OK;
 	struct cact_val x = CACT_NULL_VAL;
 	char* string = NULL;
-	cact_init(&cact);
 
 	// Null
 	string = "()";
@@ -187,7 +182,6 @@ cact_read_quote_test()
 	int status = CACT_READ_OK;
 	struct cact_val x = CACT_NULL_VAL;
 	char* string = NULL;
-	cact_init(&cact);
 
     string = "'a";
 	cact_lexer_init(&cact.lexer, string);
@@ -198,6 +192,9 @@ cact_read_quote_test()
 }
 
 char *read_tests() {
+
+    cact_init(&cact);
+
 	mu_run_test(cact_read_null_test);
 	mu_run_test(cact_read_blank_test);
 	mu_run_test(cact_read_whitespace_test);
@@ -207,6 +204,9 @@ char *read_tests() {
 	mu_run_test(cact_read_string_test);
 	mu_run_test(cact_read_list_test);
 	mu_run_test(cact_read_quote_test);
+
+    cact_finish(&cact);
+
 	return 0;
 }
 
