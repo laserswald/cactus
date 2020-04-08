@@ -71,8 +71,8 @@ void cact_call_stack_push(struct cactus *, struct cact_env *);
 void cact_call_stack_pop(struct cactus *);
 void cact_show_call_stack(struct cactus *);
 
-void cact_preserve(struct cactus *, struct cact_obj *);
-void cact_unpreserve(struct cactus *);
+bool cact_preserve(struct cactus *, struct cact_val);
+bool cact_unpreserve(struct cactus *, struct cact_val);
 
 #endif // __CACT_CORE_H__
 

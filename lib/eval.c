@@ -186,7 +186,7 @@ cact_eval(struct cactus *cact, struct cact_val x)
     struct cact_val result = CACT_UNDEF_VAL;
 
 	if (cact_is_obj(x)) {
-		cact_preserve(cact, x.as.object);
+		cact_preserve(cact, x);
 	}
 
 	if (is_self_evaluating(x)) {
@@ -249,7 +249,7 @@ cact_eval(struct cactus *cact, struct cact_val x)
 		}
 
 		if (! cact_is_procedure(maybe_procedure)) {
-			print_sexp(maybe_procedure);
+			cact_display(maybe_procedure);
 			fprintf(stdout, "Cannot apply non-operation %s:\n", cact_type_str(maybe_procedure)); abort();
 		}
 
@@ -271,7 +271,7 @@ cact_eval(struct cactus *cact, struct cact_val x)
 FINISHED:
 
 	if (cact_is_obj(x)) {
-        cact_unpreserve(cact);
+        cact_unpreserve(cact, x);
 	}
 
 	return result;
@@ -304,12 +304,12 @@ cact_eval_string(struct cactus *cact, char *s)
 				goto STOP_RUNNING;
 
 			case CACT_READ_UNMATCHED_CHAR:
-				fprint_sexp(stderr, exp);
+				cact_fdisplay(stderr, exp);
 				return ret;
 
 			case CACT_READ_OTHER_ERROR:
 				fprintf(stderr, "unknown error\n");
-				fprint_sexp(stderr, exp);
+				cact_fdisplay(stderr, exp);
 				break;
 			}
 		}

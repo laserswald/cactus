@@ -10,9 +10,26 @@
 struct cact_val
 cact_cons(struct cactus *cact, struct cact_val a, struct cact_val d)
 {
-	struct cact_pair *p = (struct cact_pair *)cact_store_allocate(&cact->store, CACT_OBJ_PAIR);
+	if (cact_is_obj(a)) {
+		cact_preserve(cact, a);
+	}
+
+	if (cact_is_obj(d)) {
+		cact_preserve(cact, d);
+	}
+
+	struct cact_pair *p = (struct cact_pair *)cact_alloc(cact, CACT_OBJ_PAIR);
 	p->car = a;
 	p->cdr = d;
+
+	if (cact_is_obj(a)) {
+		cact_unpreserve(cact, a);
+	}
+
+	if (cact_is_obj(d)) {
+		cact_unpreserve(cact, d);
+	}
+
 	return CACT_OBJ_VAL((struct cact_obj *)p);
 }
 
@@ -70,9 +87,6 @@ void
 cact_mark_pair(struct cact_obj *o)
 {
 	struct cact_pair *p = (struct cact_pair *) o;
-	printf("; cactus gc: marking pair ");
-	fprint_obj(stdout, p);
-	printf("\n");
 	cact_mark_val(p->car);
 	cact_mark_val(p->cdr);
 }
@@ -126,7 +140,7 @@ cact_append(struct cactus *cact, struct cact_val l, struct cact_val x)
 
 	struct cact_pair *e = (struct cact_pair*) l.as.object;
 
-	while (! cact_is_null(e->cdr)) {
+	while (cact_is_pair(e->cdr)) {
 		e = (struct cact_pair*) e->cdr.as.object;
 	}
 
@@ -145,3 +159,4 @@ cact_length(struct cactus *cact, struct cact_val l)
 	}
 	return len;
 }
+

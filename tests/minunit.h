@@ -7,6 +7,7 @@ do { if ((expected) != (actual)) fprintf(messagefmt, expected, actual)} while 0;
 #define mu_assert(message, test) \
 do { \
 	if (!(test)) { \
+	    printf("Failure at %s:%d\n", __FILE__, __LINE__);\
 		return message; \
 	} else { \
 	    printf("pass: %s\n", message);\

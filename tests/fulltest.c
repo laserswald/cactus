@@ -13,13 +13,11 @@ char *sexp_tests();
 char *boolean_tests();
 char *eval_tests();
 char *pair_tests();
-char *sym_tests();
 
 static char *all_tests() {
 	mu_run_test(boolean_tests);
 	mu_run_test(sexp_tests);
     mu_run_test(pair_tests);
-    mu_run_test(sym_tests);
 	mu_run_test(read_tests);
 	mu_run_test(eval_tests);
 	return 0;

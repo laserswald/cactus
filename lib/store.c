@@ -18,35 +18,64 @@
  * Arena operations.
  */
 
+/* Initialize an arena to hold items of a certain size. */
 void
-cact_arena_init(struct cact_arena *arena, size_t element_sz)
+cact_arena_init(struct cact_arena *arena, const size_t element_sz)
 {
+    assert(arena);
+    assert(element_sz > 0);
+
 	arena->element_sz = element_sz;
 	arena->data = xcalloc(64, element_sz);
 	arena->occupied_set = 0;
 }
 
-bool
-cact_arena_is_full(struct cact_arena *arena)
+/* Release the storage for this arena. */
+void
+cact_arena_finish(struct cact_arena *arena)
 {
+	if (! arena)
+		return; 
+
+	xfree(arena->data);
+}
+
+/* Is this arena full of items? */
+bool
+cact_arena_is_full(const struct cact_arena *arena)
+{
+	assert(arena);
+
 	return 0 == ~arena->occupied_set;
 }
 
+/* Get the object at the given slot in this arena. */
 struct cact_obj *
-cact_arena_get(struct cact_arena *arena, size_t nth)
+cact_arena_get(struct cact_arena * const arena, const size_t nth)
 {
+	assert(arena);
+	assert(nth < 64);
+
 	return (struct cact_obj *) (((char*)arena->data) + (nth * arena->element_sz));
 }
 
+/* Return true if the slot is occupied. */
 bool
 cact_arena_slot_occupied(struct cact_arena *arena, size_t nth)
 {
+	assert(arena);
+	assert(nth < 64);
+
 	return 0 != (arena->occupied_set & (1ll << nth));
 }
 
+/* Mark the given slot as open. */
 void
 cact_arena_mark_open(struct cact_arena *arena, size_t nth)
 {
+	assert(arena);
+	assert(nth < 64);
+
 	arena->occupied_set &= ~(1ll << nth);
 }
 
@@ -54,16 +83,22 @@ cact_arena_mark_open(struct cact_arena *arena, size_t nth)
 bool
 cact_arena_has(struct cact_arena *arena, void *thing)
 {
+	assert(arena);
+	assert(thing);
+
 	void *first_item = arena->data;
 	void *last_item = (char*) arena->data + (arena->element_sz * 64);
 
 	return thing >= first_item && thing < last_item;
 }
 
+/* Get the next open slot in the arena. */
 size_t
 cact_arena_next_open(struct cact_arena *arena)
 {
 	size_t	i;
+
+	assert(arena);
 
 	for (i = 0; i < 64; i++) {
 		if (! cact_arena_slot_occupied(arena, i)) {
@@ -74,9 +109,12 @@ cact_arena_next_open(struct cact_arena *arena)
 	return i;
 }
 
+/* Return the count of all occupied slots in the arena. */
 int
 cact_arena_count(struct cact_arena *arena)
 {
+	assert(arena);
+
 	size_t	i;
 	int     count;
 
@@ -91,11 +129,14 @@ cact_arena_count(struct cact_arena *arena)
 	return count;
 }
 
+/* Mark all unreachable objects in the arena as free for use. */
 size_t
 cact_arena_sweep(struct cact_arena *arena)
 {
+	assert(arena);
+
 	struct cact_obj *obj;
-	size_t	i, swept;
+	size_t i, swept;
 
     obj = NULL;
 	swept = 0;
@@ -120,20 +161,20 @@ cact_arena_sweep(struct cact_arena *arena)
 	return swept;
 }
 
+/* Get the next available free object in the arena. */
 struct cact_obj *
 cact_arena_get_next(struct cact_arena *arena)
 {
+	assert(arena);
+
 	size_t open_slot = cact_arena_next_open(arena);
     size_t count = cact_arena_count(arena);
-	arena->occupied_set |= (1ll << open_slot);
-	assert(cact_arena_count(arena) == 1 + count);
-	return cact_arena_get(arena, open_slot);
-}
 
-void
-cact_arena_finish(struct cact_arena *arena)
-{
-	xfree(arena->data);
+	arena->occupied_set |= (1ll << open_slot);
+
+	assert(cact_arena_count(arena) == 1 + count);
+
+	return cact_arena_get(arena, open_slot);
 }
 
 /*
@@ -143,15 +184,34 @@ cact_arena_finish(struct cact_arena *arena)
 void
 cact_arena_set_init(struct cact_arena_set *set, size_t elt_sz)
 {
+	assert(set);
+	assert(elt_sz > 0);
+
 	ARRAY_INIT(set);
+
 	struct cact_arena initial_arena = {0}; 
 	cact_arena_init(&initial_arena, elt_sz);
 	ARRAY_ADD(set, initial_arena);
 }
 
+void
+cact_arena_set_finish(struct cact_arena_set *set)
+{
+	assert(set);
+
+	int i;
+	for (i = 0; i < ARRAY_LENGTH(set); i++) {
+		cact_arena_finish(&ARRAY_ITEM(set, i));
+	}
+
+	ARRAY_FREE(set);
+}
+
 int
 cact_arena_set_count(struct cact_arena_set *set)
 {
+	assert(set);
+
 	int i, count;
 
     count = 0;
@@ -166,6 +226,8 @@ cact_arena_set_count(struct cact_arena_set *set)
 struct cact_obj *
 cact_arena_set_allocate(struct cact_arena_set *set)
 {
+	assert(set);
+
 	int i;
 	for (i = 0; i < ARRAY_LENGTH(set); i++) {
 		if (! cact_arena_is_full(&ARRAY_ITEM(set, i))) {
@@ -194,6 +256,8 @@ cact_arena_set_allocate(struct cact_arena_set *set)
 size_t
 cact_arena_set_sweep(struct cact_arena_set *set)
 {
+	assert(set);
+
 	int i, count = 0;
 	for (i = 0; i < ARRAY_LENGTH(set); i++) {
 		count += cact_arena_sweep(&ARRAY_ITEM(set, i));
@@ -204,6 +268,8 @@ cact_arena_set_sweep(struct cact_arena_set *set)
 int
 cact_arena_set_clean(struct cact_arena_set *set)
 {
+	assert(set);
+
 	int i, count = 0;
 	for (i = 0; i < ARRAY_LENGTH(set); i++) {
 		if (cact_arena_is_full(&ARRAY_ITEM(set, i))) {
@@ -214,16 +280,6 @@ cact_arena_set_clean(struct cact_arena_set *set)
 	return count;
 }
 
-void
-cact_arena_set_finish(struct cact_arena_set *set)
-{
-	int i;
-	for (i = 0; i < ARRAY_LENGTH(set); i++) {
-		cact_arena_finish(&ARRAY_ITEM(set, i));
-	}
-	ARRAY_FREE(set);
-}
-
 /*
  * Store operations.
  */
@@ -231,6 +287,8 @@ cact_arena_set_finish(struct cact_arena_set *set)
 void
 cact_store_init(struct cact_store *store)
 {
+	assert(store);
+
 	struct {
 		enum cact_obj_type type;
 		size_t size;
@@ -252,9 +310,27 @@ cact_store_init(struct cact_store *store)
 	}
 }
 
+void
+cact_store_finish(struct cact_store *store)
+{
+	assert(store);
+
+	size_t i;
+	for (i = 0; i < store->sets_len; i++) {
+		cact_arena_set_finish(&store->arena_sets[i]);
+	}
+
+	xfree(store->arena_sets);
+	store->arena_sets = NULL;
+
+	store->sets_len = 0;
+}
+
 size_t
 cact_store_count(struct cact_store *store)
 {
+	assert(store);
+
 	size_t occupied;
 
     occupied = 0;
@@ -270,6 +346,8 @@ cact_store_count(struct cact_store *store)
 void
 cact_store_show(struct cact_store *store)
 {
+    assert(store);
+
 	const char *objnames[] = {
 		"pair", "string", "procedure", "env", "cont", "error",
 	};
@@ -285,6 +363,8 @@ cact_store_show(struct cact_store *store)
 bool
 cact_store_needs_sweep(struct cact_store *store)
 {
+	assert(store);
+
 #ifdef CACT_GC_STRESS
     return true;
 #else
@@ -306,6 +386,8 @@ cact_store_needs_sweep(struct cact_store *store)
 int
 cact_store_sweep(struct cact_store *store)
 {
+	assert(store);
+
 	int i, swept = 0;
 
 	for (i = 0; i < store->sets_len; i++) {
@@ -318,25 +400,14 @@ cact_store_sweep(struct cact_store *store)
 struct cact_obj *
 cact_store_allocate(struct cact_store *store, enum cact_obj_type type)
 {
+    assert(store);
+
 	struct cact_obj *object;
+
 	object = cact_arena_set_allocate(&store->arena_sets[type]);
 	object->type = type;
+
 	return object;
 }
 
-void
-cact_store_finish(struct cact_store *store)
-{
-	size_t i;
-	for (i = 0; i < store->sets_len; i++) {
-		cact_arena_set_finish(&store->arena_sets[i]);
-	}
-	xfree(store->arena_sets);
-	store->sets_len = 0;
-}
-
-void
-cact_store_destroy(struct cact_store *store, struct cact_obj *obj)
-{
-}
 
