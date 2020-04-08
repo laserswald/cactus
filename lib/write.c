@@ -5,31 +5,36 @@
 #include "cactus/str.h"
 #include "cactus/sym.h"
 
+/* Display a list to the given output file. */
 int
-fprint_list(FILE *f, struct cact_val x)
+cact_fdisplay_list(FILE *f, struct cact_val x)
 {
-	int chars = 0;
-	chars += fprintf(f, "(");
 	struct cact_val p = x;
+	int chars = 0;
+
+	chars += fprintf(f, "(");
+
 	do {
 		if (cact_is_pair(p)) {
-			chars += fprint_sexp(f, cact_to_pair(p, "fprint_list")->car);
-			p = cact_to_pair(p, "fprint_list")->cdr;
+			chars += cact_fdisplay(f, cact_to_pair(p, "cact_fdisplay_list")->car);
+			p = cact_to_pair(p, "cact_fdisplay_list")->cdr;
 			chars += fprintf(f, " ");
 		} else {
-			chars += fprint_sexp(f, p);
+			chars += cact_fdisplay(f, p);
 			chars += fprintf(f, ". ");
 			break;
 		}
 	} while (! cact_is_null(p));
+
 	chars += fprintf(f, ")");
+
 	return chars;
 }
 
 int
 print_list(struct cact_val x)
 {
-	return fprint_list(stdout, x);
+	return cact_fdisplay_list(stdout, x);
 }
 
 int
@@ -38,28 +43,36 @@ fprint_obj(FILE *f, struct cact_obj *obj)
 	int chars = 0;
 
 	switch (obj->type) {
+
 	case CACT_OBJ_STRING:
 		return fprintf(f, "%s", ((struct cact_string*)obj)->str);
+
 	case CACT_OBJ_PAIR:
-		return fprint_list(f, CACT_OBJ_VAL(obj));
+		return cact_fdisplay_list(f, CACT_OBJ_VAL(obj));
+
 	case CACT_OBJ_PROCEDURE:
 		return fprintf(f, "#<procedure: %p>", (void*)obj);
+
 	case CACT_OBJ_ENVIRONMENT:
 		return fprintf(f, "#<environment: %p>", (void*)obj);
+
 	case CACT_OBJ_CONT:
 		return fprintf(f, "#<continuation: %p>", (void*)obj);
+
 	case CACT_OBJ_ERROR: {
 		struct cact_error *err = (struct cact_error *)obj;
 		chars += fprintf(f, "; error '%s' : ", err->msg);
-		chars += fprint_sexp(f, err->ctx);
+		chars += cact_fdisplay(f, err->ctx);
 		break;
 	}
+
 	}
+
 	return chars;
 }
 
 int
-fprint_sexp(FILE *f, struct cact_val x)
+cact_fdisplay(FILE *f, struct cact_val x)
 {
 	switch (x.type) {
 	case CACT_TYPE_UNDEF:
@@ -83,7 +96,7 @@ fprint_sexp(FILE *f, struct cact_val x)
 }
 
 int
-print_sexp(struct cact_val x)
+cact_display(struct cact_val x)
 {
-	return fprint_sexp(stdout, x);
+	return cact_fdisplay(stdout, x);
 }

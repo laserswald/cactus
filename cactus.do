@@ -1,2 +1,6 @@
+#!/bin/sh
+
+. ./config.sh
+
 redo-ifchange main.c libcact.a
-cc -Iinclude -Wall -pedantic -o $3 main.c libcact.a -DNDEBUG
+$CC $CFLAGS -o $3 main.c libcact.a -DNDEBUG

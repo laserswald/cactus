@@ -1,6 +1,6 @@
+#include <assert.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <string.h>
 
 #include "cactus/core.h"
@@ -32,7 +32,7 @@ cact_str_coords_push(struct cact_str_coords *cds, int c)
 }
 
 /* Is this int allowable as an identifier character? */
-int
+static int
 is_ident(int i)
 {
 	return i != 0 && (isalpha(i) || strchr("!$%&*+-./:<=>?@^_~", i) != NULL);
@@ -40,14 +40,15 @@ is_ident(int i)
 
 
 /* Return 0 if the character is double quote, 1 otherwise. */
-int
+static int
 notdblq(int c)
 {
 	return c != '"';
 }
 
 /* Return 0 if the character is newline, 1 otherwise. */
-int notnl(int c)
+static int 
+notnl(int c)
 {
 	return c != '\n';
 }
@@ -301,8 +302,12 @@ lextobool(struct cactus *cact, struct cact_lexeme lx)
 int
 readlist(struct cactus *cact, struct cact_val *r)
 {
+    assert(cact);
+    assert(r);
+
 	struct cact_lexer *l = &cact->lexer;
 	int status;
+
 	*r = CACT_NULL_VAL;
 
 	struct cact_lexeme open_paren = peeklex(l);
@@ -317,6 +322,7 @@ readlist(struct cactus *cact, struct cact_val *r)
 	while (! peekistok(l, CACT_TOKEN_CLOSE_PAREN) && peeklex(l).t > 0) {
 		struct cact_val e;
 		status = cact_read(cact, &e);
+		cact_preserve(cact, e);
 		if (status != CACT_READ_OK) {
 			return status;
 		}
@@ -324,7 +330,11 @@ readlist(struct cactus *cact, struct cact_val *r)
 			*r = cact_make_error(cact, "Unexpected ending", CACT_NULL_VAL);
 			return CACT_READ_OTHER_ERROR;
 		}
+
 		*r = cact_append(cact, *r, e);
+		cact_preserve(cact, *r);
+		cact_unpreserve(cact, e);
+
 		expecttok(l, CACT_TOKEN_WHITESPACE);
 	}
 
@@ -341,6 +351,8 @@ readlist(struct cactus *cact, struct cact_val *r)
 		return CACT_READ_UNMATCHED_CHAR;
 	}
 
+	cact_unpreserve(cact, *r);
+
 	return CACT_READ_OK;
 }
 
@@ -353,9 +365,9 @@ cact_read(struct cactus* cact, struct cact_val* ret) {
 
 	struct cact_lexeme lx;
 
-	do
-	{
+	do {
 		lx = peeklex(l);
+
 		switch (lx.t) {
 
 		/* Ignored tokens. */

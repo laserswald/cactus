@@ -98,7 +98,10 @@ struct name { \
 } while (0)
 
 #define TABLE_CLEAR(tab) do { \
-	free((tab)->entries); \
+    if ((tab)->entries != NULL) { \
+		xfree((tab)->entries); \
+    } \
+    (tab)->entries = NULL; \
 	(tab)->count = 0; \
 	(tab)->available = 0; \
 } while (0)

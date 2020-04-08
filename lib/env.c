@@ -128,7 +128,7 @@ print_env(struct cact_env *e)
 	TABLE_FOREACH_BUCKET(, bucket, &e->entries) {
 		if (bucket->state == TABLE_ENTRY_FILLED) {
 			printf("%s : ", bucket->key->sym);
-			print_sexp(bucket->val);
+			cact_display(bucket->val);
 			printf("\n");
 		}
 	}

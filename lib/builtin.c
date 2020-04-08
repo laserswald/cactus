@@ -123,11 +123,14 @@ struct cact_val
 cact_builtin_display(struct cactus *cact, struct cact_val args)
 {
 	struct cact_val x;
+
 	if (1 != cact_unpack_args(cact, args, ".", &x)) {
 		return cact_make_error(cact, "Did not get expected number of arguments", args);
 	}
 	PROPAGATE_ERROR(x);
-	print_sexp(x);
+
+	cact_display(x);
+
 	return CACT_UNDEF_VAL;
 }
 
@@ -135,6 +138,7 @@ struct cact_val
 cact_builtin_newline(struct cactus *cact, struct cact_val args)
 {
 	puts("");
+
 	return CACT_UNDEF_VAL;
 }
 
@@ -274,7 +278,7 @@ cact_builtin_load(struct cactus *cact, struct cact_val x)
 		return cact_make_error(cact, "`load` expects a string", x);
 	}
 
-	FILE *f = fopen(cact_to_string(fname, "load"), "r");
+	FILE *f = fopen(cact_to_string(fname, "load")->str, "r");
 	if (! f) {
 		return cact_make_error(cact, "load: no file found", fname);
 	}
@@ -292,6 +296,7 @@ cact_builtin_not(struct cactus *cact, struct cact_val x)
 {
 	struct cact_val arg = cact_eval(cact, cact_car(cact, x));
 	PROPAGATE_ERROR(arg);
+
 	return cact_bool_not(arg);
 }
 

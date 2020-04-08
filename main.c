@@ -33,7 +33,7 @@ repl(struct cactus *cact, FILE *f)
     while (fgets(line, sizeof line, f) != NULL)
     {
         x = cact_eval_string(cact, line);
-        print_sexp(x);
+        cact_display(x);
         puts("");
         printf(PROMPT);
     }
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
         struct cact_val ret = cact_eval_file(&cact, infile);
         if (cact_is_error(ret))
         {
-            print_sexp(ret);
+            cact_display(ret);
             perror("Encountered errors");
             exit(1);
         }
