@@ -319,3 +319,11 @@ cact_builtin_error(struct cactus *cact, struct cact_val x)
 	return cact_make_error(cact, cact_to_string(cact_car(cact, x), "error"), cact_cdr(cact, x));
 }
 
+struct cact_val
+cact_builtin_is_bound(struct cactus *cact, struct cact_val x)
+{
+	struct cact_val s = cact_car(cact, x);
+	cact_fdisplay(s);
+	return CACT_BOOL_VAL(cact_env_is_bound(cact_current_env(cact), cact_to_symbol(s, "bound?")));
+}
+

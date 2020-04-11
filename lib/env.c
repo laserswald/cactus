@@ -109,13 +109,35 @@ cact_env_set(struct cactus *cact, struct cact_env *e,
     assert(e);
     assert(key);
 
-    if (! TABLE_HAS(cact_env_entries, &e->entries, key)) {
-        return cact_make_error(cact, "cannot set nonexistent variable", CACT_SYM_VAL(key));
-    }
+    struct cact_env *cur = e;
 
-    TABLE_ENTER(cact_env_entries, &e->entries, key, val);
+    do {
+	    if (TABLE_HAS(cact_env_entries, &cur->entries, key)) {
+		    TABLE_ENTER(cact_env_entries, &cur->entries, key, val);
+		    return CACT_UNDEF_VAL;
+	    }
+	    cur = e->parent;
+    } while (cur != NULL);
 
-    return CACT_UNDEF_VAL;
+    return cact_make_error(cact, "cannot set nonexistent variable", CACT_SYM_VAL(key));
+}
+
+bool
+cact_env_is_bound(struct cact_env *e, struct cact_symbol *key)
+{
+    assert(e);
+    assert(key);
+
+    struct cact_env *cur = e;
+
+    do {
+	    if (TABLE_HAS(cact_env_entries, &cur->entries, key)) {
+		    return true;
+	    }
+	    cur = e->parent;
+    } while (cur != NULL);
+
+    return false;
 }
 
 void

@@ -5,14 +5,9 @@
 #include "cactus/val.h"
 #include "cactus/builtin.h"
 #include "minunit.h"
+#include "tests.h"
 
 int tests_run = 0;
-
-char *read_tests();
-char *sexp_tests();
-char *boolean_tests();
-char *eval_tests();
-char *pair_tests();
 
 static char *all_tests() {
 	mu_run_test(boolean_tests);
