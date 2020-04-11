@@ -30,8 +30,7 @@ repl(struct cactus *cact, FILE *f)
     struct cact_val x;
 
     printf(PROMPT);
-    while (fgets(line, sizeof line, f) != NULL)
-    {
+    while (fgets(line, sizeof line, f) != NULL) {
         x = cact_eval_string(cact, line);
         cact_display(x);
         puts("");
@@ -51,24 +50,19 @@ int main(int argc, char *argv[])
 
     cact_define_builtin_array(&cact, builtins, LENGTH(builtins));
 
-    if (argc == 2)
-    {
+    if (argc == 2) {
         infile = fopen(argv[1], "r");
-        if (! infile)
-        {
+        if (! infile) {
             perror("Could not run file");
             exit(1);
         }
         struct cact_val ret = cact_eval_file(&cact, infile);
-        if (cact_is_error(ret))
-        {
+        if (cact_is_error(ret)) {
             cact_display(ret);
             perror("Encountered errors");
             exit(1);
         }
-    }
-    else
-    {
+    } else {
         result = repl(&cact, stdin);
     }
 

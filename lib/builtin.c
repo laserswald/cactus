@@ -313,3 +313,9 @@ cact_builtin_collect_garbage(struct cactus *cact, struct cact_val x)
     return CACT_UNDEF_VAL;
 }
 
+struct cact_val
+cact_builtin_error(struct cactus *cact, struct cact_val x)
+{
+	return cact_make_error(cact, cact_to_string(cact_car(cact, x), "error"), cact_cdr(cact, x));
+}
+

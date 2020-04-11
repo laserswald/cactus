@@ -145,9 +145,6 @@ cact_arena_sweep(struct cact_arena *arena)
         if (cact_arena_slot_occupied(arena, i)) {
             obj = cact_arena_get(arena, i);
             if (obj->store_data.mark != CACT_STORE_MARK_REACHABLE) {
-                printf("; cactus gc: unreachable object: ");
-                fprint_obj(stdout, obj);
-                printf("\n");
                 obj->store_data.mark = CACT_STORE_MARK_FREE;
                 cact_obj_destroy(obj);
                 cact_arena_mark_open(arena, i);

@@ -57,6 +57,18 @@ eval_pairs_test()
 }
 
 char *
+eval_setbang_test()
+{
+	struct cact_val v;
+
+	v = cact_eval_string(&cact, "(define x 2) (set! x 4) x");
+	mu_assert("eval_setbang_test: expect x to be fixnum", cact_is_fixnum(v));
+	mu_assert("eval_setbang_test: expect x to be 4", cact_to_long(v, "eval_setbang_test") == 4);
+
+	return NULL;
+}
+
+char *
 eval_tests() 
 {
 	cact_init(&cact);
@@ -67,6 +79,7 @@ eval_tests()
 	mu_run_test(eval_define_test);
 	mu_run_test(eval_if_test);
 	mu_run_test(eval_pairs_test);
+	mu_run_test(eval_setbang_test);
 
 	cact_finish(&cact);
 

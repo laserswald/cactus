@@ -12,6 +12,8 @@ if [ $CACT_DEBUG -eq 1 ]; then
     CFLAGS="$CFLAGS -g"
 fi
 
+echo "$0: CFLAGS is $CFLAGS" >&2
+
 $CC $CFLAGS -MD -MF "$2.d" -o $3 -c "$2.c"
 
 # Read the generated dependency files, and ensure the object file depends
