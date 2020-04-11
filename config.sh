@@ -1,7 +1,8 @@
 #!/bin/sh
 
 CACT_OPTIMIZE=0
-CACT_DEBUG=1
+CACT_DEBUG=0
+CACT_COVERAGE=1
 
-CC=clang
+CC=gcc
 CFLAGS="-Wall -pedantic -Iinclude -DNDEBUG"

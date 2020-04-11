@@ -4,7 +4,5 @@
       1
       (* n (factorial (- n 1)))))
 
-(collect-garbage)
-
-(display (factorial 5))
-(newline)
+(display (factorial 5)) (newline)
+(display (factorial 10)) (newline)

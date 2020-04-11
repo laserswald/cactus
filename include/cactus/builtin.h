@@ -29,6 +29,7 @@ BUILTIN_FUNC(cact_builtin_times);
 BUILTIN_FUNC(cact_builtin_divide);
 BUILTIN_FUNC(cact_builtin_load);
 BUILTIN_FUNC(cact_builtin_interaction_environment);
+BUILTIN_FUNC(cact_builtin_is_bound);
 BUILTIN_FUNC(cact_builtin_collect_garbage);
 
 /* Errors. */
