@@ -1,2 +1,1 @@
-redo test
-redo cactus 
+redo-ifchange cactus test

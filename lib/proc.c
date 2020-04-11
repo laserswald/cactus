@@ -66,10 +66,6 @@ cact_proc_eval_args(struct cactus *cact, struct cact_env *params_env,
 
         struct cact_val evaled_arg = cact_eval(cact, cact_car(cact, current_arg));
 
-        printf("eval_args: evaluated arg: ");
-        cact_display(evaled_arg);
-        printf("\n");
-
         cact_env_define(
             cact,
             params_env,
@@ -124,15 +120,10 @@ cact_mark_proc(struct cact_obj *o)
         return;
     }
 
-    puts("; cactus gc: marking procedure");
-
     if (p->env) {
         cact_obj_mark((struct cact_obj *) p->env);
     }
 
-    puts("marking arg list");
-    cact_display(p->argl);
-    fflush(stdout);
     cact_mark_val(p->argl);
     cact_mark_val(p->body);
 }

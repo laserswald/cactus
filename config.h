@@ -23,6 +23,7 @@ struct cact_builtin builtins[] = {
     {"display", cact_builtin_display},
     {"newline", cact_builtin_newline},
 
+    {"error", cact_builtin_error},
     {"load", cact_builtin_load},
     {"exit", cact_builtin_exit},
     {"interaction-environment", cact_builtin_interaction_environment},
