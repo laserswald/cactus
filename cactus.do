@@ -2,5 +2,5 @@
 
 . ./config.sh
 
-redo-ifchange main.c libcact.a
-$CC $CFLAGS --coverage -o $3 main.c libcact.a -DNDEBUG
+redo-ifchange src/*.c src/*.h libcact.a
+$CC $CFLAGS -o $3 src/main.c src/linenoise.c libcact.a -DNDEBUG
