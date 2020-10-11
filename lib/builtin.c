@@ -15,6 +15,8 @@
 #include "cactus/str.h"
 #include "cactus/err.h"
 #include "cactus/bool.h"
+#include "cactus/char.h"
+
 
 bool
 unpack_typecheck(const struct cact_val arg, const char c)
@@ -24,6 +26,8 @@ unpack_typecheck(const struct cact_val arg, const char c)
         return true;
     case 'p':
         return cact_is_pair(arg);
+    case 'c':
+        return cact_is_procedure(arg);
     }
     fprintf(stdout, "cactus: fatal error: could not understand unpack args character '%c'", c);
     abort();
@@ -283,10 +287,16 @@ cact_builtin_load(struct cactus *cact, struct cact_val x)
         return cact_make_error(cact, "load: no file found", fname);
     }
 
+    // Need to save the current reader state
+    struct cact_lexer prev_lexer = cact->lexer;
+
     struct cact_val result = cact_eval_file(cact, f);
     if (cact_is_error(result)) {
+        cact_fdisplay(stderr, result);
         return cact_make_error(cact, "load: could not read file", fname);
     }
+
+    cact->lexer = prev_lexer;
 
     return CACT_UNDEF_VAL;
 }
@@ -316,14 +326,33 @@ cact_builtin_collect_garbage(struct cactus *cact, struct cact_val x)
 struct cact_val
 cact_builtin_error(struct cactus *cact, struct cact_val x)
 {
-	return cact_make_error(cact, cact_to_string(cact_car(cact, x), "error"), cact_cdr(cact, x));
+	return cact_make_error(cact, cact_to_string(cact_car(cact, x), "error")->str, cact_cdr(cact, x));
 }
 
 struct cact_val
 cact_builtin_is_bound(struct cactus *cact, struct cact_val x)
 {
-	struct cact_val s = cact_car(cact, x);
-	cact_fdisplay(s);
-	return CACT_BOOL_VAL(cact_env_is_bound(cact_current_env(cact), cact_to_symbol(s, "bound?")));
+	struct cact_val arg = cact_eval(cact, cact_car(cact, x));
+	return CACT_BOOL_VAL(cact_env_is_bound(cact_current_env(cact), cact_to_symbol(arg, "bound?")));
+}
+
+struct cact_val
+cact_builtin_with_exception_handler(struct cactus *cact, struct cact_val args)
+{
+    struct cact_val handler, thunk;
+
+    if (2 != cact_unpack_args(cact, args, "cc", &handler, &thunk)) {
+        return cact_make_error(cact, "Did not get expected number of arguments", args);
+    }
+
+    cact_current_cont(cact)->exn_handler = cact_to_procedure(
+	    handler, "with-exception-handler"
+	);
+
+    return cact_proc_apply(
+	    cact, 
+	    cact_to_procedure(thunk, "with-exception-handler"), 
+	    CACT_NULL_VAL
+	);
 }
 

@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdarg.h>
 
 #include "cactus/internal/xmalloc.h"
@@ -81,5 +82,15 @@ char *strslice(const char *str, const char *end)
     newstr[diff] = '\0';
     memcpy(newstr, str, diff);
     return newstr;
+}
+
+int ptrcmp(const void *a, const void *b)
+{
+	return (const char *)a - (const char *)b;
+}
+
+uintptr_t ptrhash(const void *a)
+{
+	return (uintptr_t) a;
 }
 

@@ -28,11 +28,12 @@ struct cact_val cact_make_procedure(struct cactus *, struct cact_env *e,
 /* Create a new native C procedure. */
 struct cact_val cact_make_native_proc(struct cactus *, cact_native_func);
 
+/* Apply the procedure with the given arguments. */
+struct cact_val cact_proc_apply(struct cactus *, struct cact_proc *, struct cact_val);
+
 void cact_mark_proc(struct cact_obj *);
 void cact_destroy_proc(struct cact_obj *);
 
-/* Apply the procedure with the given arguments. */
-struct cact_val cact_proc_apply(struct cactus *, struct cact_proc *, struct cact_val);
 
 #endif // CACT_PROC_H
 

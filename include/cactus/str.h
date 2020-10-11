@@ -1,6 +1,7 @@
 #ifndef str_h_INCLUDED
 #define str_h_INCLUDED
 
+#include "core.h"
 #include "obj.h"
 
 struct cact_string {

@@ -42,7 +42,8 @@ bool cact_arena_has(struct cact_arena*, void*);
 void cact_arena_set_init(struct cact_arena_set *, size_t);
 struct cact_obj *cact_arena_set_allocate(struct cact_arena_set *);
 
-void cact_store_init(struct cact_store*);
+void cact_store_init(struct cact_store *);
+void cact_store_finish(struct cact_store *);
 struct cact_obj *cact_store_allocate(struct cact_store*, enum cact_obj_type);
 bool cact_store_needs_sweep(struct cact_store *);
 size_t cact_store_count(struct cact_store *);

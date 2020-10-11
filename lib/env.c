@@ -1,19 +1,22 @@
 
 #include <stdlib.h>
 
-#include "cactus/env.h"
-
-#include "cactus/val.h"
-#include "cactus/store.h"
 #include "cactus/core.h"
+#include "cactus/store.h"
+#include "cactus/env.h"
+#include "cactus/val.h"
 #include "cactus/sym.h"
+#include "cactus/write.h"
+#include "cactus/err.h"
 
 #include "cactus/internal/utils.h"
 #include "cactus/internal/table.h"
 
 TABLE_GENERATE(cact_env_entries, struct cact_symbol *, struct cact_val)
 
-/* Create an environment. */
+/* 
+ * Create and initialize a new environment. 
+ */
 struct cact_val
 cact_make_env(struct cactus *cact, struct cact_env *parent)
 {
@@ -22,14 +25,21 @@ cact_make_env(struct cactus *cact, struct cact_env *parent)
     return CACT_OBJ_VAL((struct cact_obj *) env);
 }
 
+/*
+ * Initialize a given environment to have no entries and set it's parent.
+ */
 void
 cact_env_init(struct cact_env *e, struct cact_env *parent)
 {
     assert(e != parent);
+
     e->parent = parent;
     TABLE_INIT(&e->entries, ptrhash, cact_symbol_cmp);
 }
 
+/*
+ * Mark the environment as reachable during garbage collection.
+ */
 void
 cact_mark_env(struct cact_obj *o)
 {
@@ -49,6 +59,9 @@ cact_mark_env(struct cact_obj *o)
     }
 }
 
+/*
+ * Destroy any data contained within this environment.
+ */
 void
 cact_destroy_env(struct cact_obj *o)
 {
@@ -93,7 +106,7 @@ cact_env_define(struct cactus *cact, struct cact_env *e,
     assert(key);
 
     if (TABLE_HAS(cact_env_entries, &e->entries, key)) {
-        return cact_make_error(cact, "cannot define variable, already exists", CACT_SYM_VAL(key));
+        fprintf(stderr, "Warning: redefining variable %s\n", key->sym);
     }
 
     TABLE_ENTER(cact_env_entries, &e->entries, key, val);
@@ -122,6 +135,9 @@ cact_env_set(struct cactus *cact, struct cact_env *e,
     return cact_make_error(cact, "cannot set nonexistent variable", CACT_SYM_VAL(key));
 }
 
+/*
+ * Does the given environment have the given symbol bound?
+ */
 bool
 cact_env_is_bound(struct cact_env *e, struct cact_symbol *key)
 {
@@ -140,11 +156,13 @@ cact_env_is_bound(struct cact_env *e, struct cact_symbol *key)
     return false;
 }
 
+/*
+ * Display an environment to standard output.
+ */
 void
 print_env(struct cact_env *e)
 {
-    if (!e)
-        return;
+    if (!e) return;
 
     struct TABLE_ENTRY(cact_env_entries) *bucket;
     TABLE_FOREACH_BUCKET(, bucket, &e->entries) {
@@ -159,6 +177,5 @@ print_env(struct cact_env *e)
         printf("parent:\n");
         print_env(e->parent);
     }
-
 }
 

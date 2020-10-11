@@ -40,28 +40,42 @@ repl(struct cactus *cact, FILE *f)
     return 0;
 }
 
+struct cact_val
+load_file(struct cactus *cact, char *filename)
+{
+	struct cact_val v;
+	FILE *f = NULL;
+
+    f = fopen(filename, "r");
+    if (! f) {
+	    perror("Could not open file");
+	    exit(1);
+    }
+
+    v = cact_eval_file(cact, f);
+
+    if (cact_is_error(v)) {
+        cact_display(v);
+        perror("Encountered errors");
+        exit(1);
+    }
+
+    return v;
+}
+
 int main(int argc, char *argv[])
 {
     struct cactus cact;
     int result = EXIT_SUCCESS;
-    FILE *infile = NULL;
 
     cact_init(&cact);
 
     cact_define_builtin_array(&cact, builtins, LENGTH(builtins));
 
+    load_file(&cact, "rt/init.scm");
+
     if (argc == 2) {
-        infile = fopen(argv[1], "r");
-        if (! infile) {
-            perror("Could not run file");
-            exit(1);
-        }
-        struct cact_val ret = cact_eval_file(&cact, infile);
-        if (cact_is_error(ret)) {
-            cact_display(ret);
-            perror("Encountered errors");
-            exit(1);
-        }
+        load_file(&cact, argv[1]);
     } else {
         result = repl(&cact, stdin);
     }

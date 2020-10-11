@@ -1,6 +1,8 @@
 #ifndef CACT_PAIR_H
 #define CACT_PAIR_H
 
+#include "cactus/core.h"
+
 #include "cactus/obj.h"
 #include "cactus/val.h"
 

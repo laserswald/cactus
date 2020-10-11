@@ -3,11 +3,9 @@
 for inputfile in `find tests/fixtures -iname '*.scm'`; do
 	printf "testing fixture $inputfile: "
 
-	expectedfile="${inputfile%.scm}.exp"
-	outputfile="${inputfile%.scm}.out"
-	./cactus $inputfile > $outputfile
+	./cactus $inputfile
 
-	if ! cmp $outputfile $expectedfile; then
+	if test $? -ne "0"; then
 		echo "fail"
 		failed=$(true)
 	else

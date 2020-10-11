@@ -3,16 +3,19 @@
 
 #include "cactus/val.h"
 #include "cactus/internal/tree.h"
+#include "cactus/internal/array.h"
 
 struct cactus;
 
 struct cact_symbol {
-	char* sym;
+	const char *sym;
 	RB_ENTRY(cact_symbol) entry;
 };
 
 RB_HEAD(cact_symbol_table, cact_symbol);
 void cact_symbol_table_init(struct cact_symbol_table *);
+
+ARRAY_DECL(cact_symbol_arr, struct cact_symbol);
 
 struct cact_symbol *cact_get_symbol(struct cactus *, const char *);
 struct cact_val cact_make_symbol(struct cactus *, const char *);
