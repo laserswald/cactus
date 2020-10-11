@@ -18,6 +18,7 @@
  * Arena operations.
  */
 
+
 /* Initialize an arena to hold items of a certain size. */
 void
 cact_arena_init(struct cact_arena *arena, const size_t element_sz)
@@ -165,10 +166,10 @@ cact_arena_get_next(struct cact_arena *arena)
     assert(arena);
 
     size_t open_slot = cact_arena_next_open(arena);
+#ifndef NDEBUG
     size_t count = cact_arena_count(arena);
-
+#endif
     arena->occupied_set |= (1ll << open_slot);
-
     assert(cact_arena_count(arena) == 1 + count);
 
     return cact_arena_get(arena, open_slot);

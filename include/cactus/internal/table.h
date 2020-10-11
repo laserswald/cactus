@@ -45,7 +45,7 @@ fnv1a_hash(const char* key, const size_t length)
 }
 
 
-typedef unsigned int (*table_hash_fn)(const void *);
+typedef long unsigned int (*table_hash_fn)(const void *);
 typedef int (*table_cmp_fn)(const void *, const void *);
 
 #define TABLE_INITIAL_SIZE 8

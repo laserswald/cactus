@@ -290,7 +290,7 @@ struct cact_val
 cact_eval_string(struct cactus *cact, char *s)
 {
     struct cact_val exp = CACT_NULL_VAL;
-    struct cact_val ret = CACT_NULL_VAL;
+    struct cact_val ret = CACT_UNDEF_VAL;
 
     cact_lexer_init(&cact->lexer, s);
 

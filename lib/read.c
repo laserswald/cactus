@@ -4,11 +4,13 @@
 #include <string.h>
 
 #include "cactus/core.h"
+
 #include "cactus/read.h"
 #include "cactus/val.h"
 #include "cactus/sym.h"
 #include "cactus/str.h"
 #include "cactus/pair.h"
+#include "cactus/err.h"
 
 #include "cactus/internal/debug.h"
 #include "cactus/internal/utils.h"

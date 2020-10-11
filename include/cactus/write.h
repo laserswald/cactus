@@ -10,6 +10,7 @@ int fprint_list(FILE *f, struct cact_val x);
 int fprint_sexp(FILE *f, struct cact_val x);
 int print_list(struct cact_val x);
 int cact_display(struct cact_val x);
+int cact_fdisplay(FILE *f, struct cact_val x);
 
 #endif // write_h_INCLUDED
 

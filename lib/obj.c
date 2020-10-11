@@ -21,6 +21,8 @@ const char* cact_obj_show_type(enum cact_obj_type t)
         return "environment";
     case CACT_OBJ_ERROR:
         return "error";
+    case CACT_OBJ_CONT:
+        return "continuation";
     }
     return NULL;
 }

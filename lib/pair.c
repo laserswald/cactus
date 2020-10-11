@@ -154,7 +154,10 @@ unsigned int
 cact_length(struct cactus *cact, struct cact_val l)
 {
     unsigned int len = 0;
-    CACT_LIST_FOR_EACH_ITEM(cact, ignore, l) {
+
+    assert(cact);
+
+    CACT_LIST_FOR_EACH_PAIR(cact, ignore, l) {
         len++;
     }
     return len;

@@ -1,5 +1,4 @@
-(define id
-	(lambda (a)
-		a))
+
+(define (id x) x)
 
 (display (id 1))

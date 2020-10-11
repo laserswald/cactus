@@ -18,17 +18,9 @@ char *strword(const char* str, char **end);
 char *strslice(const char *str, const char *end);
 
 /* Compare two pointers, but it's a function.  */
-static int
-ptrcmp(const void *a, const void *b)
-{
-	return (const char *)a - (const char *)b;
-}
+int ptrcmp(const void *a, const void *b);
 
-static uintptr_t
-ptrhash(const void *a)
-{
-	return (uintptr_t) a;
-}
+uintptr_t ptrhash(const void *a);
 
 #endif // utils_h_INCLUDED
 
