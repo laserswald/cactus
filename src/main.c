@@ -14,27 +14,31 @@
 #include "cactus/err.h"
 
 #include "cactus/internal/utils.h"
+#include "linenoise.h"
 
-#include "config.h"
+#include "../config.h"
 
 int verbosity = 0;
 
 /* macros */
+#define TTYGREEN "\x1b[32m"
+#define TTYCLEAR "\x1b[0m"
 
-#define PROMPT "cactus> "
+#define PROMPT TTYGREEN "cact>" TTYCLEAR " "
 
 int
-repl(struct cactus *cact, FILE *f)
+repl(struct cactus *cact)
 {
-    char line[256];
+    char *line;
     struct cact_val x;
 
-    printf(PROMPT);
-    while (fgets(line, sizeof line, f) != NULL) {
+    while ((line = linenoise(PROMPT))!= NULL) {
         x = cact_eval_string(cact, line);
         cact_display(x);
-        puts("");
-        printf(PROMPT);
+        putchar('\n');
+        fflush(stdout);
+        linenoiseHistoryAdd(line);
+        linenoiseFree(line);
     }
 
     return 0;
@@ -77,7 +81,7 @@ int main(int argc, char *argv[])
     if (argc == 2) {
         load_file(&cact, argv[1]);
     } else {
-        result = repl(&cact, stdin);
+        result = repl(&cact);
     }
 
     cact_finish(&cact);
