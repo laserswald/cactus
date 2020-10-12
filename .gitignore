@@ -1,2 +1,6 @@
 *.o
 *.a
+*.d
+*.gcno
+.redo/*
+to/*
