@@ -323,16 +323,24 @@ cact_builtin_collect_garbage(struct cactus *cact, struct cact_val x)
 }
 
 struct cact_val
-cact_builtin_error(struct cactus *cact, struct cact_val x)
+cact_builtin_is_bound(struct cactus *cact, struct cact_val x)
 {
-	return cact_make_error(cact, cact_to_string(cact_car(cact, x), "error")->str, cact_cdr(cact, x));
+    struct cact_val arg = cact_eval(cact, cact_car(cact, x));
+    return CACT_BOOL_VAL(cact_env_is_bound(cact_current_env(cact), cact_to_symbol(arg, "bound?")));
 }
 
 struct cact_val
-cact_builtin_is_bound(struct cactus *cact, struct cact_val x)
+cact_builtin_raise(struct cactus *cact, struct cact_val x)
 {
-	struct cact_val arg = cact_eval(cact, cact_car(cact, x));
-	return CACT_BOOL_VAL(cact_env_is_bound(cact_current_env(cact), cact_to_symbol(arg, "bound?")));
+    struct cact_proc *exnh = cact_current_exception_handler(cact);
+
+    return CACT_UNDEF_VAL;
+}
+
+struct cact_val
+cact_builtin_error(struct cactus *cact, struct cact_val x)
+{
+    return cact_make_error(cact, cact_to_string(cact_car(cact, x), "error")->str, cact_cdr(cact, x));
 }
 
 struct cact_val
