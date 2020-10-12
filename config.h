@@ -23,12 +23,15 @@ struct cact_builtin builtins[] = {
     {"display", cact_builtin_display},
     {"newline", cact_builtin_newline},
 
-    {"error", cact_builtin_error},
     {"load", cact_builtin_load},
     {"exit", cact_builtin_exit},
-    {"interaction-environment", cact_builtin_interaction_environment},
+
     {"collect-garbage", cact_builtin_collect_garbage},
+    {"interaction-environment", cact_builtin_interaction_environment},
     {"bound?", cact_builtin_is_bound},
+
+    {"error", cact_builtin_error},
+    {"with-exception-handler", cact_builtin_with_exception_handler},
 
     {"number?", cact_builtin_is_number},
     {"+", cact_builtin_plus},
