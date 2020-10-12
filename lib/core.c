@@ -302,7 +302,7 @@ cact_current_cont(struct cactus *cact)
         return NULL;
     }
 
-	return SLIST_FIRST(&cact->conts);
+    return SLIST_FIRST(&cact->conts);
 }
 
 
@@ -314,7 +314,7 @@ cact_current_env(struct cactus *cact)
 
     struct cact_cont *cnt = cact_current_cont(cact);
     if (! cnt) {
-	    return NULL;
+        return NULL;
     }
 
     return cnt->env;
@@ -323,17 +323,16 @@ cact_current_env(struct cactus *cact)
 struct cact_proc *
 cact_current_exception_handler(struct cactus *cact)
 {
-	assert(cact);
+    assert(cact);
 
     struct cact_cont *cnt;
 
     SLIST_FOREACH(cnt, &cact->conts, parent) {
         if (cnt->exn_handler) {
-	        return cnt->exn_handler;
+            return cnt->exn_handler;
         }
     }
 
-    assert(false);
     return NULL;
 }
 
