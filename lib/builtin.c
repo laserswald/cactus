@@ -1,4 +1,3 @@
-
 #include <stdarg.h>
 
 #include "cactus/internal/debug.h"

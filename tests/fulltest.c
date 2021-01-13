@@ -1,32 +1,24 @@
-/* file minunit_example.c */
-
 #include <stdio.h>
 #include "cactus/read.h"
 #include "cactus/val.h"
 #include "cactus/builtin.h"
-#include "minunit.h"
+#include "greatest.h"
 #include "tests.h"
 
 int tests_run = 0;
 
-static char *all_tests() {
-	mu_run_test(boolean_tests);
-	mu_run_test(sexp_tests);
-    mu_run_test(pair_tests);
-	mu_run_test(read_tests);
-	mu_run_test(eval_tests);
-	return 0;
+SUITE(all_tests) {
+    RUN_TEST(boolean_tests);
+    RUN_TEST(sexp_tests);
+    RUN_TEST(pair_tests);
+    RUN_TEST(read_tests);
+    RUN_TEST(eval_tests);
 }
 
-int main(int argc, char **argv) {
-	char *result = all_tests();
-	if (result != 0) {
-		printf("FAILED: %s\n", result);
-	}
-	else {
-		printf("ALL TESTS PASSED\n");
-	}
-	printf("Tests run: %d\n", tests_run);
+GREATEST_MAIN_DEFS();
 
-	return result != 0;
+int main(int argc, char **argv) {
+    GREATEST_MAIN_BEGIN();
+    RUN_SUITE(all_tests);
+    GREATEST_MAIN_END();
 }

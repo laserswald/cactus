@@ -10,7 +10,7 @@
 
 #include "cactus/internal/queue.h"
 
-/**
+/*
  * A structure for quickly adding new native functions.
  */
 struct cact_builtin {
@@ -41,7 +41,7 @@ void cact_cont_init(struct cact_cont *cont, struct cact_env *frame, struct cact_
 void cact_mark_cont(struct cact_obj *);
 
 /*
- * 
+ * Destroy the continuation.
  */
 void cact_destroy_cont(struct cact_obj *);
 
