@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "minunit.h"
+#include "greatest.h"
 
 #include "cactus/core.h"
 #include "cactus/read.h"
@@ -9,15 +9,15 @@
 #include "cactus/bool.h"
 #include "cactus/internal/utils.h"
 
-static char*
-not_test()
-{
-	struct cactus cact;
-	cact_init(&cact);
+SUITE(boolean_tests);
+
+TEST not_test() {
+    struct cactus cact;
+    cact_init(&cact);
 
     struct {
-	    struct cact_val thing;
-	    bool expected;
+        struct cact_val thing;
+        bool expected;
     } cases[] = {
         {CACT_NULL_VAL, false},
         {CACT_BOOL_VAL(true), false},
@@ -30,20 +30,19 @@ not_test()
     size_t len_cases = LENGTH(cases);
     int i;
     for (i = 0; i < len_cases; i++) {
-	    mu_assert("`not` failed", cact_to_bool(cact_bool_not(cases[i].thing), "not_test") == cases[i].expected);
+        ASSERT_EQm("`not` failed", cases[i].expected, cact_to_bool(cact_bool_not(cases[i].thing), "not_test"));
     }
 
     cact_finish(&cact);
 
-	return 0;
+    return 0;
 }
 
-static char*
-is_boolean_test()
+TEST is_boolean_test()
 {
     struct {
-	    struct cact_val thing;
-	    bool expected;
+        struct cact_val thing;
+        bool expected;
     } cases[] = {
         {CACT_NULL_VAL, false},
         {CACT_BOOL_VAL(false), true},
@@ -54,16 +53,15 @@ is_boolean_test()
     size_t len_cases = LENGTH(cases);
     int i;
     for (i = 0; i < len_cases; i++) {
-	    mu_assert("`is_bool` failed", cact_is_bool(cases[i].thing) == cases[i].expected);
+        ASSERT_EQm("`is_bool` failed", cases[i].expected, cact_is_bool(cases[i].thing));
     }
 
-	return 0;
+    return 0;
 }
 
-char*
-boolean_tests()
+SUITE(boolean_tests)
 {
-	mu_run_test(not_test);
-	mu_run_test(is_boolean_test);
-	return 0;
+    RUN_TEST(not_test);
+    RUN_TEST(is_boolean_test);
 }
+

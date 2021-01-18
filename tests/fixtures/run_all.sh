@@ -13,5 +13,5 @@ for inputfile in `find tests/fixtures -iname '*.scm'`; do
     fi
 done
 
-[ $failed -eq $(true)] && exit 1
+[ $failed -eq $(true) ] && exit 1
 

@@ -1,4 +1,4 @@
-#include "minunit.h"
+#include "greatest.h"
 
 #include "cactus/core.h"
 #include "cactus/pair.h"
@@ -7,7 +7,7 @@
 
 static struct cactus cact;
 
-static char *car_cdr_cons_test()
+TEST car_cdr_cons_test()
 {
     int li = rand();
     struct cact_val l = CACT_FIX_VAL(li);
@@ -15,14 +15,14 @@ static char *car_cdr_cons_test()
     struct cact_val r = CACT_FIX_VAL(ri);
     struct cact_val pair = cact_cons(&cact, l, r);
 
-    mu_assert("cons did not create a new pair", cact_is_pair(pair));
-    mu_assert("car of pair was not generated number", cact_to_long(cact_car(&cact, pair), "car_cdr_cons_test") == li);
-    mu_assert("cdr of pair was not generated number", cact_to_long(cact_cdr(&cact, pair), "car_cdr_cons_test") == ri);
+    ASSERTm("cons did not create a new pair", cact_is_pair(pair));
+    ASSERTm("car of pair was not generated number", cact_to_long(cact_car(&cact, pair), "car_cdr_cons_test") == li);
+    ASSERTm("cdr of pair was not generated number", cact_to_long(cact_cdr(&cact, pair), "car_cdr_cons_test") == ri);
 
-    return NULL;
+    PASS();
 }
 
-static char *append_test()
+TEST append_test()
 {
     struct cact_val pair = CACT_NULL_VAL;
 
@@ -33,9 +33,9 @@ static char *append_test()
     pair = cact_append(&cact, pair, fst);
 
     cact_preserve(&cact, pair);
-    mu_assert("cact_append did not create a new pair", cact_is_pair(pair));
-    mu_assert("car of pair was not generated number", cact_to_long(cact_car(&cact, pair), "append_test") == first);
-    mu_assert("cdr of pair was not nil", cact_is_null(cact_cdr(&cact, pair)));
+    ASSERTm("cact_append did not create a new pair", cact_is_pair(pair));
+    ASSERTm("car of pair was not generated number", cact_to_long(cact_car(&cact, pair), "append_test") == first);
+    ASSERTm("cdr of pair was not nil", cact_is_null(cact_cdr(&cact, pair)));
 
     // 1 case
     int second = rand();
@@ -43,11 +43,11 @@ static char *append_test()
 
     pair = cact_append(&cact, pair, snd);
 
-    mu_assert("cact_append did not create a new pair", cact_is_pair(pair));
-    mu_assert("car of pair was not generated number", cact_to_long(cact_car(&cact, pair), "append_test") == first);
+    ASSERTm("cact_append did not create a new pair", cact_is_pair(pair));
+    ASSERTm("car of pair was not generated number", cact_to_long(cact_car(&cact, pair), "append_test") == first);
 
-    mu_assert("car of pair was not generated number", cact_to_long(cact_car(&cact, cact_cdr(&cact, pair)), "append_test") == second);
-    mu_assert("cdr of pair was not nil", cact_is_null(cact_cdr(&cact, cact_cdr(&cact, pair))));
+    ASSERTm("car of pair was not generated number", cact_to_long(cact_car(&cact, cact_cdr(&cact, pair)), "append_test") == second);
+    ASSERTm("cdr of pair was not nil", cact_is_null(cact_cdr(&cact, cact_cdr(&cact, pair))));
 
     // N case
     int third = rand();
@@ -55,30 +55,29 @@ static char *append_test()
 
     pair = cact_append(&cact, pair, thd);
 
-    mu_assert("cact_append did not create a new pair", cact_is_pair(pair));
-    mu_assert("car of pair was not generated number", cact_to_long(cact_car(&cact, pair), "append_test") == first);
-    mu_assert("car of pair was not generated number", cact_to_long(cact_car(&cact, cact_cdr(&cact, pair)), "append_test") == second);
-    mu_assert("car of pair was not generated number", cact_to_long(cact_car(&cact, cact_cdr(&cact, cact_cdr(&cact, pair))), "append_test") == third);
-    mu_assert("cdr of pair was not nil", cact_is_null(cact_cdr(&cact, cact_cdr(&cact, cact_cdr(&cact, pair)))));
+    ASSERTm("cact_append did not create a new pair", cact_is_pair(pair));
+    ASSERTm("car of pair was not generated number", cact_to_long(cact_car(&cact, pair), "append_test") == first);
+    ASSERTm("car of pair was not generated number", cact_to_long(cact_car(&cact, cact_cdr(&cact, pair)), "append_test") == second);
+    ASSERTm("car of pair was not generated number", cact_to_long(cact_car(&cact, cact_cdr(&cact, cact_cdr(&cact, pair))), "append_test") == third);
+    ASSERTm("cdr of pair was not nil", cact_is_null(cact_cdr(&cact, cact_cdr(&cact, cact_cdr(&cact, pair)))));
     cact_unpreserve(&cact, pair);
 
     fprintf(stderr, "success!\n");
 
-    return NULL;
+    PASS();
 }
 
-static char *assoc_list_test()
+TEST assoc_list_test()
 {
-    return NULL;
+    PASS();
 }
 
-char *pair_tests()
+SUITE(pair_tests)
 {
-	cact_init(&cact);
-    mu_run_test(car_cdr_cons_test);
-    mu_run_test(append_test);
-    mu_run_test(assoc_list_test);
-	cact_finish(&cact);
-    return NULL;
+    cact_init(&cact);
+    RUN_TEST(car_cdr_cons_test);
+    RUN_TEST(append_test);
+    RUN_TEST(assoc_list_test);
+    cact_finish(&cact);
 }
 

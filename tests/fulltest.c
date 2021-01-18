@@ -3,22 +3,29 @@
 #include "cactus/val.h"
 #include "cactus/builtin.h"
 #include "greatest.h"
-#include "tests.h"
 
-int tests_run = 0;
-
-SUITE(all_tests) {
-    RUN_TEST(boolean_tests);
-    RUN_TEST(sexp_tests);
-    RUN_TEST(pair_tests);
-    RUN_TEST(read_tests);
-    RUN_TEST(eval_tests);
-}
+SUITE_EXTERN(boolean_tests);
+SUITE_EXTERN(sexp_tests);
+SUITE_EXTERN(pair_tests);
+SUITE_EXTERN(read_tests);
+SUITE_EXTERN(eval_tests);
 
 GREATEST_MAIN_DEFS();
 
 int main(int argc, char **argv) {
+
     GREATEST_MAIN_BEGIN();
-    RUN_SUITE(all_tests);
+
+    // Core interpreter tests.
+    RUN_SUITE(read_tests);
+    RUN_SUITE(eval_tests);
+
+    // Value type tests.
+    RUN_SUITE(sexp_tests);
+    RUN_SUITE(boolean_tests);
+
+    // Object type tests.
+    RUN_SUITE(pair_tests);
+
     GREATEST_MAIN_END();
 }
