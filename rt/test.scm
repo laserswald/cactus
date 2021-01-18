@@ -7,8 +7,10 @@
 (define (assert thing msg) 
   (if (not thing)
     (begin 
+      (newline)
       (display "assertion failed: ")
       (display msg) 
+      (newline)
       (set! *failed* (+ 1 *failed*)))
     (begin
      (display ".")
