@@ -11,7 +11,8 @@
 
 /* Create a procedure. */
 struct cact_val
-cact_make_procedure(struct cactus *cact, struct cact_env *e, struct cact_val argl, struct cact_val body)
+cact_make_procedure(struct cactus *cact, struct cact_env *e, 
+        struct cact_val argl, struct cact_val body)
 {
     assert(cact);
     assert(e);
@@ -35,13 +36,14 @@ cact_make_procedure(struct cactus *cact, struct cact_env *e, struct cact_val arg
 }
 
 struct cact_val
-cact_make_native_proc(struct cactus *cact, cact_native_func fn)
+cact_make_native_proc(struct cactus *cact, cact_native_func fn, int arity)
 {
     assert(cact);
     assert(fn != NULL);
 
     struct cact_proc *nat = (struct cact_proc *)cact_alloc(cact, CACT_OBJ_PROCEDURE);
     nat->nativefn = fn;
+    nat->argl = CACT_NULL_VAL;
 
     return CACT_OBJ_VAL((struct cact_obj *) nat);
 }
@@ -84,29 +86,31 @@ cact_proc_apply(struct cactus *cact, struct cact_proc *clo, struct cact_val args
     assert(cact);
     assert(clo);
     assert(cact_is_pair(args) || cact_is_null(args));
+    assert(clo->argl.as.object != args.as.object); // (in)sanity checking
 
     struct cact_env *params_env;
+    params_env = (struct cact_env *) cact_alloc(cact, CACT_OBJ_ENVIRONMENT);
+    cact_env_init(params_env, clo->env);
+    cact_preserve(cact, CACT_OBJ_VAL(params_env));
 
+    if (clo->nativefn == NULL) {
+        cact_proc_eval_args(cact, params_env, clo->argl, args);
+    }
+
+    cact_call_stack_push(cact, params_env);
+    cact_unpreserve(cact, CACT_OBJ_VAL(params_env)); // params_env
+
+    struct cact_val ret;
     if (clo->nativefn != NULL) {
         // TODO: evaluate args then pass the list
-        return clo->nativefn(cact, args);
+        ret = clo->nativefn(cact, args);
     } else {
-        assert(clo->argl.as.object != args.as.object); // (in)sanity checking
-
-        params_env = (struct cact_env *) cact_alloc(cact, CACT_OBJ_ENVIRONMENT);
-        cact_env_init(params_env, clo->env);
-        cact_preserve(cact, CACT_OBJ_VAL(params_env));
-
-        cact_proc_eval_args(cact, params_env, clo->argl, args);
-
-        cact_call_stack_push(cact, params_env);
-        cact_unpreserve(cact, CACT_OBJ_VAL(params_env)); // params_env
-
-        struct cact_val ret = cact_eval_list(cact, clo->body);
-        cact_call_stack_pop(cact);
-
-        return ret;
+        ret = cact_eval_list(cact, clo->body);
     }
+
+    cact_call_stack_pop(cact);
+
+    return ret;
 }
 
 void

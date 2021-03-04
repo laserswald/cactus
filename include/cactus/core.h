@@ -14,26 +14,27 @@
  * A structure for quickly adding new native functions.
  */
 struct cact_builtin {
-	char* name;
-	cact_native_func fn;
+    char* name;
+    cact_native_func fn;
+    int arity;
 };
 
 /*
- * A stack frame. We allocate these on the heap and use a linked list in the 
+ * A stack frame. We allocate these on the heap and use a linked list in the
  * interpreter to keep track of them.
  */
 struct cact_cont {
-	struct cact_obj obj;
-	struct cact_env *env;
-	struct cact_proc *exn_handler;
-	SLIST_ENTRY(cact_cont) parent;
+    struct cact_obj obj;
+    struct cact_env *env;
+    struct cact_proc *exn_handler;
+    SLIST_ENTRY(cact_cont) parent;
 };
 SLIST_HEAD(cact_cont_stack, cact_cont);
 
 /*
  * Initialize the continuation.
  */
-void cact_cont_init(struct cact_cont *cont, struct cact_env *frame, struct cact_proc *exnh);
+void cact_cont_init(struct cact_cont *, struct cact_env *, struct cact_proc *);
 
 /*
  * Mark the continuation as being used.
@@ -53,29 +54,35 @@ ARRAY_DECL(cact_obj_vec, struct cact_obj *);
  * The core structure for a Cactus interpreter.
  */
 struct cactus {
-	struct cact_env         *root_env;
-	struct cact_cont_stack   conts;
-	struct cact_lexer        lexer;
-	struct cact_symbol_table interned_syms;
-	struct cact_store        store;
-	struct cact_obj_vec      preserved;
-	bool                     gc_enabled;
+    struct cact_env         *root_env;
+    struct cact_cont_stack   conts;
+    struct cact_lexer        lexer;
+    struct cact_symbol_table interned_syms;
+    struct cact_store        store;
+    struct cact_obj_vec      preserved;
+    bool                     gc_enabled;
 };
 
-/* Initialize a cactus interpreter. */
+/* 
+ * Initialize a Cactus interpreter. 
+ */
 void cact_init(struct cactus *);
 
-/* Finalize a cactus interpreter. */
+/* 
+ * Finalize a Cactus interpreter. 
+ * 
+ * This will free any memory used by the Cactus interpreter.
+ */
 void cact_finish(struct cactus *);
 
 /* Define any value in the global default namespace */
 void cact_define(struct cactus *, const char *, struct cact_val);
 
 /* Define a native procedure in the global default namespace */
-void cact_define_builtin(struct cactus *, const char *, cact_native_func);
+void cact_define_builtin(struct cactus *, const char *, cact_native_func, int);
 
 /* Define a set of procedures in the global default namespace */
-void cact_define_builtin_array(struct cactus *cact, struct cact_builtin *builtins, size_t len);
+void cact_define_builtin_array(struct cactus *, struct cact_builtin *, size_t);
 
 /* Allocate a new object from the heap. */
 struct cact_obj *cact_alloc(struct cactus *, enum cact_obj_type);

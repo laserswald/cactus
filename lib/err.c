@@ -2,6 +2,7 @@
 
 #include "cactus/val.h"
 #include "cactus/err.h"
+#include "cactus/write.h"
 
 /* Create a new heap-allocated error. */
 struct cact_val
@@ -32,22 +33,14 @@ cact_destroy_error(struct cact_obj *o)
 
 /* Raise an exception. */
 struct cact_val
-cact_raise(struct cactus *cact, struct cact_error *exn)
+cact_raise(struct cactus *cact, struct cact_val irritant)
 {
-	struct cact_cont *current = SLIST_FIRST(&cact->conts);
+    struct cact_proc *exnh = cact_current_exception_handler(cact);
 
-    while (! current->exn_handler && current) 
-        current = SLIST_NEXT(current, parent);
+    cact_call_stack_pop(cact);
 
-    if (! current) {
-	    /*
-	     * Technically we shouldn't need this since we install the default exception, but 
-	     * we might as well have this for safety
-		 */ 
-        fprintf(stderr, "Uncaught exception");
-        abort();
-    }
+    cact_display(cact_proc_apply(cact, exnh, irritant));
 
-    return cact_proc_apply(cact, current->exn_handler, CACT_OBJ_VAL(exn));
+    return CACT_UNDEF_VAL;
 }
 

@@ -6,7 +6,8 @@
 #include "cactus/internal/debug.h"
 #include "cactus/internal/utils.h"
 
-cact_native_func cact_default_exception_handler;
+struct cact_val
+cact_default_exception_handler(struct cactus *cact, struct cact_val args);
 
 /*
  * Initialize the Cactus interpreter.
@@ -60,8 +61,9 @@ cact_init(struct cactus *cact)
     /* Init the toplevel continuation. */
     struct cact_cont *nc = (struct cact_cont *) cact_store_allocate(&cact->store, CACT_OBJ_CONT);
     struct cact_proc *default_exception_handler = 
-        cact_to_procedure(cact_make_native_proc(cact, cact_default_exception_handler),
+        cact_to_procedure(cact_make_native_proc(cact, cact_default_exception_handler, 1),
                           "initialization");
+
     cact_cont_init(nc, cact->root_env, default_exception_handler);
     nc->env = cact->root_env;
     SLIST_INSERT_HEAD(&cact->conts, nc, parent);
@@ -124,9 +126,9 @@ cact_define(struct cactus *cact, const char *name, struct cact_val val)
 
 /* Define a builtin function, implemented in C. */
 void
-cact_define_builtin(struct cactus *cact, const char *name, cact_native_func fn)
+cact_define_builtin(struct cactus *cact, const char *name, cact_native_func fn, int arity)
 {
-    cact_define(cact, name, cact_make_native_proc(cact, fn));
+    cact_define(cact, name, cact_make_native_proc(cact, fn, arity));
 }
 
 /* Define an array of builtins at once. */
@@ -136,7 +138,7 @@ cact_define_builtin_array(struct cactus *cact, struct cact_builtin *builtins,
 {
     size_t i;
     for (i = 0; i < len; i++) {
-        cact_define_builtin(cact, builtins[i].name, builtins[i].fn);
+        cact_define_builtin(cact, builtins[i].name, builtins[i].fn, builtins[i].arity);
     }
 }
 
@@ -240,6 +242,15 @@ cact_mark_cont(struct cact_obj *o)
     struct cact_cont *c = (struct cact_cont *) o;
 
     cact_obj_mark((struct cact_obj *)c->env);
+
+    if (c->exn_handler) {
+        cact_obj_mark((struct cact_obj *)c->exn_handler);
+    }
+
+    struct cact_cont *parent = SLIST_NEXT(c, parent);
+    if (parent) {
+        cact_obj_mark((struct cact_obj *) parent);
+    }
 }
 
 /* Destroy any data that this continuation points to. */
@@ -262,6 +273,9 @@ cact_call_stack_push(struct cactus *cact, struct cact_env *frame)
 
     assert(cact);
     assert(frame);
+
+    struct cact_env *parent_env = cact_current_env(cact);
+    frame->parent = parent_env;
 
     nc = (struct cact_cont *) cact_alloc(cact, CACT_OBJ_CONT);
     cact_cont_init(nc, frame, NULL);
@@ -334,5 +348,12 @@ cact_current_exception_handler(struct cactus *cact)
     }
 
     return NULL;
+}
+
+struct cact_val
+cact_default_exception_handler(struct cactus *cact, struct cact_val args)
+{
+    fprintf(stderr, "Uncaught exception");
+    return CACT_UNDEF_VAL;
 }
 

@@ -40,7 +40,6 @@ BUILTIN_FUNC(cact_builtin_is_error_object);
 BUILTIN_FUNC(cact_builtin_error_message);
 BUILTIN_FUNC(cact_builtin_error_irritants);
 
-
 #undef BUILTIN_FUNC
 
 #endif // cact_builtin_h_INCLUDED

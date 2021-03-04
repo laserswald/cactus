@@ -354,8 +354,9 @@ cact_store_show(struct cact_store *store)
 
     int i;
     for (i = 0; i < store->sets_len; i++) {
-        printf("\t%s: %d\n", objnames[i], cact_arena_set_count(&store->arena_sets[i]));
+        printf("\t%s: %d %d\n", objnames[i], i, cact_arena_set_count(&store->arena_sets[i]));
     }
+    printf("done\n");
 }
 
 bool

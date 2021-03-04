@@ -18,6 +18,7 @@ DEFINE_OBJECT_CHECK(cact_is_error, CACT_OBJ_ERROR)
 struct cact_val cact_make_error(struct cactus *, char *msg, struct cact_val irr);
 void cact_mark_error(struct cact_obj *);
 void cact_destroy_error(struct cact_obj *);
+struct cact_val cact_raise(struct cactus *, struct cact_val);
 
 #endif // __CACT_ERR_H__
 

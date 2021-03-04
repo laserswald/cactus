@@ -55,7 +55,7 @@ cact_mark_env(struct cact_obj *o)
     }
 
     if (e->parent) {
-        cact_mark_env((struct cact_obj *) e->parent);
+        cact_obj_mark((struct cact_obj *) e->parent);
     }
 }
 

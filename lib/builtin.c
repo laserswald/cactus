@@ -28,7 +28,8 @@ unpack_typecheck(const struct cact_val arg, const char c)
     case 'c':
         return cact_is_procedure(arg);
     }
-    fprintf(stdout, "cactus: fatal error: could not understand unpack args character '%c'", c);
+    fprintf(stderr, "cactus: fatal error: could not understand unpack args character '%c'", c);
+    fflush(stderr);
     abort();
 }
 
@@ -56,7 +57,8 @@ cact_unpack_args(struct cactus *cact, struct cact_val arglist, const char *forma
             if (unpack_typecheck(current_val, *c)) {
                 *slot = current_val;
             } else {
-                *slot = cact_make_error(cact, "type checking error", CACT_NULL_VAL);
+                *slot = cact_make_error(cact, "type checking error", CACT_FIX_VAL(*c));
+                abort();
             }
 
         } else {
@@ -332,8 +334,7 @@ cact_builtin_is_bound(struct cactus *cact, struct cact_val x)
 struct cact_val
 cact_builtin_raise(struct cactus *cact, struct cact_val x)
 {
-    struct cact_proc *exnh = cact_current_exception_handler(cact);
-
+    cact_raise(cact, x);
     return CACT_UNDEF_VAL;
 }
 

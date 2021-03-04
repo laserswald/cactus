@@ -22,6 +22,7 @@ eval_define_test()
     v = cact_eval_string(&cact, "(define (square x) (* x x)) (square 8)");
     ASSERTm("lambda did not return int as expected", cact_is_fixnum(v));
     ASSERTm("lambda did not return square of 8", cact_to_long(v, "eval_lambda_test") == 64);
+
     PASS();
 }
 
@@ -37,6 +38,7 @@ eval_if_test()
     v = cact_eval_string(&cact, "(if #f 1 2)");
     ASSERTm("expected x to be int", cact_is_fixnum(v));
     ASSERTm("expected x to be 2", cact_to_long(v, "eval_if_test") == 2);
+
     PASS();
 }
 
@@ -49,6 +51,7 @@ eval_pairs_test()
     ASSERTm("lambda did not return pair as expected", cact_is_pair(v));
     ASSERTm("car was not 1", cact_to_long(cact_car(&cact, v), "eval_pairs_test") == 1);
     ASSERTm("cdr was not 2", cact_to_long(cact_cdr(&cact, v), "eval_pairs_test") == 2);
+
     PASS();
 }
 
@@ -68,8 +71,8 @@ SUITE(eval_tests)
 {
     cact_init(&cact);
 
-    cact_define_builtin(&cact, "*", cact_builtin_times);
-    cact_define_builtin(&cact, "cons", cact_builtin_cons);
+    cact_define_builtin(&cact, "*", cact_builtin_times, 2);
+    cact_define_builtin(&cact, "cons", cact_builtin_cons, 2);
 
     RUN_TEST(eval_define_test);
     RUN_TEST(eval_if_test);
