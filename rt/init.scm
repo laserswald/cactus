@@ -21,3 +21,8 @@
     (car l)
     (list-ref (cdr l) (- i 1))))
 
+(define (list-tail x k)
+  (if (zero? k)
+      x
+      (list-tail (cdr x) (- k 1))))
+
