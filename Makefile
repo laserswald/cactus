@@ -1,6 +1,6 @@
 
-CC = tcc
-CFLAGS = -Iinclude -Wall 
+CC = gcc
+CFLAGS = -g -Iinclude -Wall 
 
 LIBRARY = libcact.a
 BINARY = cactus
@@ -9,7 +9,7 @@ TESTBIN = cactus-test
 LIBRARY_SRCS = $(shell find lib -iname '*.c')
 LIBRARY_OBJS = $(patsubst %.c,%.o, $(LIBRARY_SRCS))
 
-BINARY_SRCS = main.c
+BINARY_SRCS = $(shell find src -iname '*.c')
 BINARY_OBJS = $(patsubst %.c,%.o, $(BINARY_SRCS))
 
 TESTBIN_SRCS = $(shell find tests -iname '*.c')

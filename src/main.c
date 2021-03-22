@@ -24,7 +24,7 @@ int verbosity = 0;
 #define TTYGREEN "\x1b[32m"
 #define TTYCLEAR "\x1b[0m"
 
-#define PROMPT TTYGREEN "cact>" TTYCLEAR " "
+#define PROMPT "cact> "
 
 int
 repl(struct cactus *cact)

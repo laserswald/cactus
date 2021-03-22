@@ -34,16 +34,17 @@ cact_destroy_error(struct cact_obj *o)
 struct cact_val
 cact_raise(struct cactus *cact, struct cact_error *exn)
 {
-	struct cact_cont *current = SLIST_FIRST(&cact->conts);
+    struct cact_cont *current = SLIST_FIRST(&cact->conts);
 
-    while (! current->exn_handler && current) 
+    while (! current->exn_handler && current) {
         current = SLIST_NEXT(current, parent);
+    }
 
     if (! current) {
-	    /*
-	     * Technically we shouldn't need this since we install the default exception, but 
-	     * we might as well have this for safety
-		 */ 
+        /*
+         * Technically we shouldn't need this since we install the default exception, but
+         * we might as well have this for safety
+         */
         fprintf(stderr, "Uncaught exception");
         abort();
     }
