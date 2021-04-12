@@ -222,21 +222,6 @@ cact_alloc(struct cactus *cact, enum cact_obj_type t)
     return cact_store_allocate(&cact->store, t);
 }
 
-/* Record a new function call or macro expansion. */
-void
-cact_call_stack_push(struct cactus *cact, struct cact_env *frame)
-{
-    struct cact_cont *nc;
-
-    assert(cact);
-    assert(frame);
-
-    nc = (struct cact_cont *) cact_alloc(cact, CACT_OBJ_CONT);
-    cact_cont_init(nc, frame, NULL);
-
-    SLIST_INSERT_HEAD(&cact->conts, nc, parent);
-}
-
 /* Finish a function call or macro expansion. */
 void
 cact_call_stack_pop(struct cactus *cact)
