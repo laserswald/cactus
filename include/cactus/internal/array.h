@@ -30,9 +30,9 @@
 
 #define ARRAY_DECL(n, c)						                           \
 	struct n {							                                   \
-		c	*list;						                                   \
-		u_int	 num;						                               \
-		size_t	 space;						                               \
+		c	         *list;						                                   \
+		unsigned int	 num;						                               \
+		size_t	         space;						                               \
 	}
 
 #define ARRAY_ITEM(a, i) ((a)->list[i])

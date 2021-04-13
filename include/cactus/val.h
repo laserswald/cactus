@@ -26,7 +26,7 @@ enum cact_type {
  * 
  * Vals store what type they are and any associated data that the value has. For 
  * the undefined value and the empty list, the union does not contain any data and 
- * may have any value.
+ * may have any bit pattern, but usually it will be zeroed out.
  * 
  * Symbols are references to a table defined elsewhere, and objects are managed
  * by the garbage collector (see store.{h,c} for details).
@@ -89,6 +89,7 @@ DEFINE_VALUE_CONV(CACT_TYPE_OBJ, struct cact_obj*, cact_to_obj,   object)
 bool cact_is_null(struct cact_val);
 DEFINE_VALUE_CHECK(cact_is_undef, CACT_TYPE_UNDEF)
 DEFINE_VALUE_CHECK(cact_is_obj,   CACT_TYPE_OBJ)
+
 /*
  * The equality comparison operations.
  */
