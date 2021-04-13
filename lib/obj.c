@@ -6,6 +6,7 @@
 #include "cactus/proc.h"
 #include "cactus/env.h"
 #include "cactus/err.h"
+#include "cactus/vec.h"
 #include "cactus/core.h"
 
 const char* cact_obj_show_type(enum cact_obj_type t)
@@ -23,6 +24,8 @@ const char* cact_obj_show_type(enum cact_obj_type t)
         return "error";
     case CACT_OBJ_CONT:
         return "continuation";
+    case CACT_OBJ_VECTOR:
+        return "vector";
     }
     return NULL;
 }
@@ -37,6 +40,7 @@ struct {
     [CACT_OBJ_ENVIRONMENT] = {cact_mark_env, cact_destroy_env},
     [CACT_OBJ_CONT] = {cact_mark_cont, cact_destroy_cont},
     [CACT_OBJ_ERROR] = {cact_mark_error, cact_destroy_error},
+    [CACT_OBJ_VECTOR] = {cact_mark_vec, cact_destroy_vec},
 };
 
 void

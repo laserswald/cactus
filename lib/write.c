@@ -59,6 +59,9 @@ fprint_obj(FILE *f, struct cact_obj *obj)
     case CACT_OBJ_CONT:
         return fprintf(f, "#<continuation: %p>", (void*)obj);
 
+    case CACT_OBJ_VECTOR:
+        return fprintf(f, "#<vector: %p>", (void*)obj);
+
     case CACT_OBJ_ERROR: {
         struct cact_error *err = (struct cact_error *)obj;
         chars += fprintf(f, "; error '%s' : ", err->msg);

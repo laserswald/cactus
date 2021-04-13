@@ -28,6 +28,13 @@ struct cact_builtin builtins[] = {
     {"null?", cact_builtin_is_nil},
     {"pair?", cact_builtin_is_pair},
 
+    // Vectors
+    {"vector?", cact_builtin_is_vector},
+    {"make-vector", cact_builtin_make_vector},
+    {"vector-ref", cact_builtin_vector_ref},
+    {"vector-set!", cact_builtin_vector_set},
+    {"vector-length", cact_builtin_vector_length},
+
     {"display", cact_builtin_display},
     {"newline", cact_builtin_newline},
 

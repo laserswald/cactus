@@ -39,6 +39,12 @@ BUILTIN_FUNC(cact_builtin_is_error_object);
 BUILTIN_FUNC(cact_builtin_error_message);
 BUILTIN_FUNC(cact_builtin_error_irritants);
 
+/* Vectors. */
+BUILTIN_FUNC(cact_builtin_is_vector);
+BUILTIN_FUNC(cact_builtin_make_vector);
+BUILTIN_FUNC(cact_builtin_vector_ref);
+BUILTIN_FUNC(cact_builtin_vector_set);
+BUILTIN_FUNC(cact_builtin_vector_length);
 
 #undef BUILTIN_FUNC
 
