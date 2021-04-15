@@ -19,6 +19,7 @@ void cact_destroy_vec(struct cact_obj *v);
 struct cact_val cact_vec_ref(struct cactus *cact, struct cact_vec *v, unsigned long index);
 void cact_vec_set(struct cactus *cact, struct cact_vec *v, unsigned long index, struct cact_val new);
 struct cact_val cact_vec_len(struct cactus *cact, struct cact_vec *v);
+struct cact_vec *cact_list_to_vec(struct cactus *cact, struct cact_val p);
 
 DEFINE_OBJECT_CONVERSION(CACT_OBJ_VECTOR, struct cact_vec*, cact_to_vec, vec)
 DEFINE_OBJECT_CHECK(cact_is_vector, CACT_OBJ_VECTOR)

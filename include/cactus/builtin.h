@@ -45,6 +45,7 @@ BUILTIN_FUNC(cact_builtin_make_vector);
 BUILTIN_FUNC(cact_builtin_vector_ref);
 BUILTIN_FUNC(cact_builtin_vector_set);
 BUILTIN_FUNC(cact_builtin_vector_length);
+BUILTIN_FUNC(cact_builtin_list_to_vector);
 
 #undef BUILTIN_FUNC
 

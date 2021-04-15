@@ -34,6 +34,7 @@ struct cact_builtin builtins[] = {
     {"vector-ref", cact_builtin_vector_ref},
     {"vector-set!", cact_builtin_vector_set},
     {"vector-length", cact_builtin_vector_length},
+    {"list->vector", cact_builtin_list_to_vector},
 
     {"display", cact_builtin_display},
     {"newline", cact_builtin_newline},

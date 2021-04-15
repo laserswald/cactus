@@ -1,5 +1,7 @@
 #include "cactus/vec.h"
 
+#include "cactus/pair.h"
+
 /*
  * Base vector constructor. 
  * 
@@ -119,3 +121,23 @@ cact_vec_len(struct cactus *cact, struct cact_vec *v)
 	return CACT_FIX_VAL(v->length);
 }
 
+/*
+ * Create a vector from a list.
+ */
+struct cact_vec *
+cact_list_to_vec(struct cactus *cact, struct cact_val p)
+{
+	unsigned int count = cact_length(cact, p);
+
+	struct cact_vec *v = (struct cact_vec *) cact_alloc(cact, CACT_OBJ_VECTOR);
+	v->length = count;
+	v->items = xcalloc(count, sizeof(struct cact_val));
+
+	size_t idx = 0;
+	CACT_LIST_FOR_EACH_ITEM(cact, item, p) {
+		v->items[idx] = item;
+		idx++;
+	}
+
+	return v;
+}

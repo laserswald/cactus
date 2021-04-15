@@ -19,10 +19,10 @@ fi
 
 redo-ifchange "$2.c"
 
-$CC $CFLAGS -MD -MF ".$2.d" -o "$3" -c "$2.c"
+$CC $CFLAGS -MD -MF "$2.d" -o "$3" -c "$2.c"
 
 # Read the generated dependency files, and ensure the object file depends
 # on them.
-read DEPS <.$2.d
+read DEPS <$2.d
 
 redo-ifchange ${DEPS#*:}

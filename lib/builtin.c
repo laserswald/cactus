@@ -414,3 +414,15 @@ cact_builtin_vector_length(struct cactus *cact, struct cact_val args)
 
 	return cact_vec_len(cact, cact_to_vec(v, "vector-length"));
 }
+
+struct cact_val
+cact_builtin_list_to_vector(struct cactus *cact, struct cact_val args)
+{
+	struct cact_val l;
+
+    if (1 != cact_unpack_args(cact, args, "p", &l)) {
+        return cact_make_error(cact, "Did not get expected number of arguments", args);
+    }
+
+	return CACT_OBJ_VAL(cact_list_to_vec(cact, l));
+}

@@ -195,8 +195,8 @@ nextlex(struct cact_lexer* l)
         cact_lexer_charspan(l, notdblq);
         cact_lexer_getc(l);
     } else if (c == '#') {
-        /* boolean and character */
         c = cact_lexer_getc(l);
+        /* boolean and character */
         if (c == 't' || c == 'f') {
             le.t = CACT_TOKEN_BOOLEAN;
             cact_lexer_charspan(l, isalpha);
@@ -204,6 +204,9 @@ nextlex(struct cact_lexer* l)
             cact_lexer_getc(l);
             le.t = CACT_TOKEN_CHARACTER;
             cact_lexer_charspan(l, isalpha);
+        } else if (c == '(') {
+            le.t = CACT_TOKEN_VECTOR_OPEN;
+            cact_lexer_getc(l);
         } else {
             le.t = CACT_TOKEN_ERROR;
         }
@@ -301,7 +304,7 @@ lextobool(struct cactus *cact, struct cact_lexeme lx)
 }
 
 /* Read a list from the given lexer and fill the cact_val with it. */
-int
+static int
 readlist(struct cactus *cact, struct cact_val *r)
 {
     assert(cact);
@@ -356,6 +359,12 @@ readlist(struct cactus *cact, struct cact_val *r)
     cact_unpreserve(cact, *r);
 
     return CACT_READ_OK;
+}
+
+int
+readvector(struct cactus *cact, struct cact_val *r)
+{
+	
 }
 
 /* Read the next valid s-expression from the lexer. */
