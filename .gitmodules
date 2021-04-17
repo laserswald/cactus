@@ -1,3 +1,0 @@
-[submodule "libs/libzahl"]
-	path = libs/libzahl
-	url = git://git.suckless.org/libzahl
