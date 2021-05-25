@@ -17,6 +17,24 @@
 #include "cactus/char.h"
 #include "cactus/vec.h"
 
+/**
+ * Definitions of the builtin functions of Cactus.
+ */
+
+/**
+ * Some helper macros that make things a lot easier.
+ */
+
+#define CACT_RAISE_ERROR(cact, description, irritant) \
+return cact_make_error((cact), (description), (irritant))
+
+#define CACT_ASSERT(cact, expr, desc, irritant) \
+if (!(expr)) { \
+    CACT_RAISE_ERROR((cact), (desc), (irritant)); \
+}
+
+// TODO: instead of evaluating the list of arguments in these functions, we should instead
+// evaluate them ahead of time.
 
 bool
 unpack_typecheck(const struct cact_val arg, const char c)
@@ -24,9 +42,23 @@ unpack_typecheck(const struct cact_val arg, const char c)
     switch (c) {
     case '.':
         return true;
+    case 'b':
+        return cact_is_bool(arg);
+    case 'i':
+        return cact_is_fixnum(arg);
+    case 'f':
+        return cact_is_flonum(arg);
+    case 'n':
+        return cact_is_number(arg);
+    case 'r': // rune
+        return cact_is_char(arg);
+    case 'a': // atom
+        return cact_is_symbol(arg);
     case 'p':
         return cact_is_pair(arg);
-    case 'c':
+    case 's':
+        return cact_is_string(arg);
+    case 'c': // closure
         return cact_is_procedure(arg);
     case 'v':
         return cact_is_vector(arg);
@@ -82,6 +114,48 @@ cact_unpack_args(struct cactus *cact, struct cact_val arglist, const char *forma
     }
 
     return cnt;
+}
+
+/**
+ * The following definitions rely on a comparison function of two items,
+ * just like `qsort` or `bsearch` in the standard library. Here is a 
+ * convenience typedef for the signature of such a function.
+ */
+typedef bool (*cact_compare_fn)(struct cact_val, struct cact_val);
+
+/*
+ * Compare every item in the list with it's neighbors using the comparison
+ * function.
+ * 
+ * This is useful for the definitions of `<`, `>`, etc.
+ */ 
+static
+struct cact_val
+compare_list(struct cactus *cact, struct cact_val args, cact_compare_fn cmp)
+{
+    struct cact_val fst, snd;
+
+    // Prime the pump by grabbing the first two arguments
+    CACT_ASSERT(cact, ! cact_is_null(args), "Comparison requires at least two arguments", args);
+    fst = cact_eval(cact, cact_car(cact, args));
+    PROPAGATE_ERROR(fst);
+    args = cact_cdr(cact, args);
+
+    CACT_ASSERT(cact, ! cact_is_null(args), "Comparison requires at least two arguments", args);
+    snd = cact_eval(cact, cact_car(cact, args));
+    PROPAGATE_ERROR(snd);
+    args = cact_cdr(cact, args);
+
+    do {
+	    if (! cmp(fst, snd)) {
+		    return CACT_FALSE;
+	    }
+	    fst = snd;
+	    snd = cact_eval(cact, cact_car(cact, args));
+	    args = cact_cdr(cact, args);
+    } while (! cact_is_null(args));
+
+    return CACT_TRUE;
 }
 
 #define DEFINE_TYPE_PREDICATE_BUILTIN(name, fn) \
@@ -414,3 +488,28 @@ cact_builtin_vector_length(struct cactus *cact, struct cact_val args)
 
 	return cact_vec_len(cact, cact_to_vec(v, "vector-length"));
 }
+
+struct cact_val
+cact_builtin_less(struct cactus *cact, struct cact_val args)
+{
+	return compare_list(cact, args, cact_number_less);
+}
+
+struct cact_val
+cact_builtin_greater(struct cactus *cact, struct cact_val args)
+{
+	return compare_list(cact, args, cact_number_greater);
+}
+
+struct cact_val
+cact_builtin_less_or_equal(struct cactus *cact, struct cact_val args)
+{
+	return compare_list(cact, args, cact_number_less_or_equal);
+}
+
+struct cact_val
+cact_builtin_greater_or_equal(struct cactus *cact, struct cact_val args)
+{
+	return compare_list(cact, args, cact_number_greater_or_equal);
+}
+

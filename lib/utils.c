@@ -94,3 +94,7 @@ uintptr_t ptrhash(const void *a)
 	return (uintptr_t) a;
 }
 
+void
+cact_fatal(const char *fmt, ...)
+{
+}

@@ -43,6 +43,8 @@ struct cact_val {
 	} as;
 };
 
+typedef struct cact_val Cact_Val;
+
 /*
  * Helper macros that make encapsulating raw C values into Cactus values easier.
  */

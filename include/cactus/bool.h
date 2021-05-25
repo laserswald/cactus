@@ -6,6 +6,9 @@
 DEFINE_VALUE_CONV(CACT_TYPE_BOOL, bool,   cact_to_bool,   boolean)
 DEFINE_VALUE_CHECK(cact_is_bool,   CACT_TYPE_BOOL)
 
+#define CACT_TRUE CACT_BOOL_VAL(true)
+#define CACT_FALSE CACT_BOOL_VAL(false)
+
 struct cact_val cact_bool_not(struct cact_val x);
 bool cact_is_truthy(struct cact_val);
 
