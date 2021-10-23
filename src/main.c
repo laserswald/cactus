@@ -67,7 +67,8 @@ load_file(struct cactus *cact, char *filename)
     return v;
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     struct cactus cact;
     int result = EXIT_SUCCESS;

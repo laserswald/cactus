@@ -53,7 +53,7 @@ cact_init(struct cactus *cact)
      * Init the root environment.
      *
      * This is the environment that builtins will be inserted into. It will
-     * never be garbage collected, and contains the initial c
+     * never be garbage collected.
      */
     cact->root_env = (struct cact_env *) cact_store_allocate(&cact->store, CACT_OBJ_ENVIRONMENT);
     cact_env_init(cact->root_env, NULL);
@@ -64,7 +64,6 @@ cact_init(struct cactus *cact)
         cact_to_procedure(cact_make_native_proc(cact, cact_default_exception_handler),
                           "initialization");
     cact_cont_init(nc, cact->root_env, default_exception_handler);
-    nc->env = cact->root_env;
     SLIST_INSERT_HEAD(&cact->conts, nc, parent);
 
     /* Init the preserved object stack. */
@@ -295,4 +294,18 @@ cact_default_exception_handler(struct cactus *cact, struct cact_val args)
 {
     fprintf(stderr, "Hit default exception handler.");
     abort();
+}
+
+struct cact_val
+cact_current_retval(struct cactus *cact)
+{
+    assert(cact);
+
+    struct cact_cont *cnt = cact_current_cont(cact);
+
+    if (! cnt) {
+        return CACT_UNDEF_VAL;
+    }
+
+    return cnt->retval;
 }

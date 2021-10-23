@@ -58,13 +58,9 @@ struct cact_obj *cact_alloc(struct cactus *, enum cact_obj_type);
 /* Collect the garbage from the heap. */
 int cact_collect_garbage(struct cactus *);
 
-struct cact_cont *cact_current_cont(struct cactus *);
 struct cact_env *cact_current_env(struct cactus *);
 struct cact_proc *cact_current_exception_handler(struct cactus *);
-
-void cact_call_stack_push(struct cactus *, struct cact_env *);
-void cact_call_stack_pop(struct cactus *);
-void cact_show_call_stack(struct cactus *);
+struct cact_val cact_current_retval(struct cactus *);
 
 bool cact_preserve(struct cactus *, struct cact_val);
 bool cact_unpreserve(struct cactus *, struct cact_val);

@@ -42,6 +42,10 @@ struct {
 void
 cact_obj_mark(struct cact_obj *obj)
 {
+	if (! obj) {
+		return;
+	}
+
     if (obj->store_data.mark == CACT_STORE_MARK_REACHABLE) {
         return;
     }

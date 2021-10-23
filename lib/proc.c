@@ -8,6 +8,7 @@
 #include "cactus/write.h"
 #include "cactus/eval.h"
 #include "cactus/internal/debug.h"
+#include "cactus/internal/utils.h"
 
 /* Create a procedure. */
 struct cact_val
@@ -85,11 +86,11 @@ cact_proc_eval_args(struct cactus *cact, struct cact_env *params_env,
 
     CACT_LIST_FOR_EACH_ITEM(cact, param, params) {
         if (cact_is_null(current_arg)) {
-	        cact_fatal("eval_args: not enough arguments");
+	        die("eval_args: not enough arguments");
         }
 
-        // TODO: when captured here, we need to make sure that the 
-        struct cact_val evaled_arg = cact_eval(cact, cact_car(cact, current_arg));
+		cact_eval_single(cact, cact_car(cact, current_arg));
+        struct cact_val evaled_arg = cact_current_retval(cact);
 
         cact_env_define(
             cact,
@@ -102,7 +103,9 @@ cact_proc_eval_args(struct cactus *cact, struct cact_env *params_env,
     }
 }
 
-/* Apply a procedure given the arguments and the environment. */
+/**
+ * Apply a procedure given the arguments and the environment. 
+ */
 struct cact_val
 cact_proc_apply(struct cactus *cact, struct cact_proc *clo, struct cact_val args)
 {
@@ -120,8 +123,8 @@ cact_proc_apply(struct cactus *cact, struct cact_proc *clo, struct cact_val args
     // Set the arguments list.
     cc->argl = args;
 
-    // Evaluate the arguments. This may not 
-    cact_proc_eval_args(cact, cc->env, clo->argl, cc->args);
+    // Evaluate the arguments.
+    cact_proc_eval_args(cact, cc->env, clo->argl, cc->argl);
 
     if (clo->nativefn != NULL) {
         return clo->nativefn(cact, args);
