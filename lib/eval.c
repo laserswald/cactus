@@ -3,6 +3,7 @@
 
 #include "cactus/core.h"
 #include "cactus/write.h"
+#include "cactus/cont.h"
 
 #include "cactus/val.h"
 #include "cactus/sym.h"
@@ -20,7 +21,7 @@
  * High-level evaluation.
  */
 
-struct cact_val cact_eval(struct cactus *cact, struct cact_val expr);
+struct cact_val cact_eval_single(struct cactus *cact, struct cact_val expr);
 
 /* Evaluate a file using the interpreter. */
 struct cact_val
@@ -58,7 +59,7 @@ cact_eval_string(struct cactus *cact, char *s)
                 break;
             }
         }
-        ret = cact_eval(cact, exp);
+        ret = cact_eval_single(cact, exp);
     }
 STOP_RUNNING:
     return ret;
@@ -71,7 +72,7 @@ cact_eval_list(struct cactus *cact, struct cact_val lst)
     struct cact_val ret = CACT_NULL_VAL;
 
     CACT_LIST_FOR_EACH_ITEM(cact, item, lst) {
-        ret = cact_eval(cact, item);
+        ret = cact_eval_single(cact, item);
     }
 
     return ret;
@@ -83,12 +84,15 @@ void cact_call_stack_pop(struct cactus *cact);
 void cact_eval_prim(struct cactus *, struct cact_val, bool);
 void cact_tailcall(struct cactus *, struct cact_proc *, struct cact_val);
 
-/* Some constants for what happens when we get back from setjmp */
-enum {
-    CACT_JMP_INITIAL = 0, /* Set up the call and such */
-    CACT_JMP_CALL, /* Tail call a new procedure */
-    CACT_JMP_RETURN, /* We are done here */
-};
+/*
+ * Begin evaluation.
+ */
+struct cact_val
+cact_eval_start(struct cactus *cact)
+{
+	struct cact_cont *cc = cact_current_cont(cact);
+	return cact_resume_cont(cact, cc);
+}
 
 /*
  * Evaluate a single expression.
@@ -96,39 +100,11 @@ enum {
 struct cact_val
 cact_eval_single(struct cactus *cact, struct cact_val expr)
 {
-    cc->evlist = cact_cons(expr, CACT_NULL_VAL);
-    cact_eval_start(cact);
+	struct cact_cont *cc = cact_current_cont(cact);
+    cc->evlist = cact_cons(cact, expr, CACT_NULL_VAL);
+    return cact_eval_start(cact);
 }
 
-/*
- * Begin evaluation.
- */
-struct cact_val
-cact_eval_start(struct cactus *cact)
-{
-    while (! cact_is_null(cc->evlist)) {
-        // Continuations have a jmp_buf to return here after they are done
-        // evaluating. This makes recursive function calls efficient spatially.
-        switch (setjmp(cc->bounce)) {
-        case CACT_JMP_INITIAL:
-            cact_eval_prim(cact, cact_car(cact, cc->evlist), true);
-            break;
-
-        case CACT_JMP_TCALL:
-            cact_proc_apply(cact, cc->proc, cc->args);
-            break;
-
-        case CACT_JMP_RETURN:
-            cact_call_stack_pop(cact);
-            break;
-
-        default:
-            cact_fatal("cact_cont_start: got mystery jump return value");
-        }
-
-        return cc->retval;
-    }
-}
 
 /*
  * Primitive evaluation recognizers and helpers.
@@ -144,15 +120,16 @@ static bool is_lambda(struct cactus *cact, struct cact_val x);
 static bool is_sequence(struct cactus *cact, struct cact_val x);
 static bool is_application(struct cactus *cact, struct cact_val x);
 
-struct cact_val special_quote(struct cactus *cact, struct cact_val args);
-struct cact_val special_variable(struct cactus *cact, struct cact_val args);
-struct cact_val special_set_bang(struct cactus *cact, struct cact_val args);
-struct cact_val special_define(struct cactus *cact, struct cact_val args);
+void special_quote(struct cactus *cact, struct cact_val args);
+void special_variable(struct cactus *cact, struct cact_val args);
+void special_set_bang(struct cactus *cact, struct cact_val args);
+void special_define(struct cactus *cact, struct cact_val args);
 
-struct cact_val special_if(struct cactus *cact, struct cact_val args, bool tail);
-struct cact_val special_lambda(struct cactus *cact, struct cact_val args, bool tail);
-struct cact_val special_begin(struct cactus *cact, struct cact_val args, bool tail);
-struct cact_val special_call(struct cactus *cact, struct cact_val args, bool tail);
+// Tail call sensitive special forms.
+void special_if(struct cactus *cact, struct cact_val args, bool tail);
+void special_lambda(struct cactus *cact, struct cact_val args, bool tail);
+void special_begin(struct cactus *cact, struct cact_val args, bool tail);
+void special_call(struct cactus *cact, struct cact_val args, bool tail);
 
 /**
  * Evaluate a primitive expression.
@@ -162,11 +139,9 @@ struct cact_val special_call(struct cactus *cact, struct cact_val args, bool tai
  * Calls to this function will not return. Instead, a `longjmp` will be called to
  * go back to `cact_eval`.
  */
-struct cact_val
+void
 cact_eval_prim(struct cactus *cact, struct cact_val x, bool tail)
 {
-    struct cact_cont *cc = cact_current_cont(cact);
-
     if (cact_is_obj(x)) {
         cact_preserve(cact, x);
     }
@@ -178,37 +153,37 @@ cact_eval_prim(struct cactus *cact, struct cact_val x, bool tail)
 
     if (is_quotation(cact, x)) {
         DBG("; cactus eval: quotation \n");
-        cact_return(cact, special_quote(cact, cact_cdr(cact, x)));
+        special_quote(cact, cact_cdr(cact, x));
     }
 
     if (is_assignment(cact, x)) {
         DBG("; cactus eval: assignment \n");
-        cc->res = special_set_bang(cact, cact_cdr(cact, x));
+        special_set_bang(cact, cact_cdr(cact, x));
     }
 
     if (is_definition(cact, x)) {
         DBG("; cactus eval: definition \n");
-        cc->res = special_define(cact, cact_cdr(cact, x));
+        special_define(cact, cact_cdr(cact, x));
     }
 
     if (is_conditional(cact, x)) {
         DBG("; cactus eval: conditional \n");
-        cc->res = special_if(cact, cact_cdr(cact, x), tail);
+        special_if(cact, cact_cdr(cact, x), tail);
     }
 
     if (is_lambda(cact, x)) {
         DBG("; cactus eval: lambda \n");
-        cc->res = special_lambda(cact, cact_cdr(cact, x));
+        special_lambda(cact, cact_cdr(cact, x), tail);
     }
 
     if (is_sequence(cact, x)) {
         DBG("; cactus eval: sequence \n");
-        cc->res = special_begin(cact, cact_cdr(cact, x));
+        special_begin(cact, cact_cdr(cact, x), tail);
     }
 
-    if (is_variable(x)) {
+    if (is_variable(cact, x)) {
         DBG("; cactus eval: variable lookup \n");
-        cc->res = cact_env_lookup(cact, cact_current_env(cact), cact_to_symbol(x, "eval"));
+        cact_env_lookup(cact, cact_current_env(cact), cact_to_symbol(x, "eval"));
     }
 
     if (is_application(cact, x)) {
@@ -220,28 +195,29 @@ cact_eval_prim(struct cactus *cact, struct cact_val x, bool tail)
     abort();
 }
 
-struct cact_val
+void
 special_quote(struct cactus *cact, struct cact_val args)
 {
-    return args;
+    cact_return(cact, args);
 }
 
-struct cact_val
+void
 special_if(struct cactus *cact, struct cact_val args, bool tail)
 {
     struct cact_val cond = cact_car(cact, args);
     struct cact_val cseq = cact_cadr(cact, args);
     struct cact_val alt = cact_caddr(cact, args);
-    struct cact_val result = CACT_UNDEF_VAL;
 
-    if (cact_is_truthy(cact_eval_prim(cact, cond, false))) {
+	cact_eval_prim(cact, cond, false);
+
+    if (cact_is_truthy(cact_current_retval(cact))) {
         cact_eval_prim(cact, cseq, tail);
     } else {
         cact_eval_prim(cact, alt, tail);
     }
 }
 
-struct cact_val
+void
 special_define(struct cactus *cact, struct cact_val args)
 {
     struct cact_val term, defn, value, params;
@@ -250,7 +226,7 @@ special_define(struct cactus *cact, struct cact_val args)
 
     if (cact_is_symbol(term)) {
         defn = cact_cadr(cact, args);
-        value = cact_eval(cact, defn);
+        value = cact_eval_single(cact, defn);
     } else if (cact_is_pair(term)) {
         defn = cact_cdr(cact, args);
         params = cact_cdr(cact, term);
@@ -258,45 +234,43 @@ special_define(struct cactus *cact, struct cact_val args)
         value = cact_make_procedure(cact, cact_current_env(cact), params, defn);
     }
 
-    return cact_env_define(cact, cact_current_env(cact), cact_to_symbol(term, "special_define"), value);
+    cact_return(cact, cact_env_define(cact, cact_current_env(cact), cact_to_symbol(term, "special_define"), value));
 }
 
-struct cact_val
-special_lambda(struct cactus *cact, struct cact_val args)
+void
+special_lambda(struct cactus *cact, struct cact_val args, bool tail)
 {
     struct cact_val lambda_args = cact_car(cact, args);
     struct cact_val body = cact_cdr(cact, args);
-    return cact_make_procedure(cact, cact_current_env(cact), lambda_args, body);
+    cact_return(cact, cact_make_procedure(cact, cact_current_env(cact), lambda_args, body));
 }
 
-struct cact_val
-special_begin(struct cactus *cact, struct cact_val args)
+void
+special_begin(struct cactus *cact, struct cact_val args, bool tail)
 {
     if (cact_is_pair(args)) {
-
         struct cact_val current_expr_pair = args;
-        while (cact_is_pair(cact_cdr(cact, current_arg_pair))) {
+        while (cact_is_pair(cact_cdr(cact, current_expr_pair))) {
             struct cact_val current_expr = cact_car(cact, current_expr_pair);
             cact_eval_prim(cact, current_expr, false);
             current_expr_pair = cact_cdr(cact, current_expr_pair);
         }
-        if (! cact_is_null()) {
-            // TODO: throw an error
-        }
-        cact_eval_prim(cact, expr, true);
+        cact_eval_prim(cact, cact_car(cact, current_expr_pair), true);
     } else {
         cact_eval_prim(cact, args, true);
     }
 }
 
-struct cact_val
+void
 special_set_bang(struct cactus *cact, struct cact_val args)
 {
     struct cact_val term = cact_car(cact, args);
     struct cact_val defn = cact_cadr(cact, args);
-    struct cact_val value = cact_eval(cact, defn);
 
-    return cact_env_set(cact, cact_current_env(cact), cact_to_symbol(term, "special_set_bang"), value);
+	cact_eval_prim(cact, defn, true);    
+	struct cact_val value = cact_current_retval(cact);
+
+    cact_env_set(cact, cact_current_env(cact), cact_to_symbol(term, "special_set_bang"), value);
 }
 
 void
@@ -306,7 +280,8 @@ special_call(struct cactus *cact, struct cact_val x, bool tail)
     struct cact_val operands = cact_cdr(cact, x);
 
     // Make sure the operator is OK.
-    struct cact_val maybe_procedure = cact_eval_prim(cact, operator);
+    cact_eval_prim(cact, operator, false);
+    struct cact_val maybe_procedure = cact_current_retval(cact);
 
     if (cact_is_error(maybe_procedure)) {
         cact_return(cact, maybe_procedure);
@@ -330,61 +305,11 @@ special_call(struct cactus *cact, struct cact_val x, bool tail)
  * Helpers for the primitive operation definitions above.
  */
 
-/* Jump back to the current trampoline, but without adding more stuff to do. */
-void
-cact_return(struct cactus *cact, struct cact_val value)
-{
-    struct cact_cont *current_cont = cact_current_continuation(cact);
-
-    cont->retval = value;
-
-    longjmp(cont->bounce, CACT_JMP_RETURN);
-}
-
-/* Jump back to the trampoline, but replace the return value of that trampoline with
- * the return value of */
-void
-cact_tailcall(struct cactus *cact, struct cact_proc *proc, struct cact_val args)
-{
-    struct cact_cont *current_cont = cact_current_continuation(cact);
-
-    cont->proc = proc;
-    cont->evlist = CACT_NULL_VAL;
-    cont->argl = args;
-
-    longjmp(cont->bounce, CACT_JMP_TCALL);
-}
-
-void
-cact_call(struct cactus *cact, struct cact_proc *proc, struct cact_val args)
-{
-    struct cact_cont *nc;
-
-    assert(cact);
-    assert(frame);
-
-    nc = (struct cact_cont *) cact_alloc(cact, CACT_OBJ_CONT);
-    cact_cont_init(nc, proc);
-
-    SLIST_INSERT_HEAD(&cact->conts, nc, parent);
-
-    cact_tailcall(cact, proc, args);
-}
-
-/* Finish a function call or macro expansion. */
-void
-cact_call_stack_pop(struct cactus *cact)
-{
-    assert(cact);
-
-    SLIST_REMOVE_HEAD(&cact->conts, parent);
-}
-
 /*
  * Syntax recognizers.
  */
 
-bool is_tagged_pair(struct cactus *cact, const char* tag, struct cact_val x);
+static bool is_tagged_pair(struct cactus *cact, const char* tag, struct cact_val x);
 
 static bool
 is_self_evaluating(struct cact_val x)
@@ -394,12 +319,12 @@ is_self_evaluating(struct cact_val x)
            || cact_is_number(x)
            || cact_is_procedure(x)
            || cact_is_string(x)
-           || cact_is_error(x);
-    || cact_is_env(x);
+           || cact_is_error(x)
+		   || cact_is_env(x);
 }
 
 static bool
-is_variable(struct cact_val x)
+is_variable(struct cactus *cact, struct cact_val x)
 {
     return cact_is_symbol(x);
 }
