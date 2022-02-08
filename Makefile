@@ -1,4 +1,3 @@
-
 CC = gcc
 CFLAGS = -g -Iinclude -Wall 
 
@@ -17,8 +16,9 @@ TESTBIN_OBJS = $(patsubst %.c,%.o, $(TESTBIN_SRCS))
 
 all: $(BINARY) test
 
-test: $(TESTBIN)
-	exec ./$(TESTBIN)
+test: $(TESTBIN) $(BINARY)
+	exec ./$(TESTBIN) -v
+	tests/fixtures/run_all.sh
 
 clean:
 	rm -f $(LIBRARY_SRCS:.c=.d) $(LIBRARY_OBJS) $(LIBRARY)

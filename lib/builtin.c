@@ -346,13 +346,13 @@ cact_builtin_with_exception_handler(struct cactus *cact, struct cact_val args)
     }
 
     cact_current_cont(cact)->exn_handler = cact_to_procedure(
-	handler, "with-exception-handler"
+		handler, "with-exception-handler"
     );
 
     return cact_proc_apply(
-	cact, 
-	cact_to_procedure(thunk, "with-exception-handler"), 
-	CACT_NULL_VAL
+		cact, 
+		cact_to_procedure(thunk, "with-exception-handler"), 
+		CACT_NULL_VAL
     );
 }
 

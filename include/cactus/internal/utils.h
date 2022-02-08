@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
+#include <setjmp.h>
 
 #define LENGTH(arr) (sizeof(arr) / sizeof(arr[0]))
 
@@ -21,6 +23,8 @@ char *strslice(const char *str, const char *end);
 int ptrcmp(const void *a, const void *b);
 
 uintptr_t ptrhash(const void *a);
+
+bool jmp_buf_empty(jmp_buf env);
 
 #endif // utils_h_INCLUDED
 
