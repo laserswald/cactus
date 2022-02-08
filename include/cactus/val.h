@@ -13,6 +13,7 @@
 enum cact_type {
 	CACT_TYPE_UNDEF,
 	CACT_TYPE_NULL,
+	CACT_TYPE_EOF,
 	CACT_TYPE_FIXNUM,
 	CACT_TYPE_FLONUM,
 	CACT_TYPE_BOOL,
@@ -48,6 +49,7 @@ struct cact_val {
  */
 #define CACT_NULL_VAL    ((struct cact_val){.type=CACT_TYPE_NULL})
 #define CACT_UNDEF_VAL   ((struct cact_val){.type=CACT_TYPE_UNDEF})
+#define CACT_EOF_VAL     ((struct cact_val){.type=CACT_TYPE_EOF})
 #define CACT_FIX_VAL(n)  ((struct cact_val){.type=CACT_TYPE_FIXNUM, .as.fixnum = (n)})
 #define CACT_FLO_VAL(n)  ((struct cact_val){.type=CACT_TYPE_FLONUM, .as.flonum = (n)})
 #define CACT_BOOL_VAL(p) ((struct cact_val){.type=CACT_TYPE_BOOL, .as.boolean = (p)})
@@ -88,7 +90,8 @@ DEFINE_VALUE_CONV(CACT_TYPE_OBJ, struct cact_obj*, cact_to_obj,   object)
 
 bool cact_is_null(struct cact_val);
 DEFINE_VALUE_CHECK(cact_is_undef, CACT_TYPE_UNDEF)
-DEFINE_VALUE_CHECK(cact_is_obj,   CACT_TYPE_OBJ)
+DEFINE_VALUE_CHECK(cact_is_eof, CACT_TYPE_EOF)
+DEFINE_VALUE_CHECK(cact_is_obj, CACT_TYPE_OBJ)
 
 /*
  * The equality comparison operations.
