@@ -11,6 +11,7 @@
 
 #include "cactus/internal/utils.h"
 #include "cactus/internal/table.h"
+#include "cactus/internal/debug.h"
 
 TABLE_GENERATE(cact_env_entries, struct cact_symbol *, struct cact_val)
 
@@ -165,6 +166,7 @@ print_env(struct cact_env *e)
     if (!e) return;
 
     struct TABLE_ENTRY(cact_env_entries) *bucket;
+
     TABLE_FOREACH_BUCKET(, bucket, &e->entries) {
         if (bucket->state == TABLE_ENTRY_FILLED) {
             printf("%s : ", bucket->key->sym);

@@ -4,8 +4,20 @@
 #include "core.h"
 #include "pair.h"
 
+// Entry points from the continuation 
+void cact_eval_prim(struct cactus *, struct cact_cont *cc);
+void cact_eval_branch(struct cactus *, struct cact_cont *cc);
+void cact_eval_assignment(struct cactus *, struct cact_cont *cc);
+void cact_eval_definition(struct cactus *, struct cact_cont *cc);
+void cact_eval_sequence(struct cactus *, struct cact_cont *cc);
+void cact_eval_apply_with_operator(struct cactus *, struct cact_cont *cc);
+void cact_eval_arg_pop(struct cactus *, struct cact_cont *cc);
+void cact_eval_arg_bind(struct cactus *, struct cact_cont *cc);
+void cact_eval_extend_env(struct cactus *, struct cact_cont *cc);
+void cact_eval_apply(struct cactus *, struct cact_cont *cc);
+
 /* Evaluate a single expression using the interpreter. */
-void cact_eval_prim(struct cactus *, struct cact_val, bool tail);
+struct cact_val cact_eval_single(struct cactus *, struct cact_val);
 
 /* Evaluate a file using the interpreter. */
 struct cact_val cact_eval_file(struct cactus *, FILE *);

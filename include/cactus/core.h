@@ -65,5 +65,7 @@ struct cact_val cact_current_retval(struct cactus *);
 bool cact_preserve(struct cactus *, struct cact_val);
 bool cact_unpreserve(struct cactus *, struct cact_val);
 
+void cact_continue(struct cactus *cact);
+
 #endif // __CACT_CORE_H__
 
