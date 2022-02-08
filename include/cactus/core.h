@@ -19,10 +19,15 @@ struct cact_builtin {
 	cact_native_func fn;
 };
 
-
 #include "cactus/store.h"
 
 ARRAY_DECL(cact_obj_vec, struct cact_obj *);
+
+struct cact_lexer_stack {
+	char *filename;
+
+	SLIST_ENTRY(cact) containing;
+};
 
 /**
  * The core structure for a Cactus interpreter.
@@ -34,6 +39,7 @@ struct cactus {
 	struct cact_symbol_table interned_syms;
 	struct cact_store        store;
 	struct cact_obj_vec      preserved;
+	struct cact_load_stack   load_stack;
 	bool                     gc_enabled;
 };
 

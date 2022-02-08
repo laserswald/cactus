@@ -2,6 +2,7 @@
 
 #include "cactus/core.h"
 #include "cactus/sym.h"
+#include "cactus/write.h"
 
 #include "cactus/internal/debug.h"
 #include "cactus/internal/utils.h"
@@ -338,4 +339,18 @@ void
 cact_continue(struct cactus *cact)
 {
     cact_resume_cont(cact, cact_current_cont(cact));
+}
+
+/*
+ * Load a source file.
+ * 
+ * In order to keep from trashing the 
+ */
+void
+cact_push_file_load(struct cactus *cact, char *filename)
+{
+	char *buf = slurp(filename);
+	struct cact_lexer *new_lexer = malloc(sizeof(struct cact_lexer));
+	cact_lexer_init(new_lexer, buf);
+    SLIST_INSERT_HEAD(&cact->load_stack, new_lexer, parent);
 }

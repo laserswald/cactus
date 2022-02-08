@@ -60,6 +60,7 @@ struct cact_lexer {
 	char *cur;
 	struct cact_str_coords coords;
 	struct cact_lexeme buf;
+	SLIST_ENTRY(cact_lexer) parent;
 };
 
 void cact_lexer_init(struct cact_lexer *l, const char* data);
