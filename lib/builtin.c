@@ -35,7 +35,7 @@ unpack_typecheck(const struct cact_val arg, const char c)
 }
 
 /**
- * Check all the arguments in the argument list and 
+ * Check all the arguments in the argument list and
  */
 static int
 cact_unpack_args(struct cactus *cact, struct cact_val arglist, const char *format, ...)
@@ -55,7 +55,7 @@ cact_unpack_args(struct cactus *cact, struct cact_val arglist, const char *forma
 
     while (*c != '\0') {
         if (! cact_is_null(current_pair)) {
-			struct cact_val current_val = cact_car(cact, current_pair);
+            struct cact_val current_val = cact_car(cact, current_pair);
             struct cact_val *slot = va_arg(slots, struct cact_val*);
 
             if (unpack_typecheck(current_val, *c)) {
@@ -346,13 +346,13 @@ cact_builtin_with_exception_handler(struct cactus *cact, struct cact_val args)
     }
 
     cact_current_cont(cact)->exn_handler = cact_to_procedure(
-		handler, "with-exception-handler"
-    );
+            handler, "with-exception-handler"
+                                           );
 
     return cact_proc_apply(
-		cact, 
-		cact_to_procedure(thunk, "with-exception-handler"), 
-		CACT_NULL_VAL
-    );
+               cact,
+               cact_to_procedure(thunk, "with-exception-handler"),
+               CACT_NULL_VAL
+           );
 }
 

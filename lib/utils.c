@@ -88,18 +88,18 @@ char *strslice(const char *str, const char *end)
 
 int ptrcmp(const void *a, const void *b)
 {
-	return (const char *)a - (const char *)b;
+    return (const char *)a - (const char *)b;
 }
 
 uintptr_t ptrhash(const void *a)
 {
-	return (uintptr_t) a;
+    return (uintptr_t) a;
 }
 
 bool jmp_buf_empty(jmp_buf *env)
 {
-	jmp_buf empty_buf;
-	memset(&empty_buf, 0, sizeof(jmp_buf));
-	return 0 == memcmp(env, &empty_buf, sizeof(jmp_buf));
+    jmp_buf empty_buf;
+    memset(&empty_buf, 0, sizeof(jmp_buf));
+    return 0 == memcmp(env, &empty_buf, sizeof(jmp_buf));
 }
 

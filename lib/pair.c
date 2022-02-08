@@ -132,11 +132,13 @@ cact_append(struct cactus *cact, struct cact_val l, struct cact_val x)
 {
     assert(cact);
 
-    if (cact_is_null(l))
+    if (cact_is_null(l)) {
         return cact_cons(cact, x, CACT_NULL_VAL);
+    }
 
-    if (! cact_is_pair(l))
+    if (! cact_is_pair(l)) {
         return cact_make_error(cact, "Tried to append to non-list", CACT_NULL_VAL);
+    }
 
     struct cact_pair *e = (struct cact_pair*) l.as.object;
 

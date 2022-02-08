@@ -86,10 +86,10 @@ cact_proc_eval_args(struct cactus *cact, struct cact_env *params_env,
 
     CACT_LIST_FOR_EACH_ITEM(cact, param, params) {
         if (cact_is_null(current_arg)) {
-	        die("eval_args: not enough arguments");
+            die("eval_args: not enough arguments");
         }
 
-		cact_eval_single(cact, cact_car(cact, current_arg));
+        cact_eval_single(cact, cact_car(cact, current_arg));
         struct cact_val evaled_arg = cact_current_retval(cact);
 
         cact_env_define(
@@ -104,7 +104,7 @@ cact_proc_eval_args(struct cactus *cact, struct cact_env *params_env,
 }
 
 /**
- * Apply a procedure given the arguments and the environment. 
+ * Apply a procedure given the arguments and the environment.
  */
 struct cact_val
 cact_proc_apply(struct cactus *cact, struct cact_proc *clo, struct cact_val args)

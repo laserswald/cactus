@@ -15,8 +15,8 @@
 
 TABLE_GENERATE(cact_env_entries, struct cact_symbol *, struct cact_val)
 
-/* 
- * Create and initialize a new environment. 
+/*
+ * Create and initialize a new environment.
  */
 struct cact_val
 cact_make_env(struct cactus *cact, struct cact_env *parent)
@@ -126,11 +126,11 @@ cact_env_set(struct cactus *cact, struct cact_env *e,
     struct cact_env *cur = e;
 
     do {
-	    if (TABLE_HAS(cact_env_entries, &cur->entries, key)) {
-		    TABLE_ENTER(cact_env_entries, &cur->entries, key, val);
-		    return CACT_UNDEF_VAL;
-	    }
-	    cur = e->parent;
+        if (TABLE_HAS(cact_env_entries, &cur->entries, key)) {
+            TABLE_ENTER(cact_env_entries, &cur->entries, key, val);
+            return CACT_UNDEF_VAL;
+        }
+        cur = e->parent;
     } while (cur != NULL);
 
     return cact_make_error(cact, "cannot set nonexistent variable", CACT_SYM_VAL(key));
@@ -148,10 +148,10 @@ cact_env_is_bound(struct cact_env *e, struct cact_symbol *key)
     struct cact_env *cur = e;
 
     do {
-	    if (TABLE_HAS(cact_env_entries, &cur->entries, key)) {
-		    return true;
-	    }
-	    cur = e->parent;
+        if (TABLE_HAS(cact_env_entries, &cur->entries, key)) {
+            return true;
+        }
+        cur = e->parent;
     } while (cur != NULL);
 
     return false;
@@ -163,7 +163,9 @@ cact_env_is_bound(struct cact_env *e, struct cact_symbol *key)
 void
 print_env(struct cact_env *e)
 {
-    if (!e) return;
+    if (!e) {
+        return;
+    }
 
     struct TABLE_ENTRY(cact_env_entries) *bucket;
 
