@@ -70,7 +70,7 @@ cact_val_eq(struct cact_val l, struct cact_val r)
     case CACT_TYPE_UNDEF:
         return false;
     case CACT_TYPE_NULL:
-        return true;
+        return true; // because we already checked above for the same type
     case CACT_TYPE_BOOL:
         return l.as.boolean == r.as.boolean;
     case CACT_TYPE_SYM:

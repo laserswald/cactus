@@ -15,8 +15,7 @@ enum cact_obj_type {
 	/* TODO: Ports */
 	/* CACT_OBJ_PORT, */
 
-	/* TODO: Vectors */
-	/* CACT_OBJ_VECTOR, */
+	CACT_OBJ_VECTOR,
 
 	/* TODO: Record types */
 	/* CACT_OBJ_RECORD_TYPE, */

@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -Iinclude -Wall 
+CFLAGS = -g -Iinclude -Wall -DNDEBUG
 
 LIBRARY = libcact.a
 BINARY = cactus

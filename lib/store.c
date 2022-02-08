@@ -8,6 +8,7 @@
 #include "cactus/proc.h"
 #include "cactus/env.h"
 #include "cactus/err.h"
+#include "cactus/vec.h"
 
 #include "cactus/internal/xmalloc.h"
 #include "cactus/internal/utils.h"
@@ -17,7 +18,6 @@
 /*
  * Arena operations.
  */
-
 
 /* Initialize an arena to hold items of a certain size. */
 void
@@ -298,6 +298,7 @@ cact_store_init(struct cact_store *store)
         {CACT_OBJ_ENVIRONMENT, sizeof(struct cact_env)},
         {CACT_OBJ_CONT, sizeof(struct cact_cont)},
         {CACT_OBJ_ERROR, sizeof(struct cact_error)},
+        {CACT_OBJ_VECTOR, sizeof(struct cact_vec)},
     };
 
     store->sets_len = LENGTH(set_defs);
@@ -348,7 +349,7 @@ cact_store_show(struct cact_store *store)
     assert(store);
 
     const char *objnames[] = {
-        "pair", "string", "procedure", "env", "cont", "error",
+        "pair", "string", "procedure", "env", "cont", "error", "vector",
     };
 
     printf("storage totals:\n");
