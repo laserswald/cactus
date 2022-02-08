@@ -47,13 +47,13 @@ repl(struct cactus *cact)
 struct cact_val
 load_file(struct cactus *cact, char *filename)
 {
-	struct cact_val v;
-	FILE *f = NULL;
+    struct cact_val v;
+    FILE *f = NULL;
 
     f = fopen(filename, "r");
     if (! f) {
-	    perror("Could not open file");
-	    exit(1);
+        perror("Could not open file");
+        exit(1);
     }
 
     v = cact_eval_file(cact, f);

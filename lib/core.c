@@ -262,7 +262,7 @@ struct cact_cont *
 cact_current_cont(struct cactus *cact)
 {
     if (SLIST_EMPTY(&cact->conts)) {
-	    die("Did not expect no continuation!");
+        die("Did not expect no continuation!");
         return NULL;
     }
 
@@ -282,7 +282,7 @@ cact_current_env(struct cactus *cact)
     }
 
     while (cnt->env == NULL) {
-	    cnt = SLIST_NEXT(cnt, parent);
+        cnt = SLIST_NEXT(cnt, parent);
     }
 
     return cnt->env;
@@ -309,8 +309,8 @@ struct cact_val
 cact_default_exception_handler(struct cactus *cact, struct cact_val args)
 {
     fprintf(stderr, "Error!\n");
-	cact_fdisplay(stderr, args);
-	cact_show_call_stack(cact);
+    cact_fdisplay(stderr, args);
+    cact_show_call_stack(cact);
     abort();
 }
 
@@ -337,5 +337,5 @@ cact_call_stack_push(struct cactus *cact, struct cact_cont *cont)
 void
 cact_continue(struct cactus *cact)
 {
-	cact_resume_cont(cact, cact_current_cont(cact));
+    cact_resume_cont(cact, cact_current_cont(cact));
 }

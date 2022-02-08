@@ -35,8 +35,9 @@ cact_arena_init(struct cact_arena *arena, const size_t element_sz)
 void
 cact_arena_finish(struct cact_arena *arena)
 {
-    if (! arena)
+    if (! arena) {
         return;
+    }
 
     xfree(arena->data);
 }

@@ -230,7 +230,7 @@ special_begin(struct cactus *cact, struct cact_val args)
     if (cact_is_null(args)) {
         // Sequences with no items are no-ops. We are done here.
         cc->state = CACT_JMP_FINISH;
-	    cact_continue_cont(cc);
+        cact_continue_cont(cc);
     }
 
     if (! cact_is_pair(args)) {
@@ -238,14 +238,14 @@ special_begin(struct cactus *cact, struct cact_val args)
         // then return it after it's done evaluating.
         cc->state = CACT_JMP_EVAL_SINGLE;
         cc->expr = args;
-	    cact_continue_cont(cc);
+        cact_continue_cont(cc);
     } else {
         // Otherwise, we need to set up evaluating the sequence, and then continue from there.
-	    struct cact_cont *nc = push_new_cont(cact, cc);
+        struct cact_cont *nc = push_new_cont(cact, cc);
         nc->state = CACT_JMP_EVAL_SEQ;
         nc->expr = cact_car(cact, args);
         nc->unevaled = cact_cdr(cact, args);
-	    cact_resume_cont(cact, nc);
+        cact_resume_cont(cact, nc);
     }
 }
 
@@ -300,21 +300,21 @@ cact_eval_branch(struct cactus *cact, struct cact_cont *cc)
 {
     DBG("Evaluating branch #%lu\n", cc->obj.store_data.place);
     if (cact_is_truthy(cc->retval)) {
-	    cc->retval = CACT_UNDEF_VAL;
+        cc->retval = CACT_UNDEF_VAL;
         cc->expr = cact_car(cact, cc->unevaled);
-	    cc->state = CACT_JMP_EVAL_SINGLE;
-	    cact_show_call_stack(cact);
-	    cact_cont_continue_step(cc, CACT_JMP_EVAL_SINGLE);
-    } 
+        cc->state = CACT_JMP_EVAL_SINGLE;
+        cact_show_call_stack(cact);
+        cact_cont_continue_step(cc, CACT_JMP_EVAL_SINGLE);
+    }
 
     if (cact_is_null(cact_cdr(cact, cc->unevaled))) {
-	    cact_cont_return(cc, CACT_UNDEF_VAL);
-    } 
+        cact_cont_return(cc, CACT_UNDEF_VAL);
+    }
 
     cc->expr = cact_cadr(cact, cc->unevaled);
     cc->state = CACT_JMP_EVAL_SINGLE;
     cact_show_call_stack(cact);
-	cact_continue_cont(cc);
+    cact_continue_cont(cc);
 }
 
 /*
@@ -418,11 +418,11 @@ cact_eval_apply_with_operator(struct cactus *cact, struct cact_cont *cc)
     cc->proc = cact_to_procedure(maybe_procedure, "eval");
 
     if (cact_is_null(cc->unevaled)) {
-	    cc->state = CACT_JMP_APPLY;
-	    cact_continue_cont(cc);
+        cc->state = CACT_JMP_APPLY;
+        cact_continue_cont(cc);
     } else {
-	    cc->state = CACT_JMP_ARG_POP;
-	    cact_continue_cont(cc);
+        cc->state = CACT_JMP_ARG_POP;
+        cact_continue_cont(cc);
     }
 }
 
@@ -432,9 +432,9 @@ cact_eval_apply_with_operator(struct cactus *cact, struct cact_cont *cc)
 void
 cact_eval_arg_pop(struct cactus *cact, struct cact_cont *cc)
 {
-	if (cact_is_null(cc->unevaled)) {
-		cact_cont_continue_step(cc, CACT_JMP_EXTEND_ENV);
-	}
+    if (cact_is_null(cc->unevaled)) {
+        cact_cont_continue_step(cc, CACT_JMP_EXTEND_ENV);
+    }
 
     struct cact_cont *nc = push_new_cont(cact, cc);
     nc->expr = cact_car(cact, cc->unevaled);
@@ -456,11 +456,11 @@ cact_eval_arg_bind(struct cactus *cact, struct cact_cont *cc)
 void
 cact_eval_extend_env(struct cactus *cact, struct cact_cont *cc)
 {
-	struct cact_env *extended = (struct cact_env *) cact_alloc(cact, CACT_OBJ_ENVIRONMENT);    
-	cact_env_init(extended, cc->env);
-	cc->env = extended;
+    struct cact_env *extended = (struct cact_env *) cact_alloc(cact, CACT_OBJ_ENVIRONMENT);
+    cact_env_init(extended, cc->env);
+    cc->env = extended;
 
-	// Iterate over the binding names (the argl of proc)
+    // Iterate over the binding names (the argl of proc)
     CACT_LIST_FOR_EACH_ITEM(cact, current_binding_name, cc->proc->argl) {
         if (cact_is_null(cc->argl)) {
             die("eval_args: not enough arguments");
@@ -485,10 +485,10 @@ cact_eval_apply(struct cactus *cact, struct cact_cont *cc)
     struct cact_proc *clo = cc->proc;
 
     if (clo->nativefn != NULL) {
-	    cact_cont_return(cc, clo->nativefn(cact, cc->argl));
+        cact_cont_return(cc, clo->nativefn(cact, cc->argl));
     } else {
         cc->unevaled = cc->proc->body;
-	    cact_cont_continue_step(cc, CACT_JMP_EVAL_SEQ);
+        cact_cont_continue_step(cc, CACT_JMP_EVAL_SEQ);
     }
 }
 

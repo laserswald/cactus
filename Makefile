@@ -25,6 +25,10 @@ clean:
 	rm -f $(BINARY_SRCS:.c=.d) $(BINARY_OBJS) $(BINARY)
 	rm -f $(TESTBIN_SRCS:.c=.d) $(TESTBIN_OBJS) $(TESTBIN)
 
+format: $(LIBRARY_SRCS) $(BINARY_SRCS) $(TESTBIN_SRCS)
+	astyle --style=1tbs $^
+	
+
 %.o: %.c 
 	$(CC) $(CFLAGS) -MD -MF $(<:.c=.d) -c -o $@ $<
 
@@ -39,4 +43,4 @@ $(LIBRARY): $(LIBRARY_OBJS)
 
 -include $(LIBRARY_SRCS:.c=.d)
 
-.PHONY: all test clean
+.PHONY: all test clean format
