@@ -35,10 +35,20 @@ struct cact_builtin builtins[] = {
     {"vector-set!", cact_builtin_vector_set},
     {"vector-length", cact_builtin_vector_length},
 
+    {"procedure?", cact_builtin_is_procedure},
+
     {"display", cact_builtin_display},
     {"newline", cact_builtin_newline},
 
     {"error", cact_builtin_error},
+
+    /*
+    {"raise", cact_builtin_raise},
+    {"error-object?", cact_builtin_is_error_object},
+    {"error-message", cact_builtin_error_message},
+    {"error-irritants", cact_builtin_error_irritants},
+    */
+
     {"load", cact_builtin_load},
     {"exit", cact_builtin_exit},
     {"interaction-environment", cact_builtin_interaction_environment},

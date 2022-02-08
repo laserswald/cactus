@@ -20,7 +20,6 @@ BUILTIN_FUNC(cact_builtin_eqv);
 BUILTIN_FUNC(cact_builtin_equal);
 BUILTIN_FUNC(cact_builtin_display);
 BUILTIN_FUNC(cact_builtin_newline);
-BUILTIN_FUNC(cact_builtin_begin);
 BUILTIN_FUNC(cact_builtin_exit);
 BUILTIN_FUNC(cact_builtin_load);
 BUILTIN_FUNC(cact_builtin_plus);
@@ -31,6 +30,9 @@ BUILTIN_FUNC(cact_builtin_load);
 BUILTIN_FUNC(cact_builtin_interaction_environment);
 BUILTIN_FUNC(cact_builtin_is_bound);
 BUILTIN_FUNC(cact_builtin_collect_garbage);
+
+// Control structures
+BUILTIN_FUNC(cact_builtin_is_procedure);
 
 /* Errors. */
 BUILTIN_FUNC(cact_builtin_raise);
