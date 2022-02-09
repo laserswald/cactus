@@ -46,9 +46,14 @@ struct {
 void
 cact_obj_mark(struct cact_obj *obj)
 {
+    if (! obj) {
+        return;
+    }
+
     if (obj->store_data.mark == CACT_STORE_MARK_REACHABLE) {
         return;
     }
+
     obj->store_data.mark = CACT_STORE_MARK_REACHABLE;
     object_gc_methods[obj->type].mark_fn(obj);
 }
@@ -56,6 +61,10 @@ cact_obj_mark(struct cact_obj *obj)
 void
 cact_obj_destroy(struct cact_obj *obj)
 {
+    if (! obj) {
+        return;
+    }
+
     object_gc_methods[obj->type].destroy_fn(obj);
 }
 

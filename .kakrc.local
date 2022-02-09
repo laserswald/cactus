@@ -1,2 +1,2 @@
 
-set-option global makecmd "redo"
+set-option global makecmd "make"

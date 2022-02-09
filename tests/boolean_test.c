@@ -11,7 +11,8 @@
 
 SUITE(boolean_tests);
 
-TEST not_test() {
+TEST not_test()
+{
     struct cactus cact;
     cact_init(&cact);
 

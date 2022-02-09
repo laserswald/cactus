@@ -24,7 +24,7 @@ int verbosity = 0;
 #define TTYGREEN "\x1b[32m"
 #define TTYCLEAR "\x1b[0m"
 
-#define PROMPT "cact> "
+#define PROMPT ">()< "
 
 int
 repl(struct cactus *cact)
@@ -47,13 +47,13 @@ repl(struct cactus *cact)
 struct cact_val
 load_file(struct cactus *cact, char *filename)
 {
-	struct cact_val v;
-	FILE *f = NULL;
+    struct cact_val v;
+    FILE *f = NULL;
 
     f = fopen(filename, "r");
     if (! f) {
-	    perror("Could not open file");
-	    exit(1);
+        perror("Could not open file");
+        exit(1);
     }
 
     v = cact_eval_file(cact, f);
@@ -67,7 +67,8 @@ load_file(struct cactus *cact, char *filename)
     return v;
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     struct cactus cact;
     int result = EXIT_SUCCESS;

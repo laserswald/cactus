@@ -144,8 +144,8 @@ cact_mark_val(struct cact_val v)
 void
 cact_destroy_val(struct cact_val v)
 {
-	if (cact_is_obj(v)) {
-		cact_obj_destroy(cact_to_obj(v, "cact-destroy-val"));
-	}
+    if (cact_is_obj(v)) {
+        cact_obj_destroy(cact_to_obj(v, "cact-destroy-val"));
+    }
 }
 

@@ -8,6 +8,7 @@
 #include "cactus/write.h"
 #include "cactus/eval.h"
 #include "cactus/internal/debug.h"
+#include "cactus/internal/utils.h"
 
 /* Create a procedure. */
 struct cact_val
@@ -46,69 +47,6 @@ cact_make_native_proc(struct cactus *cact, cact_native_func fn)
     return CACT_OBJ_VAL((struct cact_obj *) nat);
 }
 
-static void
-cact_proc_eval_args(struct cactus *cact, struct cact_env *params_env,
-                    struct cact_val params, struct cact_val args)
-{
-    assert(cact);
-    assert(params_env);
-
-    struct cact_val current_arg;
-
-    current_arg = args;
-
-    CACT_LIST_FOR_EACH_ITEM(cact, param, params) {
-        if (cact_is_null(current_arg)) {
-            fprintf(stderr, "Not enough arguments!");
-            cact_fdisplay(stderr, args);
-            abort();
-        }
-
-        struct cact_val evaled_arg = cact_eval(cact, cact_car(cact, current_arg));
-
-        cact_env_define(
-            cact,
-            params_env,
-            cact_to_symbol(param, "cact_proc_eval_args"),
-            evaled_arg
-        );
-
-        current_arg = cact_cdr(cact, current_arg);
-    }
-}
-
-/* Apply a procedure given the arguments and the environment. */
-struct cact_val
-cact_proc_apply(struct cactus *cact, struct cact_proc *clo, struct cact_val args)
-{
-    assert(cact);
-    assert(clo);
-    assert(cact_is_pair(args) || cact_is_null(args));
-
-    struct cact_env *params_env;
-
-    if (clo->nativefn != NULL) {
-        // TODO: evaluate args then pass the list
-        return clo->nativefn(cact, args);
-    } else {
-        assert(clo->argl.as.object != args.as.object); // (in)sanity checking
-
-        params_env = (struct cact_env *) cact_alloc(cact, CACT_OBJ_ENVIRONMENT);
-        cact_env_init(params_env, clo->env);
-        cact_preserve(cact, CACT_OBJ_VAL(params_env));
-
-        cact_proc_eval_args(cact, params_env, clo->argl, args);
-
-        cact_call_stack_push(cact, params_env);
-        cact_unpreserve(cact, CACT_OBJ_VAL(params_env)); // params_env
-
-        struct cact_val ret = cact_eval_list(cact, clo->body);
-        cact_call_stack_pop(cact);
-
-        return ret;
-    }
-}
-
 void
 cact_mark_proc(struct cact_obj *o)
 {
@@ -132,5 +70,67 @@ void
 cact_destroy_proc(struct cact_obj *o)
 {
     return;
+}
+
+
+static void
+cact_proc_eval_args(struct cactus *cact, struct cact_env *params_env,
+                    struct cact_val params, struct cact_val args)
+{
+    assert(cact);
+    assert(params_env);
+
+    struct cact_val current_arg;
+
+    current_arg = args;
+
+    CACT_LIST_FOR_EACH_ITEM(cact, param, params) {
+        if (cact_is_null(current_arg)) {
+            die("eval_args: not enough arguments");
+        }
+
+        cact_eval_single(cact, cact_car(cact, current_arg));
+        struct cact_val evaled_arg = cact_current_retval(cact);
+
+        cact_env_define(
+            cact,
+            params_env,
+            cact_to_symbol(param, "cact_proc_eval_args"),
+            evaled_arg
+        );
+
+        current_arg = cact_cdr(cact, current_arg);
+    }
+}
+
+/**
+ * Apply a procedure given the arguments and the environment.
+ */
+struct cact_val
+cact_proc_apply(struct cactus *cact, struct cact_proc *clo, struct cact_val args)
+{
+    assert(cact);
+    assert(clo);
+    assert(cact_is_pair(args) || cact_is_null(args));
+    assert(clo->argl.as.object != args.as.object); // (in)sanity checking
+
+    struct cact_cont *cc = cact_current_cont(cact);
+
+    // Initialize the environment containing the parameters.
+    cc->env = (struct cact_env *) cact_alloc(cact, CACT_OBJ_ENVIRONMENT);
+    cact_env_init(cc->env, clo->env);
+
+    // Set the arguments list.
+    cc->argl = args;
+
+    // Evaluate the arguments.
+    cact_proc_eval_args(cact, cc->env, clo->argl, cc->argl);
+
+    if (clo->nativefn != NULL) {
+        return clo->nativefn(cact, args);
+    } else {
+        struct cact_val ret = cact_eval_list(cact, clo->body);
+        return ret;
+    }
 }
 

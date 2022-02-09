@@ -53,18 +53,21 @@ cact_init(struct cactus *cact)
      * Init the root environment.
      *
      * This is the environment that builtins will be inserted into. It will
-     * never be garbage collected, and contains the initial c
+     * never be garbage collected.
      */
     cact->root_env = (struct cact_env *) cact_store_allocate(&cact->store, CACT_OBJ_ENVIRONMENT);
     cact_env_init(cact->root_env, NULL);
 
     /* Init the toplevel continuation. */
     struct cact_cont *nc = (struct cact_cont *) cact_store_allocate(&cact->store, CACT_OBJ_CONT);
+    cact_cont_init(nc, cact->root_env, NULL);
+
     struct cact_proc *default_exception_handler =
         cact_to_procedure(cact_make_native_proc(cact, cact_default_exception_handler),
                           "initialization");
-    cact_cont_init(nc, cact->root_env, default_exception_handler);
-    nc->env = cact->root_env;
+
+    nc->exn_handler = default_exception_handler;
+
     SLIST_INSERT_HEAD(&cact->conts, nc, parent);
 
     /* Init the preserved object stack. */
@@ -222,21 +225,6 @@ cact_alloc(struct cactus *cact, enum cact_obj_type t)
     return cact_store_allocate(&cact->store, t);
 }
 
-/* Record a new function call or macro expansion. */
-void
-cact_call_stack_push(struct cactus *cact, struct cact_env *frame)
-{
-    struct cact_cont *nc;
-
-    assert(cact);
-    assert(frame);
-
-    nc = (struct cact_cont *) cact_alloc(cact, CACT_OBJ_CONT);
-    cact_cont_init(nc, frame, NULL);
-
-    SLIST_INSERT_HEAD(&cact->conts, nc, parent);
-}
-
 /* Finish a function call or macro expansion. */
 void
 cact_call_stack_pop(struct cactus *cact)
@@ -257,7 +245,14 @@ cact_show_call_stack(struct cactus *cact)
     DBG("; cactus: call stack:\n");
     SLIST_FOREACH(c, &cact->conts, parent) {
         DBG("; === call stack entry === :\n");
+        printf("%s\n", cact_cont_show_state(c->state));
+        DBG("; === environment === :\n");
         print_env(c->env);
+        DBG("; === retval === :\n");
+        cact_display(c->retval);
+        puts("");
+        DBG("; === expression === :\n");
+        cact_display(c->expr);
         puts("");
     }
 }
@@ -267,6 +262,7 @@ struct cact_cont *
 cact_current_cont(struct cactus *cact)
 {
     if (SLIST_EMPTY(&cact->conts)) {
+        die("Did not expect no continuation!");
         return NULL;
     }
 
@@ -283,6 +279,10 @@ cact_current_env(struct cactus *cact)
     struct cact_cont *cnt = cact_current_cont(cact);
     if (! cnt) {
         return NULL;
+    }
+
+    while (cnt->env == NULL) {
+        cnt = SLIST_NEXT(cnt, parent);
     }
 
     return cnt->env;
@@ -308,6 +308,34 @@ cact_current_exception_handler(struct cactus *cact)
 struct cact_val
 cact_default_exception_handler(struct cactus *cact, struct cact_val args)
 {
-    fprintf(stderr, "Hit default exception handler.");
+    fprintf(stderr, "Error!\n");
+    cact_fdisplay(stderr, args);
+    cact_show_call_stack(cact);
     abort();
+}
+
+struct cact_val
+cact_current_retval(struct cactus *cact)
+{
+    assert(cact);
+
+    struct cact_cont *cnt = cact_current_cont(cact);
+
+    if (! cnt) {
+        return CACT_UNDEF_VAL;
+    }
+
+    return cnt->retval;
+}
+
+void
+cact_call_stack_push(struct cactus *cact, struct cact_cont *cont)
+{
+    SLIST_INSERT_HEAD(&cact->conts, cont, parent);
+}
+
+void
+cact_continue(struct cactus *cact)
+{
+    cact_resume_cont(cact, cact_current_cont(cact));
 }

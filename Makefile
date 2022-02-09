@@ -1,4 +1,3 @@
-
 CC = gcc
 CFLAGS = -g -Iinclude -Wall -DNDEBUG
 
@@ -17,13 +16,18 @@ TESTBIN_OBJS = $(patsubst %.c,%.o, $(TESTBIN_SRCS))
 
 all: $(BINARY) test
 
-test: $(TESTBIN)
-	exec ./$(TESTBIN)
+test: $(TESTBIN) $(BINARY)
+	exec ./$(TESTBIN) -v
+	tests/fixtures/run_all.sh
 
 clean:
 	rm -f $(LIBRARY_SRCS:.c=.d) $(LIBRARY_OBJS) $(LIBRARY)
 	rm -f $(BINARY_SRCS:.c=.d) $(BINARY_OBJS) $(BINARY)
 	rm -f $(TESTBIN_SRCS:.c=.d) $(TESTBIN_OBJS) $(TESTBIN)
+
+format: $(LIBRARY_SRCS) $(BINARY_SRCS) $(TESTBIN_SRCS)
+	astyle --style=1tbs $^
+	
 
 %.o: %.c 
 	$(CC) $(CFLAGS) -MD -MF $(<:.c=.d) -c -o $@ $<
@@ -39,4 +43,4 @@ $(LIBRARY): $(LIBRARY_OBJS)
 
 -include $(LIBRARY_SRCS:.c=.d)
 
-.PHONY: all test clean
+.PHONY: all test clean format

@@ -1,28 +1,34 @@
 ;;; Initialization file for Cactus.
 
-(define (id x) x)
+(define id
+  (lambda (x) x))
 
-(define (atom? x) 
-  (not (pair? x)))
+(define atom?
+  (lambda (x)
+    (not (pair? x))))
 
-(define (displayln x)
-  (display x)
-  (newline))
+(define displayln
+  (lambda (x)
+    (display x)
+    (newline)))
 
-(define (map f l)
-  (if (null? l)
-    '()
-    (cons (f (car l))
-          (map f (cdr l)))))
+(define map
+  (lambda (f l)
+    (if (null? l)
+      '()
+      (cons (f (car l))
+            (map f (cdr l))))))
 
-(define (list-ref l i)
-  (if (and (eqv? i 0)
-           (pair? l))
-    (car l)
-    (list-ref (cdr l) (- i 1))))
+(define list-ref 
+  (lambda (l i)
+    (if (and (eqv? i 0)
+             (pair? l))
+      (car l)
+      (list-ref (cdr l) (- i 1)))))
 
-(define (list-tail x k)
-  (if (zero? k)
-      x
-      (list-tail (cdr x) (- k 1))))
+(define list-tail
+  (lambda (x k)
+    (if (zero? k)
+        x
+        (list-tail (cdr x) (- k 1)))))
 

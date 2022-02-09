@@ -101,6 +101,7 @@
 		ARRAY_FREE(a);						                               \
 } while (0)
 
+
 #define ARRAY_EXPAND(a, n) do {						                       \
 	ARRAY_ENSURE(a, n);						                               \
 	(a)->num += n;							                               \
