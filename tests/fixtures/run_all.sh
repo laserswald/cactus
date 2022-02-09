@@ -3,15 +3,14 @@
 for inputfile in `find tests/fixtures -iname '*.scm'`; do
 	printf "testing fixture $inputfile: "
 
-	./cactus $inputfile
-
-	if test $? -ne "0"; then
+	if ! ./cactus $inputfile
+	then
 		echo "fail"
-		failed=$(true)
+		failed=1
 	else
         echo "ok"
     fi
 done
 
-[ $failed -eq $(true) ] && exit 1
+[ $failed ] && exit 1
 
