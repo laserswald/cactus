@@ -125,14 +125,17 @@ cact_eval_prim(struct cactus *cact, struct cact_cont *cc)
     }
 
     if (is_assignment(cact, cc->expr)) {
+	    DBG("assignment \n");
         special_set_bang(cact, cact_cdr(cact, cc->expr));
     }
 
     if (is_definition(cact, cc->expr)) {
+	    DBG("definition \n");
         special_define(cact, cact_cdr(cact, cc->expr));
     }
 
     if (is_conditional(cact, cc->expr)) {
+	    DBG("conditional \n");
         special_if(cact, cact_cdr(cact, cc->expr));
     }
 
@@ -145,11 +148,12 @@ cact_eval_prim(struct cactus *cact, struct cact_cont *cc)
     }
 
     if (is_variable(cact, cc->expr)) {
+	    assert(cact_env_num_bindings(cc->env) != 0);
         cact_cont_return(
             cc,
             cact_env_lookup(
                 cact,
-                cact_current_env(cact),
+                cc->env,
                 cact_to_symbol(cc->expr, "eval")
             )
         );
@@ -168,7 +172,7 @@ struct cact_cont*
 push_new_cont(struct cactus *cact, struct cact_cont *cc)
 {
     struct cact_cont *nc = (struct cact_cont *) cact_alloc(cact, CACT_OBJ_CONT);
-    cact_cont_init(nc, NULL, NULL);
+    cact_cont_init(nc, cc->env, NULL);
     cact_call_stack_push(cact, nc);
     return nc;
 }
@@ -214,7 +218,8 @@ special_lambda(struct cactus *cact, struct cact_val args)
     struct cact_val lambda_args = cact_car(cact, args);
     struct cact_val body = cact_cdr(cact, args);
 
-    cc->retval = cact_make_procedure(cact, cact_current_env(cact), lambda_args, body);
+    assert(cact_env_num_bindings(cc->env) != 0);
+    cc->retval = cact_make_procedure(cact, cc->env, lambda_args, body);
 
     cc->state = CACT_JMP_FINISH;
     cact_continue_cont(cc);
@@ -226,33 +231,15 @@ special_begin(struct cactus *cact, struct cact_val args)
     struct cact_cont *cc = cact_current_cont(cact);
 
     cc->retval = CACT_UNDEF_VAL;
-
-    if (cact_is_null(args)) {
-        // Sequences with no items are no-ops. We are done here.
-        cc->state = CACT_JMP_FINISH;
-        cact_continue_cont(cc);
-    }
-
-    if (! cact_is_pair(args)) {
-        // If we don't have a pair, then queue up this expression for evaluation, and
-        // then return it after it's done evaluating.
-        cc->state = CACT_JMP_EVAL_SINGLE;
-        cc->expr = args;
-        cact_continue_cont(cc);
-    } else {
-        // Otherwise, we need to set up evaluating the sequence, and then continue from there.
-        struct cact_cont *nc = push_new_cont(cact, cc);
-        nc->state = CACT_JMP_EVAL_SEQ;
-        nc->expr = cact_car(cact, args);
-        nc->unevaled = cact_cdr(cact, args);
-        cact_resume_cont(cact, nc);
-    }
+    cc->unevaled = args;
+    cact_cont_continue_step(cc, CACT_JMP_EVAL_SEQ);
 }
 
 void
 special_set_bang(struct cactus *cact, struct cact_val args)
 {
     struct cact_cont *cc = cact_current_cont(cact);
+    assert(cact_env_num_bindings(cc->env) != 0);
     struct cact_val term, defn;
 
     term = cact_car(cact, args);
@@ -277,6 +264,7 @@ void
 special_if(struct cactus *cact, struct cact_val args)
 {
     struct cact_cont *cc = cact_current_cont(cact);
+    assert(cact_env_num_bindings(cc->env) != 0);
     DBG("Evaluating if statement #%lu\n", cc->obj.store_data.place);
 
     struct cact_val condition = cact_car(cact, args);
@@ -299,6 +287,7 @@ void
 cact_eval_branch(struct cactus *cact, struct cact_cont *cc)
 {
     DBG("Evaluating branch #%lu\n", cc->obj.store_data.place);
+    assert(cact_env_num_bindings(cc->env) != 0);
     if (cact_is_truthy(cc->retval)) {
         cc->retval = CACT_UNDEF_VAL;
         cc->expr = cact_car(cact, cc->unevaled);
@@ -328,7 +317,9 @@ cact_eval_definition(struct cactus *cact, struct cact_cont *cc)
     term = cc->unevaled;
     defn = cc->retval;
 
-    cact_env_define(cact, cact_current_env(cact), cact_to_symbol(term, "special_define"), defn);
+    assert(cact_env_num_bindings(cc->env) != 0);
+    cact_env_define(cact, cc->env, cact_to_symbol(term, "special_define"), defn);
+    assert(cact_env_num_bindings(cc->env) != 0);
 
     cc->state = CACT_JMP_FINISH;
     cact_continue_cont(cc);
@@ -346,25 +337,23 @@ cact_eval_definition(struct cactus *cact, struct cact_cont *cc)
 void
 cact_eval_sequence(struct cactus *cact, struct cact_cont *cc)
 {
+    assert(cc->env->entries.count != 0);
     // If we have no more items to evaluate, then we are done.
     if (cact_is_null(cc->unevaled)) {
-        cc->state = CACT_JMP_FINISH;
-        cact_continue(cact);
+	    cact_cont_continue_step(cc, CACT_JMP_FINISH);
     }
 
-    // We only expect a list here, so if it's not a pair then
-    // something screwed up.
     if (! cact_is_pair(cc->unevaled)) {
-        die("Not a sequence");
+        // If we don't have a pair, then queue up this expression for evaluation, and
+        // then return it after it's done evaluating.
+        cc->expr = cc->unevaled;
+	    cact_cont_continue_step(cc, CACT_JMP_EVAL_SINGLE);
     }
 
-    struct cact_cont *new = push_new_cont(cact, cc);
-    new->state = CACT_JMP_EVAL_SINGLE;
-    new->expr = cact_car(cact, cc->unevaled);
-
+    struct cact_cont *nc = push_new_cont(cact, cc);
+    nc->expr = cact_car(cact, cc->unevaled);
     cc->unevaled = cact_cdr(cact, cc->unevaled);
-
-    cact_continue_cont(cc);
+    cact_resume_cont(cact, nc);
 }
 
 void
@@ -375,7 +364,8 @@ cact_eval_assignment(struct cactus *cact, struct cact_cont *cc)
     term = cc->unevaled;
     defn = cc->retval;
 
-    cact_env_set(cact, cact_current_env(cact), cact_to_symbol(term, "special_set_bang"), defn);
+    assert(cc->env->entries.count != 0);
+    cact_env_set(cact, cc->env, cact_to_symbol(term, "special_set_bang"), defn);
 
     cc->retval = CACT_UNDEF_VAL;
 
@@ -433,6 +423,9 @@ void
 cact_eval_arg_pop(struct cactus *cact, struct cact_cont *cc)
 {
     if (cact_is_null(cc->unevaled)) {
+	    if (cc->proc->nativefn) {
+	        cact_cont_continue_step(cc, CACT_JMP_APPLY);
+	    }
         cact_cont_continue_step(cc, CACT_JMP_EXTEND_ENV);
     }
 
@@ -457,8 +450,10 @@ void
 cact_eval_extend_env(struct cactus *cact, struct cact_cont *cc)
 {
     struct cact_env *extended = (struct cact_env *) cact_alloc(cact, CACT_OBJ_ENVIRONMENT);
-    cact_env_init(extended, cc->env);
-    cc->env = extended;
+    cact_env_init(extended, cc->proc->env);
+    assert(cact_env_num_bindings(extended) != 0);
+
+    cact_preserve(cact, CACT_OBJ_VAL(extended));
 
     // Iterate over the binding names (the argl of proc)
     CACT_LIST_FOR_EACH_ITEM(cact, current_binding_name, cc->proc->argl) {
@@ -468,13 +463,18 @@ cact_eval_extend_env(struct cactus *cact, struct cact_cont *cc)
 
         cact_env_define(
             cact,
-            cc->env,
+            extended,
             cact_to_symbol(current_binding_name, "cact_eval_extend_env"),
             cact_car(cact, cc->argl)
         );
 
         cc->argl = cact_cdr(cact, cc->argl);
     }
+    print_env(extended);
+    cc->env = extended;
+
+    cact_unpreserve(cact, CACT_OBJ_VAL(extended));
+    assert(cact_env_num_bindings(cc->env) != 0);
 
     cact_cont_continue_step(cc, CACT_JMP_APPLY);
 }

@@ -30,6 +30,8 @@ struct cact_val cact_env_lookup(struct cactus *, struct cact_env *e, struct cact
 bool cact_env_is_bound(struct cact_env *e, struct cact_symbol *k);
 
 void            print_env(struct cact_env *e);
+int
+cact_env_num_bindings(struct cact_env *e);
 
 
 #endif // env_h_INCLUDED

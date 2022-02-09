@@ -1,5 +1,5 @@
-CC = gcc
-CFLAGS = -g -Iinclude -Wall -DNDEBUG
+CC = tcc
+CFLAGS = -g -bt 20 -Iinclude -Wall -pedantic
 
 LIBRARY = libcact.a
 BINARY = cactus

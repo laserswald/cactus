@@ -157,6 +157,18 @@ cact_env_is_bound(struct cact_env *e, struct cact_symbol *key)
     return false;
 }
 
+int
+cact_env_num_bindings(struct cact_env *e) 
+{
+	int count = e->entries.count;
+
+	if (e->parent) {
+		return count + cact_env_num_bindings(e->parent);
+	}
+
+	return count;
+}
+
 /*
  * Display an environment to standard output.
  */

@@ -42,6 +42,7 @@ cact_make_native_proc(struct cactus *cact, cact_native_func fn)
     assert(fn != NULL);
 
     struct cact_proc *nat = (struct cact_proc *)cact_alloc(cact, CACT_OBJ_PROCEDURE);
+    nat->env = NULL;
     nat->nativefn = fn;
 
     return CACT_OBJ_VAL((struct cact_obj *) nat);
