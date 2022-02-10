@@ -3,7 +3,7 @@
 
 #include "core.h"
 
-#include "obj.h"
+#include "storage/obj.h"
 #include "val.h"
 
 struct cact_pair {

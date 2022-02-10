@@ -4,8 +4,9 @@
 #include "core.h"
 #include "val.h"
 #include "pair.h"
-#include "store.h"
 #include "write.h"
+
+#include "storage/store.h"
 #include "evaluator/eval.h"
 #include "internal/debug.h"
 #include "internal/utils.h"

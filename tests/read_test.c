@@ -112,12 +112,42 @@ TEST cact_read_int_test()
     struct cact_val x = CACT_NULL_VAL;
     char* string = NULL;
 
-    // Integer
+    // unsigned
     string = "1234";
     cact_lexer_init(&cact.lexer, string);
     status = cact_read(&cact, &x);
     ASSERTm("cact_read not ok when reading integer", status == CACT_READ_OK);
     ASSERTm("cact_read did not read an integer", cact_is_fixnum(x));
+
+    // signed
+    string = "-1234";
+    cact_lexer_init(&cact.lexer, string);
+    status = cact_read(&cact, &x);
+    ASSERTm("cact_read not ok when reading integer", status == CACT_READ_OK);
+    ASSERTm("cact_read did not read an integer", cact_is_fixnum(x));
+
+    PASS();
+}
+
+TEST cact_read_float_test()
+{
+    int status = CACT_READ_OK;
+    struct cact_val x = CACT_NULL_VAL;
+    char* string = NULL;
+
+    // unsigned
+    string = "12.34";
+    cact_lexer_init(&cact.lexer, string);
+    status = cact_read(&cact, &x);
+    ASSERTm("cact_read not ok when reading unsigned float", status == CACT_READ_OK);
+    ASSERTm("cact_read did not read an unsigned float", cact_is_flonum(x));
+
+    // signed
+    string = "-12.34";
+    cact_lexer_init(&cact.lexer, string);
+    status = cact_read(&cact, &x);
+    ASSERTm("cact_read not ok when reading signed float", status == CACT_READ_OK);
+    ASSERTm("cact_read did not read a signed float", cact_is_flonum(x));
 
     PASS();
 }
@@ -208,6 +238,7 @@ SUITE(read_tests)
     RUN_TEST(cact_read_whitespace_test);
     RUN_TEST(cact_read_ident_test);
     RUN_TEST(cact_read_int_test);
+    RUN_TEST(cact_read_float_test);
     RUN_TEST(cact_read_boolean_test);
     RUN_TEST(cact_read_string_test);
     RUN_TEST(cact_read_list_test);

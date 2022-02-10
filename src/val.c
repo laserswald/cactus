@@ -7,7 +7,10 @@
 #include "sym.h"
 #include "pair.h"
 #include "str.h"
-#include "obj.h"
+#include "err.h"
+
+#include "storage/obj.h"
+#include "builtin.h"
 
 const char *
 cact_val_show_type(enum cact_type t)
@@ -81,6 +84,7 @@ cact_val_eq(struct cact_val l, struct cact_val r)
         return false;
     }
 }
+DEFINE_COMPARISON_BUILTIN(cact_builtin_eq, cact_val_eq)
 
 bool
 cact_val_eqv(struct cact_val l, struct cact_val r)
@@ -100,6 +104,7 @@ cact_val_eqv(struct cact_val l, struct cact_val r)
         return false;
     }
 }
+DEFINE_COMPARISON_BUILTIN(cact_builtin_eqv, cact_val_eqv)
 
 /* Deeply compare two values. */
 bool
@@ -132,6 +137,7 @@ cact_val_equal(struct cact_val l, struct cact_val r)
     return false;
 }
 
+DEFINE_COMPARISON_BUILTIN(cact_builtin_equal, cact_val_equal)
 void
 cact_mark_val(struct cact_val v)
 {

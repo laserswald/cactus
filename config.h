@@ -3,6 +3,7 @@
 
 #include "evaluator/eval.h"
 #include "builtin.h"
+#include "num.h"
 
 struct cact_builtin builtins[] = {
     // Equality
@@ -16,6 +17,12 @@ struct cact_builtin builtins[] = {
 
     // Numbers
     {"number?", cact_builtin_is_number},
+    {"zero?", cact_builtin_is_zero},
+    {"<", cact_builtin_less_than},
+    {">", cact_builtin_greater_than},
+    {"<=", cact_builtin_less_or_equal},
+    {">=", cact_builtin_greater_or_equal},
+    {"=", cact_builtin_num_equal},
     {"+", cact_builtin_plus},
     {"-", cact_builtin_minus},
     {"*", cact_builtin_times},

@@ -35,11 +35,16 @@ cact_str_coords_push(struct cact_str_coords *cds, int c)
 
 /* Is this int allowable as an identifier character? */
 static int
-is_ident(int i)
+is_initial_identifier(int i)
 {
-    return i != 0 && (isalpha(i) || strchr("!$%&*+-./:<=>?@^_~", i) != NULL);
+    return i != 0 && (isalpha(i) || strchr("!$%&*/:<=>?@^_~", i) != NULL);
 }
 
+static int
+is_subsequent_identifier(int i)
+{
+    return i != 0 && (isalpha(i) || isdigit(i) || strchr("!$%&*./:<=>?@^_~", i) != NULL);
+}
 
 /* Return 0 if the character is double quote, 1 otherwise. */
 static int
@@ -158,6 +163,38 @@ printlex(struct cact_lexeme lx)
     printf(":\t'%s'\n", sym);
 }
 
+void
+cact_lexer_decimal(struct cact_lexer *l, struct cact_lexeme *le)
+{
+	le->t = CACT_TOKEN_FLOAT;
+    cact_lexer_getc(l);
+    cact_lexer_charspan(l, isdigit);
+}
+
+void
+cact_lexer_unsigned_number(struct cact_lexer *l, struct cact_lexeme *le)
+{
+	le->t = CACT_TOKEN_INTEGER;
+    cact_lexer_charspan(l, isdigit);
+    int c = cact_lexer_peekc(l);
+    if (c == '.') {
+	    cact_lexer_decimal(l, le);
+    }
+}
+
+void
+cact_lexer_minus_and_plus(struct cact_lexer *l, struct cact_lexeme *le)
+{
+	cact_lexer_getc(l);
+    int c = cact_lexer_peekc(l);
+    if (isdigit(c)) {
+		cact_lexer_unsigned_number(l, le);
+    } else {
+        le->t = CACT_TOKEN_IDENTIFIER;
+        cact_lexer_charspan(l, is_ident);
+    }
+}
+
 /* Return the next lexeme available from the lexer. */
 struct cact_lexeme
 nextlex(struct cact_lexer* l)
@@ -178,8 +215,9 @@ nextlex(struct cact_lexer* l)
         le.t = CACT_TOKEN_IDENTIFIER;
         cact_lexer_charspan(l, is_ident);
     } else if (isdigit(c)) {
-        le.t = CACT_TOKEN_INTEGER;
-        cact_lexer_charspan(l, isdigit);
+	    cact_lexer_unsigned_number(l, &le);
+    } else if (c == '-' || c == '+') {
+	    cact_lexer_minus_and_plus(l, &le);
     } else if (c == '(') {
         le.t = CACT_TOKEN_OPEN_PAREN;
         cact_lexer_getc(l);
@@ -279,6 +317,15 @@ lextoint(struct cactus *cact, struct cact_lexeme lx)
     char *end = lx.st;
     long i = strtol(lx.st, &end, 10);
     return CACT_FIX_VAL(i);
+}
+
+/* Convert a lexeme to a floating point. */
+struct cact_val
+lextofloat(struct cactus *cact, struct cact_lexeme lx)
+{
+    char *end = lx.st;
+    double d = strtod(lx.st, &end);
+    return CACT_FLO_VAL(d);
 }
 
 /* Convert a lexeme to a string. */
@@ -394,6 +441,11 @@ cact_read(struct cactus* cact, struct cact_val* ret) {
             break;
         case CACT_TOKEN_INTEGER:
             *ret = lextoint(cact, lx);
+            status = CACT_READ_OK;
+            nextlex(l);
+            break;
+        case CACT_TOKEN_FLOAT:
+            *ret = lextofloat(cact, lx);
             status = CACT_READ_OK;
             nextlex(l);
             break;
