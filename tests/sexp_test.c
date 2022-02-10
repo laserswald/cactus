@@ -1,6 +1,6 @@
 #include "greatest.h"
 
-#include "cactus/val.h"
+#include "val.h"
 
 TEST is_nil_test()
 {

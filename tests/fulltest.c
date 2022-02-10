@@ -1,7 +1,7 @@
 #include <stdio.h>
-#include "cactus/read.h"
-#include "cactus/val.h"
-#include "cactus/builtin.h"
+#include "read.h"
+#include "val.h"
+#include "builtin.h"
 #include "greatest.h"
 
 SUITE_EXTERN(boolean_tests);

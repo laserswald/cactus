@@ -1,18 +1,20 @@
-CC = tcc
-CFLAGS = -g -bt 20 -Iinclude -Wall -pedantic
-
+CFLAGS = -g -Isrc -Ilib -Wall -pedantic
 LIBRARY = libcact.a
 BINARY = cactus
 TESTBIN = cactus-test
 
-LIBRARY_SRCS = $(shell find lib -iname '*.c')
-LIBRARY_OBJS = $(patsubst %.c,%.o, $(LIBRARY_SRCS))
+HELPER_LIBRARY_SOURCES = 
+LIBRARY_SRCS =
+BINARY_SRCS =
+TESTBIN_SRCS =
 
-BINARY_SRCS = $(shell find src -iname '*.c')
-BINARY_OBJS = $(patsubst %.c,%.o, $(BINARY_SRCS))
+include lib/module.mk
+include src/module.mk
+include tests/module.mk
 
-TESTBIN_SRCS = $(shell find tests -iname '*.c')
-TESTBIN_OBJS = $(patsubst %.c,%.o, $(TESTBIN_SRCS)) 
+LIBRARY_OBJS = $(LIBRARY_SRCS:.c=.o)
+BINARY_OBJS = $(BINARY_SRCS:.c=.o)
+TESTBIN_OBJS = $(TESTBIN_SRCS:.c=.o)
 
 all: $(BINARY) test
 
@@ -27,20 +29,20 @@ clean:
 
 format: $(LIBRARY_SRCS) $(BINARY_SRCS) $(TESTBIN_SRCS)
 	astyle --style=1tbs $^
-	
 
-%.o: %.c 
+.c.o:
 	$(CC) $(CFLAGS) -MD -MF $(<:.c=.d) -c -o $@ $<
 
 $(BINARY): $(BINARY_OBJS) $(LIBRARY)
 	$(CC) $(CFLAGS) -o $@ $^
-	
+
 $(TESTBIN): $(TESTBIN_OBJS) $(LIBRARY)
 	$(CC) $(CFLAGS) -o $@ $^
 
-$(LIBRARY): $(LIBRARY_OBJS)	
+$(LIBRARY): $(LIBRARY_OBJS)
 	$(AR) rcs $@ $^
 
 -include $(LIBRARY_SRCS:.c=.d)
+-include $(BINARY_SRCS:.c=.d)
 
 .PHONY: all test clean format

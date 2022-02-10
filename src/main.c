@@ -8,12 +8,12 @@
 #include <stdbool.h>
 #include <ctype.h>
 
-#include "cactus/core.h"
-#include "cactus/eval.h"
-#include "cactus/write.h"
-#include "cactus/err.h"
+#include "core.h"
+#include "evaluator/eval.h"
+#include "write.h"
+#include "err.h"
 
-#include "cactus/internal/utils.h"
+#include "internal/utils.h"
 #include "linenoise.h"
 
 #include "../config.h"

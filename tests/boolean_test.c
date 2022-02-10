@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include "greatest.h"
 
-#include "cactus/core.h"
-#include "cactus/read.h"
-#include "cactus/val.h"
-#include "cactus/pair.h"
-#include "cactus/sym.h"
-#include "cactus/bool.h"
-#include "cactus/internal/utils.h"
+#include "core.h"
+#include "read.h"
+#include "val.h"
+#include "pair.h"
+#include "sym.h"
+#include "bool.h"
+#include "internal/utils.h"
 
 SUITE(boolean_tests);
 

@@ -1,9 +1,9 @@
 #include "greatest.h"
 
-#include "cactus/core.h"
-#include "cactus/pair.h"
-#include "cactus/num.h"
-#include "cactus/write.h"
+#include "core.h"
+#include "pair.h"
+#include "num.h"
+#include "write.h"
 
 static struct cactus cact;
 
