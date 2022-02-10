@@ -1,8 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include "cactus/eval.h"
-#include "cactus/builtin.h"
+#include "evaluator/eval.h"
+#include "builtin.h"
 
 struct cact_builtin builtins[] = {
     // Equality

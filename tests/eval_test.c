@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include "greatest.h"
 
-#include "cactus/core.h"
-#include "cactus/eval.h"
-#include "cactus/num.h"
-#include "cactus/err.h"
-#include "cactus/write.h"
-#include "cactus/builtin.h"
+#include "core.h"
+#include "evaluator/eval.h"
+#include "num.h"
+#include "err.h"
+#include "write.h"
+#include "builtin.h"
 
 static struct cactus cact;
 
