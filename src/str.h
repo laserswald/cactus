@@ -2,7 +2,7 @@
 #define str_h_INCLUDED
 
 #include "core.h"
-#include "obj.h"
+#include "storage/obj.h"
 
 struct cact_string {
 	struct cact_obj obj;

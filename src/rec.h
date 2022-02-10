@@ -1,7 +1,7 @@
 #ifndef CACT_REC_H
 #define CACT_REC_H
 
-#include "obj.h"
+#include "storage/obj.h"
 #include "sym.h"
 
 struct cact_record_spec {

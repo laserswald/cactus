@@ -1,10 +1,12 @@
 
 #include <assert.h>
 
+#include "builtin.h"
 #include "core.h"
-#include "store.h"
 #include "pair.h"
 #include "err.h"
+
+#include "storage/store.h"
 
 /* Create a pair. */
 struct cact_val
@@ -33,6 +35,21 @@ cact_cons(struct cactus *cact, struct cact_val a, struct cact_val d)
     return CACT_OBJ_VAL((struct cact_obj *)p);
 }
 
+struct cact_val
+cact_builtin_cons(struct cactus *cact, struct cact_val args)
+{
+    struct cact_val a, d;
+
+    if (2 != cact_unpack_args(cact, args, "..", &a, &d)) {
+        return cact_make_error(cact, "Did not get expected number of arguments", args);
+    }
+    PROPAGATE_ERROR(a);
+    PROPAGATE_ERROR(d);
+
+    return cact_cons(cact, a, d);
+}
+
+
 /* Get the car of a pair. */
 struct cact_val
 cact_car(struct cactus *cact, struct cact_val x)
@@ -45,6 +62,20 @@ cact_car(struct cactus *cact, struct cact_val x)
     return p->car;
 }
 
+/* Unpack arguments, and take the car of the list at the first argument */
+struct cact_val
+cact_builtin_car(struct cactus *cact, struct cact_val args)
+{
+    struct cact_val l;
+
+    if (1 != cact_unpack_args(cact, args, "p", &l)) {
+        return cact_make_error(cact, "Did not get expected number of arguments", args);
+    }
+    PROPAGATE_ERROR(l);
+
+    return cact_car(cact, l);
+}
+
 /* Get the cdr of a pair. */
 struct cact_val
 cact_cdr(struct cactus *cact, struct cact_val x)
@@ -55,6 +86,19 @@ cact_cdr(struct cactus *cact, struct cact_val x)
 
     struct cact_pair *p = cact_to_pair(x, "cdr");
     return p->cdr;
+}
+
+struct cact_val
+cact_builtin_cdr(struct cactus *cact, struct cact_val args)
+{
+    struct cact_val l;
+
+    if (1 != cact_unpack_args(cact, args, "p", &l)) {
+        return cact_make_error(cact, "Did not get expected number of arguments", args);
+    }
+    PROPAGATE_ERROR(l);
+
+    return cact_cdr(cact, l);
 }
 
 /* Set the car of a pair. */

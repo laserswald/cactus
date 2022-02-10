@@ -2,7 +2,7 @@
 #define __ENV_H__
 
 #include "val.h"
-#include "obj.h"
+#include "storage/obj.h"
 #include "sym.h"
 
 #include "internal/table.h"

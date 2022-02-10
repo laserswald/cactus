@@ -3,7 +3,7 @@
 
 #include "val.h"
 #include "env.h"
-#include "obj.h"
+#include "storage/obj.h"
 
 struct cactus;
 

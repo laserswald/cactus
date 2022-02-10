@@ -32,7 +32,7 @@ cact_destroy_error(struct cact_obj *o)
 
 /* Raise an exception. */
 struct cact_val
-cact_raise(struct cactus *cact, struct cact_error *exn)
+cact_raise(struct cactus *cact, struct cact_val exn)
 {
     struct cact_cont *current = SLIST_FIRST(&cact->conts);
 
@@ -49,6 +49,6 @@ cact_raise(struct cactus *cact, struct cact_error *exn)
         abort();
     }
 
-    return cact_proc_apply(cact, current->exn_handler, CACT_OBJ_VAL(exn));
+    return cact_proc_apply(cact, current->exn_handler, exn);
 }
 

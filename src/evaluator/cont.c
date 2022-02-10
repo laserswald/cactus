@@ -5,9 +5,9 @@
 #include "core.h"
 #include "proc.h"
 #include "env.h"
-#include "obj.h"
-#include "evaluator/eval.h"
 
+#include "storage/obj.h"
+#include "evaluator/eval.h"
 #include "internal/utils.h"
 #include "internal/debug.h"
 #include "internal/array.h"

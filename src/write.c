@@ -1,5 +1,5 @@
 #include "write.h"
-#include "obj.h"
+#include "storage/obj.h"
 #include "pair.h"
 #include "err.h"
 #include "str.h"

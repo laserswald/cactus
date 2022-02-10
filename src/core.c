@@ -1,5 +1,6 @@
 #include <assert.h>
 
+#include "builtin.h"
 #include "core.h"
 #include "sym.h"
 
@@ -76,6 +77,7 @@ cact_init(struct cactus *cact)
     /* Don't forget the GC! */
     cact->gc_enabled = true;
 }
+
 
 /*
  * Finalize a cactus interpreter.
@@ -212,7 +214,9 @@ cact_collect_garbage(struct cactus *cact)
     return swept;
 }
 
-/* Allocate a new object of a given type. */
+/* 
+ * Allocate a new object of a given type. 
+ */
 struct cact_obj *
 cact_alloc(struct cactus *cact, enum cact_obj_type t)
 {
@@ -225,7 +229,9 @@ cact_alloc(struct cactus *cact, enum cact_obj_type t)
     return cact_store_allocate(&cact->store, t);
 }
 
-/* Finish a function call or macro expansion. */
+/* 
+ * Finish a function call or macro expansion. 
+ */
 void
 cact_call_stack_pop(struct cactus *cact)
 {
@@ -334,8 +340,3 @@ cact_call_stack_push(struct cactus *cact, struct cact_cont *cont)
     SLIST_INSERT_HEAD(&cact->conts, cont, parent);
 }
 
-void
-cact_continue(struct cactus *cact)
-{
-    cact_resume_cont(cact, cact_current_cont(cact));
-}

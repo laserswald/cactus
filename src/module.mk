@@ -10,13 +10,11 @@ LIBRARY_SRCS += \
 	src/err.c \
 	src/main.c \
 	src/number.c \
-	src/obj.c \
 	src/pair.c \
 	src/port.c \
 	src/proc.c \
 	src/read.c \
 	src/rec.c \
-	src/store.c \
 	src/str.c \
 	src/sym.c \
 	src/syn.c \
@@ -28,3 +26,4 @@ LIBRARY_SRCS += \
 	
 include src/compiler/module.mk
 include src/evaluator/module.mk
+include src/storage/module.mk

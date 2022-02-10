@@ -1,5 +1,7 @@
 #include <stdarg.h>
 
+#include "builtin.h"
+
 #include "internal/debug.h"
 #include "internal/utils.h"
 
@@ -42,7 +44,7 @@ unpack_typecheck(const struct cact_val arg, const char c)
 /**
  * Check all the arguments in the argument list and
  */
-static int
+int
 cact_unpack_args(struct cactus *cact, struct cact_val arglist, const char *format, ...)
 {
     va_list slots;
@@ -89,49 +91,11 @@ cact_unpack_args(struct cactus *cact, struct cact_val arglist, const char *forma
     return cnt;
 }
 
-#define DEFINE_TYPE_PREDICATE_BUILTIN(name, fn) \
-struct cact_val \
-name(struct cactus *cact, struct cact_val args) \
-{ \
-    struct cact_val x; \
-    if (1 != cact_unpack_args(cact, args, ".", &x)) { \
-        return cact_make_error(cact, "Did not get expected number of arguments", args); \
-    } \
-    PROPAGATE_ERROR(x); \
-    return CACT_BOOL_VAL(fn(x)); \
-}
-
 DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_nil, cact_is_null)
 DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_pair, cact_is_pair)
-DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_fixnum, cact_is_fixnum)
-DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_flonum, cact_is_flonum)
 DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_boolean, cact_is_bool)
 DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_char, cact_is_char)
-DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_number, cact_is_number)
 DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_procedure, cact_is_procedure)
-DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_vector, cact_is_vector)
-
-#undef DEFINE_TYPE_PREDICATE_BUILTIN
-
-
-#define DEFINE_COMPARISON_BUILTIN(name, fn) \
-struct cact_val \
-name(struct cactus *cact, struct cact_val args) \
-{ \
-    struct cact_val x, y; \
-    if (2 != cact_unpack_args(cact, args, "..", &x, &y)) { \
-        return cact_make_error(cact, "Did not get expected number of arguments", args); \
-    } \
-    PROPAGATE_ERROR(x); \
-    PROPAGATE_ERROR(y); \
-    return CACT_BOOL_VAL(fn(x, y)); \
-}
-
-DEFINE_COMPARISON_BUILTIN(cact_builtin_eq, cact_val_eq)
-DEFINE_COMPARISON_BUILTIN(cact_builtin_eqv, cact_val_eqv)
-DEFINE_COMPARISON_BUILTIN(cact_builtin_equal, cact_val_equal)
-
-#undef DEFINE_COMPARISON_BUILTIN
 
 struct cact_val
 cact_builtin_display(struct cactus *cact, struct cact_val args)
@@ -154,119 +118,6 @@ cact_builtin_newline(struct cactus *cact, struct cact_val args)
     puts("");
 
     return CACT_UNDEF_VAL;
-}
-
-/*
- * Pair builtins.
- */
-
-/* Unpack arguments, and take the car of the list at the first argument */
-struct cact_val
-cact_builtin_car(struct cactus *cact, struct cact_val args)
-{
-    struct cact_val l;
-
-    if (1 != cact_unpack_args(cact, args, "p", &l)) {
-        return cact_make_error(cact, "Did not get expected number of arguments", args);
-    }
-    PROPAGATE_ERROR(l);
-
-    return cact_car(cact, l);
-}
-
-struct cact_val
-cact_builtin_cdr(struct cactus *cact, struct cact_val args)
-{
-    struct cact_val l;
-
-    if (1 != cact_unpack_args(cact, args, "p", &l)) {
-        return cact_make_error(cact, "Did not get expected number of arguments", args);
-    }
-    PROPAGATE_ERROR(l);
-
-    return cact_cdr(cact, l);
-}
-
-struct cact_val
-cact_builtin_cons(struct cactus *cact, struct cact_val args)
-{
-    struct cact_val a, d;
-
-    if (2 != cact_unpack_args(cact, args, "..", &a, &d)) {
-        return cact_make_error(cact, "Did not get expected number of arguments", args);
-    }
-    PROPAGATE_ERROR(a);
-    PROPAGATE_ERROR(d);
-
-    return cact_cons(cact, a, d);
-}
-
-struct cact_val
-cact_builtin_plus(struct cactus *cact, struct cact_val args)
-{
-    int result = 0;
-
-    CACT_LIST_FOR_EACH_ITEM(cact, addend, args) {
-        int a = cact_to_long(addend, "+");
-        result += a;
-    }
-
-    return CACT_FIX_VAL(result);
-}
-
-struct cact_val
-cact_builtin_times(struct cactus *cact, struct cact_val args)
-{
-    int result = 1;
-
-    CACT_LIST_FOR_EACH_ITEM(cact, factor, args) {
-        PROPAGATE_ERROR(factor);
-        int a = cact_to_long(factor, "*");
-        result *= a;
-    }
-
-    return CACT_FIX_VAL(result);
-}
-
-struct cact_val
-cact_builtin_minus(struct cactus *cact, struct cact_val x)
-{
-    struct cact_val initial, rest;
-    int result, a;
-
-    initial = cact_car(cact, x);
-    PROPAGATE_ERROR(initial);
-
-    result = cact_to_long(initial, "-");
-    rest = cact_cdr(cact, x);
-
-    // Fancy word.
-    CACT_LIST_FOR_EACH_ITEM(cact, subtrahend, rest) {
-        PROPAGATE_ERROR(subtrahend);
-        a = cact_to_long(subtrahend, "-");
-        result -= a;
-    }
-
-    return CACT_FIX_VAL(result);
-}
-
-struct cact_val
-cact_builtin_divide(struct cactus *cact, struct cact_val x)
-{
-    int result = cact_to_long(cact_car(cact, x), "/");
-
-    struct cact_val rest = cact_cdr(cact, x);
-
-    CACT_LIST_FOR_EACH_ITEM(cact, divisor, rest) {
-        PROPAGATE_ERROR(divisor);
-        int a = cact_to_long(divisor, "/");
-        if (a == 0) {
-            return cact_make_error(cact, "Division by zero", CACT_NULL_VAL);
-        }
-        result /= a;
-    }
-
-    return CACT_FIX_VAL(result);
 }
 
 struct cact_val
@@ -367,56 +218,3 @@ cact_builtin_with_exception_handler(struct cactus *cact, struct cact_val args)
            );
 }
 
-struct cact_val
-cact_builtin_make_vector(struct cactus *cact, struct cact_val args)
-{
-	struct cact_val lenarg = cact_car(cact, args);
-	if (! cact_is_fixnum(lenarg)) {
-        return cact_make_error(cact, "make-vector: argument 1 must be a fixnum", args);
-	}
-
-	if (cact_is_null(cact_cdr(cact, args))) {
-		return cact_make_vec_empty(cact, cact_to_long(lenarg, "make-vector"));
-	} else {
-		struct cact_val fill = cact_cadr(cact, args);
-		return cact_make_vec_filled(cact, cact_to_long(lenarg, "make-vector"), fill);
-	}
-}
-
-struct cact_val
-cact_builtin_vector_ref(struct cactus *cact, struct cact_val args)
-{
-	struct cact_val v, idx;
-
-    if (2 != cact_unpack_args(cact, args, "vi", &v, &idx)) {
-        return cact_make_error(cact, "Did not get expected number of arguments", args);
-    }
-
-	return cact_vec_ref(cact, cact_to_vec(v, "vector-ref!"), cact_to_long(idx, "vector-ref!"));
-}
-
-struct cact_val
-cact_builtin_vector_set(struct cactus *cact, struct cact_val args)
-{
-	struct cact_val v, idx, val;
-
-    if (3 != cact_unpack_args(cact, args, "vi.", &v, &idx, &val)) {
-        return cact_make_error(cact, "Did not get expected number of arguments", args);
-    }
-
-	cact_vec_set(cact, cact_to_vec(v, "vector-set!"), cact_to_long(idx, "vector-set!"), val);
-
-	return CACT_UNDEF_VAL;
-}
-
-struct cact_val
-cact_builtin_vector_length(struct cactus *cact, struct cact_val args)
-{
-	struct cact_val v;
-
-    if (1 != cact_unpack_args(cact, args, "v", &v)) {
-        return cact_make_error(cact, "Did not get expected number of arguments", args);
-    }
-
-	return cact_vec_len(cact, cact_to_vec(v, "vector-length"));
-}

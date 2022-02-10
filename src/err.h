@@ -1,7 +1,7 @@
 #ifndef __CACT_ERR_H__
 #define __CACT_ERR_H__
 
-#include "obj.h"
+#include "storage/obj.h"
 #include "val.h"
 
 struct cact_error {
@@ -18,6 +18,10 @@ DEFINE_OBJECT_CHECK(cact_is_error, CACT_OBJ_ERROR)
 struct cact_val cact_make_error(struct cactus *, char *msg, struct cact_val irr);
 void cact_mark_error(struct cact_obj *);
 void cact_destroy_error(struct cact_obj *);
+
+/* Raise an exception. */
+struct cact_val
+cact_raise(struct cactus *cact, struct cact_val exn);
 
 #endif // __CACT_ERR_H__
 

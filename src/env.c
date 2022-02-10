@@ -2,12 +2,13 @@
 #include <stdlib.h>
 
 #include "core.h"
-#include "store.h"
 #include "env.h"
 #include "val.h"
 #include "sym.h"
 #include "write.h"
 #include "err.h"
+
+#include "storage/store.h"
 
 #include "internal/utils.h"
 #include "internal/table.h"
