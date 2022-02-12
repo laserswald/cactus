@@ -137,6 +137,18 @@ cact_env_set(struct cactus *cact, struct cact_env *e,
     return cact_make_error(cact, "cannot set nonexistent variable", CACT_SYM_VAL(key));
 }
 
+void
+cact_env_undefine(struct cactus *cact, struct cact_env *e,
+                  struct cact_symbol *key)
+{
+    assert(e);
+    assert(key);
+
+    if (TABLE_HAS(cact_env_entries, &e->entries, key)) {
+        TABLE_REMOVE(cact_env_entries, &e->entries, key);
+    }
+}
+
 /*
  * Does the given environment have the given symbol bound?
  */

@@ -8,6 +8,7 @@ LIBRARY_SRCS += \
 	src/core.c \
 	src/env.c \
 	src/err.c \
+	src/load.c \
 	src/main.c \
 	src/number.c \
 	src/pair.c \

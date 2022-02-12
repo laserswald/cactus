@@ -28,6 +28,7 @@ cact_make_procedure(struct cactus *cact, struct cact_env *e, struct cact_val arg
     proc->env = e;
     proc->argl = argl;
     proc->body = body;
+    proc->nativefn = NULL;
 
     cact_unpreserve(cact, body);
     cact_unpreserve(cact, argl);

@@ -69,7 +69,6 @@ BUILTIN_FUNC(cact_builtin_display);
 BUILTIN_FUNC(cact_builtin_newline);
 BUILTIN_FUNC(cact_builtin_exit);
 BUILTIN_FUNC(cact_builtin_load);
-BUILTIN_FUNC(cact_builtin_load);
 BUILTIN_FUNC(cact_builtin_interaction_environment);
 BUILTIN_FUNC(cact_builtin_is_bound);
 BUILTIN_FUNC(cact_builtin_collect_garbage);

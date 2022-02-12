@@ -6,10 +6,15 @@
 #include "env.h"
 #include "proc.h"
 #include "internal/array.h"
+#include "read.h"
+
+enum cact_cont_bounce_state {
+    CACT_BOUNCE_START = 0,
+    CACT_BOUNCE_CONTINUE,
+    CACT_BOUNCE_FINISH,
+};
 
 enum cact_cont_state {
-    CACT_JMP_START = 0,
-
     // This state will try to evaluate whatever is in the expr field and return it's 
     // value int
     CACT_JMP_EVAL_SINGLE,
@@ -40,12 +45,11 @@ enum cact_cont_state {
     // Assignments are fairly easy; this will assign the value in 
     CACT_JMP_ASSIGN,
 
-    // Defines a new 
+    // 
     CACT_JMP_DEFINE,
 
-    // And here after we are done with everything. Once this is done, the continuation's 
-    // retval field will have the final evaluated state.
-    CACT_JMP_FINISH,
+    // Load from a string; just like eval_seq, but reads the item from the port
+    CACT_JMP_LOAD,
 };
 
 /*
@@ -74,6 +78,9 @@ struct cact_cont {
     // The return value of the evaluation is stored here.
 	struct cact_val retval;
 
+	// When loading, the lexer lives here.
+	struct cact_lexer lexer;
+
     // The state of the continuation is here. When resumed, this will be looked at
     // in order to perform the next actions while evaluating.
     enum cact_cont_state state;
@@ -96,6 +103,11 @@ SLIST_HEAD(cact_cont_stack, cact_cont);
 void cact_cont_init(struct cact_cont *cont, struct cact_env *parent_env, struct cact_proc *proc);
 
 /*
+ * Initialize the continuation for loading a string.
+ */
+void cact_cont_init_load(struct cact_cont *cont, struct cact_env *parent_env, char *string);
+
+/*
  * Mark the continuation as being used.
  */
 void cact_mark_cont(struct cact_obj *);
@@ -106,24 +118,35 @@ void cact_mark_cont(struct cact_obj *);
 void cact_destroy_cont(struct cact_obj *);
 
 /*
- * Either begin a newly created continuation or resume a previously started one
+ * Start the continuation. After this, it can be continued using cact_cont_continue, or 
+ * completed with cact_cont_finish.
  */
-void cact_resume_cont(struct cactus *cact, struct cact_cont *cont);
+void cact_cont_start(struct cactus *cact, struct cact_cont *cont);
 
 /*
- * Begin the continuation. After this, the continuation is enabled and ready to 
- * be continued later.
+ * Continue an already started continuation.
  */
-void cact_continue_cont(struct cact_cont *cc);
+void cact_cont_continue(struct cact_cont *cc);
+
+/*
+ * Finish the already started continuation.
+ */
+void cact_cont_finish(struct cact_cont *cc);
+
+/*
+ * Set the next step of the continuation and immediately continue.
+ */
+void cact_cont_step(struct cact_cont *cont, enum cact_cont_state state);
+
+/*
+ * Finish the continuation with the given value as the return value.
+ */
 void cact_cont_return(struct cact_cont *cont, struct cact_val value);
-void cact_cont_continue_step(struct cact_cont *cont, enum cact_cont_state state);
 
 void cact_call_stack_push(struct cactus *, struct cact_cont *cont);
 void cact_call_stack_pop(struct cactus *);
 void cact_show_call_stack(struct cactus *);
-
 const char* cact_cont_show_state(enum cact_cont_state state);
-
 struct cact_cont *cact_current_cont(struct cactus *);
 
 #endif // __CACTUS_CONT_H__

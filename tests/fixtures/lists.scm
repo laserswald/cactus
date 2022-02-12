@@ -15,7 +15,8 @@
 
 (assert (bound? 'list-ref) "list-ref exists")
 (assert (eqv? 'a (list-ref l 0)) "list-ref 0")
-(display (list-ref l 1))
-(newline)
 (assert (eqv? 'b (list-ref l 1)) "list-ref 1")
-         
+(assert (eqv? 'c (list-ref l 2)) "list-ref 2")
+(assert (eqv? 'd (list-ref l 3)) "list-ref 3")
+(show-report)
+

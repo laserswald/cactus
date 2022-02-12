@@ -69,10 +69,17 @@ is_assignment(struct cactus *cact, struct cact_val x)
 }
 
 bool
+is_inclusion(struct cactus *cact, struct cact_val x)
+{
+    return is_tagged_pair(cact, "load", x);
+}
+
+bool
 is_application(struct cactus *cact, struct cact_val x)
 {
     return cact_is_pair(x);
 }
+
 
 bool
 is_tagged_pair(struct cactus *cact, const char* tag, struct cact_val x)

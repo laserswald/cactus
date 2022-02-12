@@ -63,7 +63,6 @@ eval_if_false_test()
     struct cact_val v;
 
     v = cact_eval_string(&cact, "(if #f 1 2)");
-    cact_display(v);
     ASSERTm("expected x to be int", cact_is_fixnum(v));
     ASSERTm("expected x to be 2", cact_to_long(v, "eval_if_test") == 2);
     PASS();
@@ -106,13 +105,25 @@ eval_apply_test()
     PASS();
 }
 
-SUITE(eval_tests)
+static void
+setup_eval_cb(void *data)
 {
     cact_init(&cact);
-
     cact_define_builtin(&cact, "*", cact_builtin_times);
     cact_define_builtin(&cact, "+", cact_builtin_plus);
     cact_define_builtin(&cact, "cons", cact_builtin_cons);
+}
+
+static void
+teardown_eval_cb(void *data)
+{
+    cact_finish(&cact);
+}
+
+SUITE(eval_tests)
+{
+	SET_SETUP(setup_eval_cb, (void*) NULL);
+	SET_TEARDOWN(teardown_eval_cb, (void*) NULL);
 
     RUN_TEST(eval_selfeval_test);
     RUN_TEST(eval_quote_test);
@@ -122,6 +133,4 @@ SUITE(eval_tests)
     RUN_TEST(eval_setbang_test);
     RUN_TEST(eval_apply_builtin_test);
     RUN_TEST(eval_apply_test);
-
-    cact_finish(&cact);
 }

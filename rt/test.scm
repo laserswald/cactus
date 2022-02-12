@@ -1,7 +1,6 @@
 ; vim: ft=scheme
 
 (define *failed* 0)
-
 (define *passed* 0)
 
 (define assert
@@ -18,7 +17,7 @@
        (set! *passed* (+ 1 *passed*))))))
 
 (define show-report
-  (lambda 
+  (lambda ()
     (newline)
     (display "passed: ")
     (display *passed*)

@@ -3,6 +3,7 @@
 #include "builtin.h"
 #include "core.h"
 #include "sym.h"
+#include "write.h"
 
 #include "internal/debug.h"
 #include "internal/utils.h"
