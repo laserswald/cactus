@@ -14,6 +14,7 @@
 #include "builtin.h"
 
 struct cactus cact;
+struct cact_lexer lexer;
 
 TEST cact_read_null_test()
 {
@@ -23,8 +24,8 @@ TEST cact_read_null_test()
     cact_init(&cact);
 
     // No string
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
     ASSERTm("cact_read with blank string did not return other error", status == CACT_READ_OTHER_ERROR);
 
     cact_finish(&cact);
@@ -40,10 +41,10 @@ TEST cact_read_blank_test()
 
     // Blank string
     string = "";
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
     ASSERTm("cact_read with blank string did not return EOF", status == CACT_READ_END_OF_FILE);
 
     PASS();
@@ -58,8 +59,8 @@ TEST cact_read_whitespace_test()
 
     // Blank string
     string = "\n \t";
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
     ASSERTm("cact_read with only whitespace did not return EOF", status == CACT_READ_END_OF_FILE);
 
     PASS();
@@ -73,8 +74,8 @@ TEST cact_read_ident_test()
 
     // Identifier
     string = "identifier";
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
     ASSERTm("cact_read not ok when reading identifier", status == CACT_READ_OK);
     ASSERTm("cact_read did not read an identifier", cact_is_symbol(x));
 
@@ -89,15 +90,15 @@ TEST cact_read_boolean_test()
 
     /* True */
     string = "#t";
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
     ASSERTm("cact_read not ok when reading boolean true", status == CACT_READ_OK);
     ASSERTm("cact_read did not read a boolean", cact_is_bool(x) == true);
     ASSERTm("cact_read did not read true", cact_to_bool(x, "cact_read_boolean_test") == true);
 
     string = "#f";
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
     ASSERTm("cact_read not ok when reading boolean false", status == CACT_READ_OK);
     ASSERTm("cact_read did not read a boolean", cact_is_bool(x) == true);
     ASSERTm("cact_read did not read false", cact_to_bool(x, "cact_read_boolean_test") == false);
@@ -114,15 +115,15 @@ TEST cact_read_int_test()
 
     // unsigned
     string = "1234";
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
     ASSERTm("cact_read not ok when reading integer", status == CACT_READ_OK);
     ASSERTm("cact_read did not read an integer", cact_is_fixnum(x));
 
     // signed
     string = "-1234";
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
     ASSERTm("cact_read not ok when reading integer", status == CACT_READ_OK);
     ASSERTm("cact_read did not read an integer", cact_is_fixnum(x));
 
@@ -137,15 +138,15 @@ TEST cact_read_float_test()
 
     // unsigned
     string = "12.34";
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
     ASSERTm("cact_read not ok when reading unsigned float", status == CACT_READ_OK);
     ASSERTm("cact_read did not read an unsigned float", cact_is_flonum(x));
 
     // signed
     string = "-12.34";
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
     ASSERTm("cact_read not ok when reading signed float", status == CACT_READ_OK);
     ASSERTm("cact_read did not read a signed float", cact_is_flonum(x));
 
@@ -160,8 +161,8 @@ TEST cact_read_string_test()
 
     // cact_string
     string = "\"identifier\"";
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
     ASSERTm("cact_read not ok when reading string", status == CACT_READ_OK);
     ASSERTm("cact_read did not read a string", cact_is_string(x));
     ASSERTm("cact_read included quotes", cact_to_string(x, "cact_read_string_test")->str[0] == 'i');
@@ -177,15 +178,15 @@ TEST cact_read_list_test()
 
     // Null
     string = "()";
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
     ASSERTm("cact_read not ok when reading null", status == CACT_READ_OK);
     ASSERTm("cact_read did not read () as null", cact_is_null(x));
 
     // List
     string = "(a)";
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
     cact_preserve(&cact, x);
     ASSERTm("cact_read not ok when reading list with one item", status == CACT_READ_OK);
     ASSERTm("cact_read did not read a list with one item", cact_is_pair(x));
@@ -194,9 +195,9 @@ TEST cact_read_list_test()
     ASSERTm("cact_read did not read second item in list", cact_is_null(cact_cdr(&cact, x)));
 
     string = "(d c b a)";
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
-    ASSERTm("cact_read not ok when reading list", status == CACT_READ_OK);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
+    ASSERTm("cact_read not ok when reading medium sized list", status == CACT_READ_OK);
     ASSERTm("cact_read did not read a list", cact_is_pair(x));
 
     CACT_LIST_FOR_EACH_PAIR(&cact, p, x) {
@@ -207,11 +208,11 @@ TEST cact_read_list_test()
     }
 
     string = "(define double (lambda (x) (+ x x)))";
-    cact_lexer_init(&cact.lexer, string);
+    cact_lexer_init(&lexer, string);
     // printtokstream(&l);
 
-    status = cact_read(&cact, &x);
-    ASSERTm("cact_read not ok when reading list", status == CACT_READ_OK);
+    status = cact_read(&cact, &lexer, &x);
+    ASSERTm("cact_read not ok when reading definition", status == CACT_READ_OK);
     PASS();
 }
 
@@ -222,8 +223,8 @@ TEST cact_read_quote_test()
     char* string = NULL;
 
     string = "'a";
-    cact_lexer_init(&cact.lexer, string);
-    status = cact_read(&cact, &x);
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
     ASSERTm("cact_read not ok when reading quoted symbol", status == CACT_READ_OK);
 
     PASS();

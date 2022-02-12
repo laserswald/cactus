@@ -36,7 +36,7 @@ cact_raise(struct cactus *cact, struct cact_val exn)
 {
     struct cact_cont *current = SLIST_FIRST(&cact->conts);
 
-    while (! current->exn_handler && current) {
+    while (current && ! current->exn_handler) {
         current = SLIST_NEXT(current, parent);
     }
 

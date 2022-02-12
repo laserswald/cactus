@@ -21,10 +21,9 @@
 
 (define list-ref 
   (lambda (l i)
-    (if (and (eqv? i 0)
-             (pair? l))
-      (car l)
-      (list-ref (cdr l) (- i 1)))))
+    (if (eqv? i 0)
+        (car l)
+        (list-ref (cdr l) (- i 1)))))
 
 (define list-tail
   (lambda (x k)

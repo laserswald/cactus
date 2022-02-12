@@ -1,5 +1,8 @@
+(load "rt/test.scm")
 
 (define id
   (lambda (x) x))
 
-(display (id 1))
+(assert (= (id 1) 1) "identity function")
+
+(show-report)

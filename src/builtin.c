@@ -130,38 +130,6 @@ cact_builtin_exit(struct cactus *cact, struct cact_val x)
 }
 
 struct cact_val
-cact_builtin_load(struct cactus *cact, struct cact_val x)
-{
-    struct cact_val fname = cact_car(cact, x);
-    if (! cact_is_string(fname)) {
-        return cact_make_error(cact, "`load` expects a string", x);
-    }
-
-    FILE *f = fopen(cact_to_string(fname, "load")->str, "r");
-    if (! f) {
-        return cact_make_error(cact, "load: no file found", fname);
-    }
-
-    // Need to save the current reader state
-    struct cact_lexer prev_lexer = cact->lexer;
-
-    struct cact_cont *nc = (struct cact_cont*)cact_alloc(cact, CACT_OBJ_CONT);
-    cact_cont_init(nc, cact_current_env(cact), NULL);
-    cact_call_stack_push(cact, nc);
-
-    struct cact_val result = cact_eval_file(cact, f);
-    if (cact_is_error(result)) {
-        cact_fdisplay(stderr, result);
-        return cact_make_error(cact, "load: could not read file", fname);
-    }
-
-    cact_call_stack_pop(cact);
-    cact->lexer = prev_lexer;
-
-    return CACT_UNDEF_VAL;
-}
-
-struct cact_val
 cact_builtin_not(struct cactus *cact, struct cact_val x)
 {
     struct cact_val arg = cact_car(cact, x);

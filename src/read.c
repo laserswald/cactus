@@ -354,12 +354,11 @@ lextobool(struct cactus *cact, struct cact_lexeme lx)
 
 /* Read a list from the given lexer and fill the cact_val with it. */
 int
-readlist(struct cactus *cact, struct cact_val *r)
+readlist(struct cactus *cact, struct cact_lexer *l,  struct cact_val *r)
 {
     assert(cact);
     assert(r);
 
-    struct cact_lexer *l = &cact->lexer;
     int status;
 
     *r = CACT_NULL_VAL;
@@ -375,7 +374,7 @@ readlist(struct cactus *cact, struct cact_val *r)
 
     while (! peekistok(l, CACT_TOKEN_CLOSE_PAREN) && peeklex(l).t > 0) {
         struct cact_val e;
-        status = cact_read(cact, &e);
+        status = cact_read(cact, l, &e);
         cact_preserve(cact, e);
         if (status != CACT_READ_OK) {
             return status;
@@ -412,10 +411,10 @@ readlist(struct cactus *cact, struct cact_val *r)
 
 /* Read the next valid s-expression from the lexer. */
 enum cact_read_status
-cact_read(struct cactus* cact, struct cact_val* ret) {
+cact_read(struct cactus* cact, struct cact_lexer *l, struct cact_val* ret) 
+{
     int status = CACT_READ_IN_PROGRESS;
     *ret = CACT_NULL_VAL;
-    struct cact_lexer *l = &cact->lexer;
 
     struct cact_lexeme lx;
 
@@ -463,7 +462,7 @@ cact_read(struct cactus* cact, struct cact_val* ret) {
         /* Data structures. */
 
         case CACT_TOKEN_OPEN_PAREN:
-            status = readlist(cact, ret);
+            status = readlist(cact, l, ret);
             break;
 
         /* Extra syntax. */
@@ -471,7 +470,7 @@ cact_read(struct cactus* cact, struct cact_val* ret) {
         case CACT_TOKEN_SINGLE_QUOTE:
             nextlex(l);
             struct cact_val quoted;
-            status = cact_read(cact, &quoted);
+            status = cact_read(cact, l, &quoted);
             struct cact_val q = cact_make_symbol(cact, "quote");
             *ret = cact_cons(cact, q, quoted);
             status = CACT_READ_OK;

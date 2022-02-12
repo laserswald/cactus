@@ -62,8 +62,6 @@ TEST append_test()
     ASSERTm("cdr of pair was not nil", cact_is_null(cact_cdr(&cact, cact_cdr(&cact, cact_cdr(&cact, pair)))));
     cact_unpreserve(&cact, pair);
 
-    fprintf(stderr, "success!\n");
-
     PASS();
 }
 

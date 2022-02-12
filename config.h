@@ -56,7 +56,6 @@ struct cact_builtin builtins[] = {
     {"error-irritants", cact_builtin_error_irritants},
     */
 
-    {"load", cact_builtin_load},
     {"exit", cact_builtin_exit},
     {"interaction-environment", cact_builtin_interaction_environment},
     {"collect-garbage", cact_builtin_collect_garbage},

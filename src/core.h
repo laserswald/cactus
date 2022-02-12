@@ -22,7 +22,6 @@ ARRAY_DECL(cact_obj_vec, struct cact_obj *);
 struct cactus {
 	struct cact_env         *root_env;
 	struct cact_cont_stack   conts;
-	struct cact_lexer        lexer;
 	struct cact_symbol_table interned_syms;
 	struct cact_store        store;
 	struct cact_obj_vec      preserved;

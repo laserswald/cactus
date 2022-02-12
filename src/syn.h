@@ -15,6 +15,7 @@ bool is_conditional(struct cactus *cact, struct cact_val x);
 bool is_lambda(struct cactus *cact, struct cact_val x);
 bool is_sequence(struct cactus *cact, struct cact_val x);
 bool is_application(struct cactus *cact, struct cact_val x);
+bool is_inclusion(struct cactus *cact, struct cact_val x);
 
 #endif // syn_h_INCLUDED
 
