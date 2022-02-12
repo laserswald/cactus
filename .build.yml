@@ -1,0 +1,7 @@
+image: alpine/edge
+packages:
+	- gcc
+    - make
+tasks:
+	- build: |
+		make
