@@ -37,13 +37,13 @@ cact_str_coords_push(struct cact_str_coords *cds, int c)
 static int
 is_initial_identifier(int i)
 {
-    return i != 0 && (isalpha(i) || strchr("!$%&*/:<=>?@^_~", i) != NULL);
+    return i != 0 && (isalpha(i) || strchr("!$%&*/:<=>?^_~", i) != NULL);
 }
 
 static int
 is_subsequent_identifier(int i)
 {
-    return i != 0 && (isalpha(i) || isdigit(i) || strchr("!$%&*./:<=>?@^_~", i) != NULL);
+    return i != 0 && (is_initial_identifier(i) || isdigit(i) || strchr("+-.@", i) != NULL);
 }
 
 /* Return 0 if the character is double quote, 1 otherwise. */
@@ -189,9 +189,14 @@ cact_lexer_minus_and_plus(struct cact_lexer *l, struct cact_lexeme *le)
     int c = cact_lexer_peekc(l);
     if (isdigit(c)) {
 		cact_lexer_unsigned_number(l, le);
-    } else {
+    } else if (is_subsequent_identifier(c)) {
         le->t = CACT_TOKEN_IDENTIFIER;
-        cact_lexer_charspan(l, is_ident);
+        cact_lexer_charspan(l, is_subsequent_identifier);
+    } else if (isspace(c)) {
+	    // Handle just '+' or '-'
+        le->t = CACT_TOKEN_IDENTIFIER;
+    } else {
+	    le->t = CACT_TOKEN_ERROR;
     }
 }
 
@@ -211,9 +216,9 @@ nextlex(struct cact_lexer* l)
     } else if (isspace(c)) {
         le.t = CACT_TOKEN_WHITESPACE;
         cact_lexer_charspan(l, isspace);
-    } else if (is_ident(c)) {
+    } else if (is_initial_identifier(c)) {
         le.t = CACT_TOKEN_IDENTIFIER;
-        cact_lexer_charspan(l, is_ident);
+        cact_lexer_charspan(l, is_subsequent_identifier);
     } else if (isdigit(c)) {
 	    cact_lexer_unsigned_number(l, &le);
     } else if (c == '-' || c == '+') {
