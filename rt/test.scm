@@ -19,10 +19,10 @@
 (define show-report
   (lambda ()
     (newline)
-    (display "passed: ")
+    (display "  passed: ")
     (display *passed*)
     (newline)
-    (display "failed: ")
+    (display "  failed: ")
     (display *failed*)
     (newline)))
   

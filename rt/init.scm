@@ -19,6 +19,16 @@
       (cons (f (car l))
             (map f (cdr l))))))
 
+(define for-each
+  (lambda (f l)
+    (define loop
+      (lambda (l)
+        (if (not (null? l))
+          (begin
+            (f (car l))
+            (loop (cdr l))))))
+    (loop l)))
+
 (define list-ref 
   (lambda (l i)
     (if (eqv? i 0)

@@ -287,16 +287,13 @@ cact_eval_definition(struct cactus *cact, struct cact_cont *cc)
 void
 cact_eval_sequence(struct cactus *cact, struct cact_cont *cc)
 {
-    assert(cc->env->entries.count != 0);
     // If we have no more items to evaluate, then we are done.
     if (cact_is_null(cc->unevaled)) {
 	    cact_cont_finish(cc);
     }
 
-    if (! cact_is_pair(cc->unevaled)) {
-        // If we don't have a pair, then queue up this expression for evaluation, and
-        // then return it after it's done evaluating.
-        cc->expr = cc->unevaled;
+    if (cact_is_null(cact_cdr(cact, cc->unevaled))) {
+	    cc->expr = cact_car(cact, cc->unevaled);
 	    cact_cont_step(cc, CACT_JMP_EVAL_SINGLE);
     }
 
