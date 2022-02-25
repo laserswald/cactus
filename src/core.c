@@ -251,15 +251,19 @@ cact_show_call_stack(struct cactus *cact)
 
     DBG("; cactus: call stack:\n");
     SLIST_FOREACH(c, &cact->conts, parent) {
-        DBG("; === call stack entry === :\n");
+        DBG("; frame: ");
         printf("%s\n", cact_cont_show_state(c->state));
-        DBG("; === environment === :\n");
-        print_env(c->env);
-        DBG("; === retval === :\n");
+        DBG("  ; retval: ");
         cact_display(c->retval);
         puts("");
-        DBG("; === expression === :\n");
+        DBG("  ; expression: ");
         cact_display(c->expr);
+        puts("");
+        DBG("  ; unevaluated: ");
+        cact_display(c->unevaled);
+        puts("");
+        DBG("  ; argl: ");
+        cact_display(c->argl);
         puts("");
     }
 }

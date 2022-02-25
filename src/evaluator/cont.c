@@ -52,7 +52,9 @@ cact_mark_cont(struct cact_obj *o)
     cact_obj_mark((struct cact_obj *)c->env);
     cact_obj_mark((struct cact_obj *)c->exn_handler);
     cact_obj_mark((struct cact_obj *)c->proc);
-    cact_obj_mark((struct cact_obj *) SLIST_NEXT(c, parent));
+    if (SLIST_NEXT(c, parent)) {
+	    cact_obj_mark((struct cact_obj *) SLIST_NEXT(c, parent));
+    }
     cact_mark_val(c->argl);
     cact_mark_val(c->expr);
     cact_mark_val(c->retval);
