@@ -34,9 +34,9 @@ cact_cont_init(struct cact_cont *cont, struct cact_env *env, struct cact_proc *p
 void
 cact_cont_init_load(struct cact_cont *cont, struct cact_env *env, char *string)
 {
-	cact_cont_init(cont, env, NULL);
-	cact_lexer_init(&cont->lexer, string);
-	cont->state = CACT_JMP_LOAD;
+    cact_cont_init(cont, env, NULL);
+    cact_lexer_init(&cont->lexer, string);
+    cont->state = CACT_JMP_LOAD;
 }
 
 /*
@@ -53,7 +53,7 @@ cact_mark_cont(struct cact_obj *o)
     cact_obj_mark((struct cact_obj *)c->exn_handler);
     cact_obj_mark((struct cact_obj *)c->proc);
     if (SLIST_NEXT(c, parent)) {
-	    cact_obj_mark((struct cact_obj *) SLIST_NEXT(c, parent));
+        cact_obj_mark((struct cact_obj *) SLIST_NEXT(c, parent));
     }
     cact_mark_val(c->argl);
     cact_mark_val(c->expr);
@@ -64,7 +64,7 @@ cact_mark_cont(struct cact_obj *o)
 void
 cact_destroy_cont(struct cact_obj *o)
 {
-	return;
+    return;
 }
 
 const char *
@@ -133,8 +133,8 @@ cact_cont_start(struct cactus *cact, struct cact_cont *cont)
     switch (setjmp(cont->bounce)) {
     case CACT_BOUNCE_START:
     case CACT_BOUNCE_CONTINUE:
-	    cact_cont_do_step(cact, cont);
-	    break;
+        cact_cont_do_step(cact, cont);
+        break;
 
     case CACT_BOUNCE_FINISH:
         cact_cont_complete(cact, cont);
@@ -149,8 +149,8 @@ cact_cont_start(struct cactus *cact, struct cact_cont *cont)
 void
 cact_cont_do_step(struct cactus *cact, struct cact_cont *cont)
 {
-	cont->is_started = true;
-	switch (cont->state) {
+    cont->is_started = true;
+    switch (cont->state) {
     case CACT_JMP_EVAL_SINGLE:
         cact_eval_prim(cact, cont);
         break;
@@ -203,7 +203,7 @@ cact_cont_do_step(struct cactus *cact, struct cact_cont *cont)
 void
 cact_cont_continue(struct cact_cont *cont)
 {
-	assert(cont->is_started);
+    assert(cont->is_started);
     longjmp(cont->bounce, CACT_BOUNCE_CONTINUE);
 }
 
@@ -214,10 +214,10 @@ cact_cont_step(struct cact_cont *cont, enum cact_cont_state state)
     cact_cont_continue(cont);
 }
 
-void 
+void
 cact_cont_finish(struct cact_cont *cont)
 {
-	assert(cont->is_started);
+    assert(cont->is_started);
     longjmp(cont->bounce, CACT_BOUNCE_FINISH);
 }
 
@@ -225,7 +225,7 @@ void
 cact_cont_return(struct cact_cont *cont, struct cact_val value)
 {
     cont->retval = value;
-	cact_cont_finish(cont);
+    cact_cont_finish(cont);
 }
 
 

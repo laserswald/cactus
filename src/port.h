@@ -34,7 +34,7 @@ cact_port_read_char(struct cactus *cact, struct cact_port *port);
 struct cact_val
 cact_port_peek_char(struct cactus *cact, struct cact_port *port);
 
-void
+struct cact_val
 cact_port_write_char(struct cactus *cact, struct cact_port *port, char c);
 
 void
