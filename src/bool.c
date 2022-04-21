@@ -1,9 +1,9 @@
 #include "bool.h"
 
 /*
- * Return true if this value is true according to an 
- * if expression. 
- * 
+ * Return true if this value is true according to an
+ * if expression.
+ *
  * That is, not #f.
  */
 bool

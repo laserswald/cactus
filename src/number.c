@@ -18,26 +18,26 @@ DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_number, cact_is_number)
 bool
 cact_is_zero(struct cact_val x)
 {
-	if (cact_is_fixnum(x)) {
-		return x.as.fixnum == 0;
-	} else if (cact_is_flonum(x)) {
-		return x.as.flonum == 0.0;
-	} else {
-		return false;
-	}
+    if (cact_is_fixnum(x)) {
+        return x.as.fixnum == 0;
+    } else if (cact_is_flonum(x)) {
+        return x.as.flonum == 0.0;
+    } else {
+        return false;
+    }
 }
 DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_zero, cact_is_zero)
 
 struct cact_val
 cact_to_inexact(struct cactus *cact, struct cact_val x)
 {
-	if (cact_is_flonum(x)) {
-		return x;
-	} else if (cact_is_fixnum(x)) {
-		return CACT_FLO_VAL(x.as.fixnum);
-	} else {
-		cact_raise(cact, cact_make_error(cact, "Not a number", x));
-	}
+    if (cact_is_flonum(x)) {
+        return x;
+    } else if (cact_is_fixnum(x)) {
+        return CACT_FLO_VAL(x.as.fixnum);
+    } else {
+        cact_raise(cact, cact_make_error(cact, "Not a number", x));
+    }
 }
 
 #define CACT_DEFINE_COMPARATOR(name, op) \
@@ -133,7 +133,7 @@ CACT_DEFINE_DIVISION_OP(cact_divide, /)
 struct cact_val
 cact_builtin_plus(struct cactus *cact, struct cact_val args)
 {
-	struct cact_val sum = CACT_FIX_VAL(0);
+    struct cact_val sum = CACT_FIX_VAL(0);
     CACT_LIST_FOR_EACH_ITEM(cact, addend, args) {
         sum = cact_add(cact, sum, addend);
     }
@@ -143,7 +143,7 @@ cact_builtin_plus(struct cactus *cact, struct cact_val args)
 struct cact_val
 cact_builtin_times(struct cactus *cact, struct cact_val args)
 {
-	struct cact_val product = CACT_FIX_VAL(1);
+    struct cact_val product = CACT_FIX_VAL(1);
     CACT_LIST_FOR_EACH_ITEM(cact, factor, args) {
         product = cact_multiply(cact, product, factor);
     }
@@ -153,29 +153,29 @@ cact_builtin_times(struct cactus *cact, struct cact_val args)
 struct cact_val
 cact_builtin_minus(struct cactus *cact, struct cact_val x)
 {
-	struct cact_val initial = cact_car(cact, x);
-	if (cact_is_null(cact_cdr(cact, x))) {
-		return cact_subtract(cact, CACT_FIX_VAL(0), initial);
-	} else {
-		struct cact_val rest = cact_cdr(cact, x);
-	    CACT_LIST_FOR_EACH_ITEM(cact, subtrahend, rest) {
-		    initial = cact_subtract(cact, initial, subtrahend);
-	    }
-		return initial;
-	}
+    struct cact_val initial = cact_car(cact, x);
+    if (cact_is_null(cact_cdr(cact, x))) {
+        return cact_subtract(cact, CACT_FIX_VAL(0), initial);
+    } else {
+        struct cact_val rest = cact_cdr(cact, x);
+        CACT_LIST_FOR_EACH_ITEM(cact, subtrahend, rest) {
+            initial = cact_subtract(cact, initial, subtrahend);
+        }
+        return initial;
+    }
 }
 
 struct cact_val
 cact_builtin_divide(struct cactus *cact, struct cact_val x)
 {
-	struct cact_val initial = cact_car(cact, x);
-	if (cact_is_null(cact_cdr(cact, x))) {
-		return cact_divide(cact, CACT_FIX_VAL(1), initial);
-	} else {
-		struct cact_val rest = cact_cdr(cact, x);
-	    CACT_LIST_FOR_EACH_ITEM(cact, divisor, rest) {
-		    initial = cact_divide(cact, initial, divisor);
-	    }
-		return initial;
-	}
+    struct cact_val initial = cact_car(cact, x);
+    if (cact_is_null(cact_cdr(cact, x))) {
+        return cact_divide(cact, CACT_FIX_VAL(1), initial);
+    } else {
+        struct cact_val rest = cact_cdr(cact, x);
+        CACT_LIST_FOR_EACH_ITEM(cact, divisor, rest) {
+            initial = cact_divide(cact, initial, divisor);
+        }
+        return initial;
+    }
 }

@@ -171,15 +171,15 @@ cact_env_is_bound(struct cact_env *e, struct cact_symbol *key)
 }
 
 int
-cact_env_num_bindings(struct cact_env *e) 
+cact_env_num_bindings(struct cact_env *e)
 {
-	int count = e->entries.count;
+    int count = e->entries.count;
 
-	if (e->parent) {
-		return count + cact_env_num_bindings(e->parent);
-	}
+    if (e->parent) {
+        return count + cact_env_num_bindings(e->parent);
+    }
 
-	return count;
+    return count;
 }
 
 /*
