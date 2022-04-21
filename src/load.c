@@ -20,9 +20,9 @@ cact_eval_file(struct cactus *cact, FILE *in)
 struct cact_val
 cact_eval_string(struct cactus *cact, char *s)
 {
-	struct cact_cont *cc = cact_current_cont(cact);
-	cact_cont_init_load(cc, cact_current_env(cact), s);
-	cact_cont_start(cact, cc);
-	return cc->retval;
+    struct cact_cont *cc = cact_current_cont(cact);
+    cact_cont_init_load(cc, cact_current_env(cact), s);
+    cact_cont_start(cact, cc);
+    return cc->retval;
 }
 
