@@ -166,7 +166,7 @@ printlex(struct cact_lexeme lx)
 void
 cact_lexer_decimal(struct cact_lexer *l, struct cact_lexeme *le)
 {
-	le->t = CACT_TOKEN_FLOAT;
+    le->t = CACT_TOKEN_FLOAT;
     cact_lexer_getc(l);
     cact_lexer_charspan(l, isdigit);
 }
@@ -174,29 +174,29 @@ cact_lexer_decimal(struct cact_lexer *l, struct cact_lexeme *le)
 void
 cact_lexer_unsigned_number(struct cact_lexer *l, struct cact_lexeme *le)
 {
-	le->t = CACT_TOKEN_INTEGER;
+    le->t = CACT_TOKEN_INTEGER;
     cact_lexer_charspan(l, isdigit);
     int c = cact_lexer_peekc(l);
     if (c == '.') {
-	    cact_lexer_decimal(l, le);
+        cact_lexer_decimal(l, le);
     }
 }
 
 void
 cact_lexer_minus_and_plus(struct cact_lexer *l, struct cact_lexeme *le)
 {
-	cact_lexer_getc(l);
+    cact_lexer_getc(l);
     int c = cact_lexer_peekc(l);
     if (isdigit(c)) {
-		cact_lexer_unsigned_number(l, le);
+        cact_lexer_unsigned_number(l, le);
     } else if (is_subsequent_identifier(c)) {
         le->t = CACT_TOKEN_IDENTIFIER;
         cact_lexer_charspan(l, is_subsequent_identifier);
     } else if (isspace(c)) {
-	    // Handle just '+' or '-'
+        // Handle just '+' or '-'
         le->t = CACT_TOKEN_IDENTIFIER;
     } else {
-	    le->t = CACT_TOKEN_ERROR;
+        le->t = CACT_TOKEN_ERROR;
     }
 }
 
@@ -220,9 +220,9 @@ nextlex(struct cact_lexer* l)
         le.t = CACT_TOKEN_IDENTIFIER;
         cact_lexer_charspan(l, is_subsequent_identifier);
     } else if (isdigit(c)) {
-	    cact_lexer_unsigned_number(l, &le);
+        cact_lexer_unsigned_number(l, &le);
     } else if (c == '-' || c == '+') {
-	    cact_lexer_minus_and_plus(l, &le);
+        cact_lexer_minus_and_plus(l, &le);
     } else if (c == '(') {
         le.t = CACT_TOKEN_OPEN_PAREN;
         cact_lexer_getc(l);
@@ -340,6 +340,12 @@ lextostr(struct cactus *cact, struct cact_lexeme lx)
     return cact_make_string(cact, strslice(lx.st + 1, &lx.st[lx.sz - 1]));
 }
 
+struct cact_val
+lextochar(struct cactus *cact, struct cact_lexeme lx)
+{
+	return CACT_CHAR_VAL(lx.st[2]);
+}
+
 /* Convert a lexeme to a boolean. */
 struct cact_val
 lextobool(struct cactus *cact, struct cact_lexeme lx)
@@ -411,8 +417,7 @@ readlist(struct cactus *cact, struct cact_lexer *l,  struct cact_val *r)
 
 /* Read the next valid s-expression from the lexer. */
 enum cact_read_status
-cact_read(struct cactus* cact, struct cact_lexer *l, struct cact_val* ret) 
-{
+cact_read(struct cactus* cact, struct cact_lexer *l, struct cact_val* ret) {
     int status = CACT_READ_IN_PROGRESS;
     *ret = CACT_NULL_VAL;
 
@@ -455,6 +460,11 @@ cact_read(struct cactus* cact, struct cact_lexer *l, struct cact_val* ret)
             break;
         case CACT_TOKEN_STRING:
             *ret = lextostr(cact, lx);
+            status = CACT_READ_OK;
+            nextlex(l);
+            break;
+        case CACT_TOKEN_CHARACTER:
+            *ret = lextochar(cact, lx);
             status = CACT_READ_OK;
             nextlex(l);
             break;

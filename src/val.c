@@ -136,8 +136,8 @@ cact_val_equal(struct cact_val l, struct cact_val r)
 
     return false;
 }
-
 DEFINE_COMPARISON_BUILTIN(cact_builtin_equal, cact_val_equal)
+
 void
 cact_mark_val(struct cact_val v)
 {

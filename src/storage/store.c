@@ -8,6 +8,7 @@
 #include "env.h"
 #include "err.h"
 #include "vec.h"
+#include "port.h"
 
 #include "storage/arena_set.h"
 
@@ -35,6 +36,7 @@ cact_store_init(struct cact_store *store)
         {CACT_OBJ_ENVIRONMENT, sizeof(struct cact_env)},
         {CACT_OBJ_CONT, sizeof(struct cact_cont)},
         {CACT_OBJ_ERROR, sizeof(struct cact_error)},
+        {CACT_OBJ_PORT, sizeof(struct cact_port)},
         {CACT_OBJ_VECTOR, sizeof(struct cact_vec)},
     };
 
@@ -97,6 +99,7 @@ cact_store_show(struct cact_store *store)
     }
 }
 
+#undef CACT_GC_STRESS
 bool
 cact_store_needs_sweep(struct cact_store *store)
 {

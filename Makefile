@@ -19,7 +19,7 @@ TESTBIN_OBJS = $(TESTBIN_SRCS:.c=.o)
 all: $(BINARY) test
 
 test: $(TESTBIN) $(BINARY)
-	exec ./$(TESTBIN) -v
+	exec ./$(TESTBIN)
 	tests/fixtures/run_all.sh
 
 clean:

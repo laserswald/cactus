@@ -54,19 +54,18 @@ name(struct cactus *cact, struct cact_val args) \
 #define BUILTIN_FUNC(name) \
 	struct cact_val name(struct cactus *, struct cact_val)
 
-BUILTIN_FUNC(cact_builtin_if);
 BUILTIN_FUNC(cact_builtin_car);
 BUILTIN_FUNC(cact_builtin_cdr);
 BUILTIN_FUNC(cact_builtin_cons);
 BUILTIN_FUNC(cact_builtin_is_nil);
 BUILTIN_FUNC(cact_builtin_is_pair);
+
 BUILTIN_FUNC(cact_builtin_is_boolean);
 BUILTIN_FUNC(cact_builtin_not);
 BUILTIN_FUNC(cact_builtin_eq);
 BUILTIN_FUNC(cact_builtin_eqv);
 BUILTIN_FUNC(cact_builtin_equal);
-BUILTIN_FUNC(cact_builtin_display);
-BUILTIN_FUNC(cact_builtin_newline);
+
 BUILTIN_FUNC(cact_builtin_exit);
 BUILTIN_FUNC(cact_builtin_load);
 BUILTIN_FUNC(cact_builtin_interaction_environment);
@@ -90,6 +89,17 @@ BUILTIN_FUNC(cact_builtin_vector_ref);
 BUILTIN_FUNC(cact_builtin_vector_set);
 BUILTIN_FUNC(cact_builtin_vector_length);
 
+/* Input and output */
+BUILTIN_FUNC(cact_builtin_open_input_file);
+BUILTIN_FUNC(cact_builtin_is_input_port);
+BUILTIN_FUNC(cact_builtin_read_char);
+BUILTIN_FUNC(cact_builtin_close_input_port);
+BUILTIN_FUNC(cact_builtin_open_output_file);
+BUILTIN_FUNC(cact_builtin_is_output_port);
+BUILTIN_FUNC(cact_builtin_write_char);
+BUILTIN_FUNC(cact_builtin_close_output_port);
+BUILTIN_FUNC(cact_builtin_display);
+BUILTIN_FUNC(cact_builtin_newline);
 
 #endif // cact_builtin_h_INCLUDED
 

@@ -11,10 +11,7 @@ enum cact_obj_type {
 	CACT_OBJ_ENVIRONMENT,
 	CACT_OBJ_CONT,
 	CACT_OBJ_ERROR,
-
-	/* TODO: Ports */
-	/* CACT_OBJ_PORT, */
-
+	CACT_OBJ_PORT,
 	CACT_OBJ_VECTOR,
 
 	/* TODO: Record types */
