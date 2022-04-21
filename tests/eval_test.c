@@ -122,8 +122,8 @@ teardown_eval_cb(void *data)
 
 SUITE(eval_tests)
 {
-	SET_SETUP(setup_eval_cb, (void*) NULL);
-	SET_TEARDOWN(teardown_eval_cb, (void*) NULL);
+    SET_SETUP(setup_eval_cb, (void*) NULL);
+    SET_TEARDOWN(teardown_eval_cb, (void*) NULL);
 
     RUN_TEST(eval_selfeval_test);
     RUN_TEST(eval_quote_test);

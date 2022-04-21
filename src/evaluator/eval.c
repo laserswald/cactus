@@ -104,7 +104,7 @@ cact_eval_prim(struct cactus *cact, struct cact_cont *cc)
     }
 
     if (is_variable(cact, cc->expr)) {
-	    assert(cact_env_num_bindings(cc->env) != 0);
+        assert(cact_env_num_bindings(cc->env) != 0);
         cact_cont_return(
             cc,
             cact_env_lookup(
@@ -289,12 +289,12 @@ cact_eval_sequence(struct cactus *cact, struct cact_cont *cc)
 {
     // If we have no more items to evaluate, then we are done.
     if (cact_is_null(cc->unevaled)) {
-	    cact_cont_finish(cc);
+        cact_cont_finish(cc);
     }
 
     if (cact_is_null(cact_cdr(cact, cc->unevaled))) {
-	    cc->expr = cact_car(cact, cc->unevaled);
-	    cact_cont_step(cc, CACT_JMP_EVAL_SINGLE);
+        cc->expr = cact_car(cact, cc->unevaled);
+        cact_cont_step(cc, CACT_JMP_EVAL_SINGLE);
     }
 
     struct cact_cont *nc = push_new_cont(cact, cc);
@@ -364,9 +364,9 @@ void
 cact_eval_arg_pop(struct cactus *cact, struct cact_cont *cc)
 {
     if (cact_is_null(cc->unevaled)) {
-	    if (cc->proc->nativefn) {
-	        cact_cont_step(cc, CACT_JMP_APPLY);
-	    }
+        if (cc->proc->nativefn) {
+            cact_cont_step(cc, CACT_JMP_APPLY);
+        }
         cact_cont_step(cc, CACT_JMP_EXTEND_ENV);
     }
 
@@ -432,10 +432,10 @@ cact_eval_apply(struct cactus *cact, struct cact_cont *cc)
     }
 }
 
-void 
+void
 cact_eval_start_include(struct cactus *cact, struct cact_val expr)
 {
-	struct cact_cont *cc = cact_current_cont(cact);
+    struct cact_cont *cc = cact_current_cont(cact);
     struct cact_val fname = cact_cadr(cact, expr);
     if (! cact_is_string(fname)) {
         cact_raise(cact, cact_make_error(cact, "`include` expects a string", expr));
@@ -453,15 +453,15 @@ cact_eval_start_include(struct cactus *cact, struct cact_val expr)
 void
 cact_eval_include(struct cactus *cact, struct cact_cont *cc)
 {
-	struct cact_val v;
+    struct cact_val v;
 
     int status = cact_read(cact, &cc->lexer, &v);
     cact_preserve(cact, v);
 
     if (status == CACT_READ_OK) {
-		struct cact_cont *nc = push_new_cont(cact, cc);
-		nc->expr = v;
-	    cact_cont_start(cact, nc);
+        struct cact_cont *nc = push_new_cont(cact, cc);
+        nc->expr = v;
+        cact_cont_start(cact, nc);
     }
 
     cact_unpreserve(cact, v);
