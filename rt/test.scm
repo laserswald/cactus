@@ -2,6 +2,7 @@
 
 (define *failed* 0)
 (define *passed* 0)
+(define *tests-loud* #f)
 
 (define assert
   (lambda (thing msg)
@@ -13,7 +14,11 @@
         (newline)
         (set! *failed* (+ 1 *failed*)))
       (begin
-       (display ".")
+       (if *tests-loud*
+         (begin
+           (display "PASS: ")
+           (displayln msg))
+         (display "."))
        (set! *passed* (+ 1 *passed*))))))
 
 (define show-report

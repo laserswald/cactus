@@ -36,6 +36,8 @@ unpack_typecheck(const struct cact_val arg, const char c)
         return cact_is_vector(arg);
     case 'i':
         return cact_is_fixnum(arg);
+    case 's':
+        return cact_is_string(arg);
     }
     fprintf(stdout, "cactus: fatal error: could not understand unpack args character '%c'", c);
     abort();
@@ -156,6 +158,13 @@ struct cact_val
 cact_builtin_error(struct cactus *cact, struct cact_val x)
 {
     return cact_make_error(cact, cact_to_string(cact_car(cact, x), "error")->str, cact_cdr(cact, x));
+}
+
+struct cact_val
+cact_builtin_raise(struct cactus *cact, struct cact_val args)
+{
+    cact_raise(cact, args);
+    return CACT_UNDEF_VAL;
 }
 
 struct cact_val

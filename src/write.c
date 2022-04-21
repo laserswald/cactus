@@ -62,6 +62,9 @@ fprint_obj(FILE *f, struct cact_obj *obj)
     case CACT_OBJ_VECTOR:
         return fprintf(f, "#<vector: %p>", (void*)obj);
 
+    case CACT_OBJ_PORT:
+        return fprintf(f, "#<port: %p>", (void*)obj);
+
     case CACT_OBJ_ERROR: {
         struct cact_error *err = (struct cact_error *)obj;
         chars += fprintf(f, "; error '%s' : ", err->msg);
@@ -82,6 +85,8 @@ cact_fdisplay(FILE *f, struct cact_val x)
         return 0;
     case CACT_TYPE_NULL:
         return fprintf(f, "()");
+    case CACT_TYPE_EOF:
+        return fprintf(f, "#<eof>");
     case CACT_TYPE_FIXNUM:
         return fprintf(f, "%li", x.as.fixnum);
     case CACT_TYPE_FLONUM:

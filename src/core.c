@@ -192,7 +192,7 @@ cact_collect_garbage(struct cactus *cact)
 {
     struct cact_cont *c;
 
-    // DBG("; cactus: starting garbage collection... \n");
+    DBG("; cactus: starting garbage collection... \n");
 
     // DBG("; cactus gc: marking root environment \n");
     cact_obj_mark((struct cact_obj *) cact->root_env);
@@ -210,13 +210,13 @@ cact_collect_garbage(struct cactus *cact)
     }
 
     int swept = cact_store_sweep(&cact->store);
-    // DBG("; cactus gc: swept %d objects \n", swept);
+    DBG("; cactus gc: swept %d objects \n", swept);
 
     return swept;
 }
 
-/* 
- * Allocate a new object of a given type. 
+/*
+ * Allocate a new object of a given type.
  */
 struct cact_obj *
 cact_alloc(struct cactus *cact, enum cact_obj_type t)
@@ -224,14 +224,16 @@ cact_alloc(struct cactus *cact, enum cact_obj_type t)
     assert(cact != NULL);
 
     if (cact_store_needs_sweep(&cact->store) && cact->gc_enabled) {
+        DBG("; cactus: starting garbage collection... \n");
+        cact_store_show(&cact->store);
         cact_collect_garbage(cact);
     }
 
     return cact_store_allocate(&cact->store, t);
 }
 
-/* 
- * Finish a function call or macro expansion. 
+/*
+ * Finish a function call or macro expansion.
  */
 void
 cact_call_stack_pop(struct cactus *cact)

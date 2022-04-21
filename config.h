@@ -46,11 +46,19 @@ struct cact_builtin builtins[] = {
 
     {"display", cact_builtin_display},
     {"newline", cact_builtin_newline},
+    {"open-input-file", cact_builtin_open_input_file},
+    {"input-port?", cact_builtin_is_input_port},
+    {"read-char", cact_builtin_read_char},
+    {"open-output-file", cact_builtin_open_output_file},
+    {"output-port?", cact_builtin_is_output_port},
+    {"write-char", cact_builtin_write_char},
+    {"close-input-port", cact_builtin_close_input_port},
+    {"close-output-port", cact_builtin_close_output_port},
 
     {"error", cact_builtin_error},
 
-    /*
     {"raise", cact_builtin_raise},
+    /*
     {"error-object?", cact_builtin_is_error_object},
     {"error-message", cact_builtin_error_message},
     {"error-irritants", cact_builtin_error_irritants},

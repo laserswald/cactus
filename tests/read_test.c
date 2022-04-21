@@ -10,6 +10,7 @@
 #include "pair.h"
 #include "num.h"
 #include "str.h"
+#include "char.h"
 
 #include "builtin.h"
 
@@ -21,14 +22,12 @@ TEST cact_read_null_test()
     int status = CACT_READ_OK;
     struct cact_val x = CACT_NULL_VAL;
     char* string = NULL;
-    cact_init(&cact);
 
     // No string
     cact_lexer_init(&lexer, string);
     status = cact_read(&cact, &lexer, &x);
     ASSERTm("cact_read with blank string did not return other error", status == CACT_READ_OTHER_ERROR);
 
-    cact_finish(&cact);
     PASS();
 }
 
@@ -37,7 +36,6 @@ TEST cact_read_blank_test()
     int status = CACT_READ_OK;
     struct cact_val x = CACT_NULL_VAL;
     char* string = NULL;
-    cact_init(&cact);
 
     // Blank string
     string = "";
@@ -55,7 +53,6 @@ TEST cact_read_whitespace_test()
     int status = CACT_READ_OK;
     struct cact_val x = CACT_NULL_VAL;
     char* string = NULL;
-    cact_init(&cact);
 
     // Blank string
     string = "\n \t";
@@ -170,6 +167,22 @@ TEST cact_read_string_test()
     PASS();
 }
 
+TEST cact_read_char_test()
+{
+    int status = CACT_READ_OK;
+    struct cact_val x = CACT_NULL_VAL;
+    char* string = NULL;
+
+    // basic characters
+    string = "#\\A";
+    cact_lexer_init(&lexer, string);
+    status = cact_read(&cact, &lexer, &x);
+    ASSERTm("cact_read not ok when reading string", status == CACT_READ_OK);
+    ASSERTm("cact_read did not read a character", cact_is_char(x));
+
+    PASS();
+}
+
 TEST cact_read_list_test()
 {
     int status = CACT_READ_OK;
@@ -242,6 +255,7 @@ SUITE(read_tests)
     RUN_TEST(cact_read_float_test);
     RUN_TEST(cact_read_boolean_test);
     RUN_TEST(cact_read_string_test);
+    RUN_TEST(cact_read_char_test);
     RUN_TEST(cact_read_list_test);
     RUN_TEST(cact_read_quote_test);
 

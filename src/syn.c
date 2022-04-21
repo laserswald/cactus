@@ -5,6 +5,7 @@
 #include "sym.h"
 #include "pair.h"
 #include "str.h"
+#include "char.h"
 #include "err.h"
 #include "env.h"
 
@@ -22,6 +23,7 @@ is_self_evaluating(struct cact_val x)
            || cact_is_number(x)
            || cact_is_procedure(x)
            || cact_is_string(x)
+           || cact_is_char(x)
            || cact_is_error(x)
            || cact_is_env(x);
 }

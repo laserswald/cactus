@@ -7,6 +7,7 @@
 struct cact_string {
 	struct cact_obj obj;
 	char *str;
+	int cbuf;
 };
 
 DEFINE_OBJECT_CONVERSION(CACT_OBJ_STRING,      struct cact_string *, cact_to_string,    str)
