@@ -4,37 +4,37 @@
 #include "err.h"
 
 /* Create a new heap-allocated error. */
-struct cact_val
-cact_make_error(struct cactus *cact, char *msg, struct cact_val irr)
+cact_value_t
+cact_make_error(cact_context_t *cact, char *msg, cact_value_t irr)
 {
-    struct cact_error *err = (struct cact_error *)cact_store_allocate(&cact->store, CACT_OBJ_ERROR);
+    cact_error_t *err = (cact_error_t *)cact_store_allocate(&cact->store, CACT_OBJ_ERROR);
     err->msg = xstrdup(msg); // strdup?
     err->ctx = irr;
-    return CACT_OBJ_VAL((struct cact_obj *)err);
+    return CACT_OBJ_VAL((cact_object_t *)err);
 }
 
 /* Mark an error as reachable. */
 void
-cact_mark_error(struct cact_obj *o)
+cact_mark_error(cact_object_t *o)
 {
-    struct cact_error *err = (struct cact_error *) o;
-    cact_mark_val(err->ctx);
+    cact_error_t *err = (cact_error_t *) o;
+    cact_mark_value(err->ctx);
 }
 
 /* Free the error's data, but not the error itself. */
 void
-cact_destroy_error(struct cact_obj *o)
+cact_destroy_error(cact_object_t *o)
 {
-    struct cact_error *err = (struct cact_error *) o;
+    cact_error_t *err = (cact_error_t *) o;
     xfree(err->msg);
-    cact_destroy_val(err->ctx);
+    cact_destroy_value(err->ctx);
 }
 
 /* Raise an exception. */
-struct cact_val
-cact_raise(struct cactus *cact, struct cact_val exn)
+cact_value_t
+cact_raise(cact_context_t *cact, cact_value_t exn)
 {
-    struct cact_cont *current = SLIST_FIRST(&cact->conts);
+    cact_frame_t *current = SLIST_FIRST(&cact->conts);
 
     while (! current->exn_handler && current) {
         current = SLIST_NEXT(current, parent);

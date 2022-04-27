@@ -9,7 +9,7 @@
 #include "vec.h"
 #include "core.h"
 
-const char* cact_obj_show_type(enum cact_obj_type t)
+const char* cact_obj_show_type(cact_object_type_t t)
 {
     switch (t) {
     case CACT_OBJ_PAIR:
@@ -31,20 +31,20 @@ const char* cact_obj_show_type(enum cact_obj_type t)
 }
 
 struct {
-    void (*mark_fn)(struct cact_obj *);
-    void (*destroy_fn)(struct cact_obj *);
+    void (*mark_fn)(cact_object_t *);
+    void (*destroy_fn)(cact_object_t *);
 } object_gc_methods[] = {
     [CACT_OBJ_PAIR] = {cact_mark_pair, cact_destroy_pair},
     [CACT_OBJ_STRING] = {cact_mark_string, cact_destroy_string},
     [CACT_OBJ_PROCEDURE] = {cact_mark_proc, cact_destroy_proc},
     [CACT_OBJ_ENVIRONMENT] = {cact_mark_env, cact_destroy_env},
-    [CACT_OBJ_CONT] = {cact_mark_cont, cact_destroy_cont},
+    [CACT_OBJ_CONT] = {cact_mark_frame, cact_destroy_frame},
     [CACT_OBJ_ERROR] = {cact_mark_error, cact_destroy_error},
     [CACT_OBJ_VECTOR] = {cact_mark_vec, cact_destroy_vec},
 };
 
 void
-cact_obj_mark(struct cact_obj *obj)
+cact_mark_object(cact_object_t *obj)
 {
     if (! obj) {
         return;
@@ -59,7 +59,7 @@ cact_obj_mark(struct cact_obj *obj)
 }
 
 void
-cact_obj_destroy(struct cact_obj *obj)
+cact_destroy_object(cact_object_t *obj)
 {
     if (! obj) {
         return;

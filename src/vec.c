@@ -12,16 +12,16 @@ DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_vector, cact_is_vector)
  * Build a vector of the specified length and filled with the specified item.
  * This is analogous to `make-vector len fill`. 
  */
-struct cact_val 
-cact_make_vec_filled(struct cactus *cact, unsigned long length, struct cact_val fill)
+cact_value_t 
+cact_make_vec_filled(cact_context_t *cact, unsigned long length, cact_value_t fill)
 {
     if (cact_is_obj(fill)) {
         cact_preserve(cact, fill);
     }
 
-    struct cact_vec *v = (struct cact_vec *) cact_alloc(cact, CACT_OBJ_VECTOR);
+    cact_vec_t *v = (cact_vec_t *) cact_alloc(cact, CACT_OBJ_VECTOR);
 
-    v->items = xcalloc(length, sizeof (struct cact_val));
+    v->items = xcalloc(length, sizeof (cact_value_t));
     v->length = length;
 
 	for (int i = 0; i < v->length; i++) {
@@ -35,10 +35,10 @@ cact_make_vec_filled(struct cactus *cact, unsigned long length, struct cact_val 
     return CACT_OBJ_VAL(v);
 }
 
-struct cact_val
-cact_builtin_make_vector(struct cactus *cact, struct cact_val args)
+cact_value_t
+cact_builtin_make_vector(cact_context_t *cact, cact_value_t args)
 {
-	struct cact_val lenarg = cact_car(cact, args);
+	cact_value_t lenarg = cact_car(cact, args);
 	if (! cact_is_fixnum(lenarg)) {
         return cact_make_error(cact, "make-vector: argument 1 must be a fixnum", args);
 	}
@@ -46,7 +46,7 @@ cact_builtin_make_vector(struct cactus *cact, struct cact_val args)
 	if (cact_is_null(cact_cdr(cact, args))) {
 		return cact_make_vec_empty(cact, cact_to_long(lenarg, "make-vector"));
 	} else {
-		struct cact_val fill = cact_cadr(cact, args);
+		cact_value_t fill = cact_cadr(cact, args);
 		return cact_make_vec_filled(cact, cact_to_long(lenarg, "make-vector"), fill);
 	}
 }
@@ -57,8 +57,8 @@ cact_builtin_make_vector(struct cactus *cact, struct cact_val args)
  * This does exactly the same thing as `cact_make_vec_filled`, but fills the
  * vector with the undefined value.
  */
-struct cact_val 
-cact_make_vec_empty(struct cactus *cact, unsigned long length)
+cact_value_t 
+cact_make_vec_empty(cact_context_t *cact, unsigned long length)
 {
     return cact_make_vec_filled(cact, length, CACT_UNDEF_VAL);
 }
@@ -70,12 +70,12 @@ cact_make_vec_empty(struct cactus *cact, unsigned long length)
  * all of the elements within a vector are marked.
  */
 void 
-cact_mark_vec(struct cact_obj *obj)
+cact_mark_vec(cact_object_t *obj)
 {
-	struct cact_vec *v = (struct cact_vec *) obj;
+	cact_vec_t *v = (cact_vec_t *) obj;
 
 	for (int i = 0; i < v->length; i++) {
-		cact_mark_val(v->items[i]);
+		cact_mark_value(v->items[i]);
 	}
 }
 
@@ -90,9 +90,9 @@ cact_mark_vec(struct cact_obj *obj)
  * (aka integers, bools, null, etc.) or object references.
  */
 void 
-cact_destroy_vec(struct cact_obj *obj)
+cact_destroy_vec(cact_object_t *obj)
 {
-	struct cact_vec *v = (struct cact_vec *) obj;
+	cact_vec_t *v = (cact_vec_t *) obj;
 
 	v->length = 0;
 	xfree(v->items);
@@ -103,8 +103,8 @@ cact_destroy_vec(struct cact_obj *obj)
  * 
  * This is literally array access. Nothing special to see here. 
  */
-struct cact_val 
-cact_vec_ref(struct cactus *cact, struct cact_vec *v, unsigned long index)
+cact_value_t 
+cact_vec_ref(cact_context_t *cact, cact_vec_t *v, unsigned long index)
 {
 	if (index >= v->length) {
 		// TODO: replace this with a raised exception
@@ -115,10 +115,10 @@ cact_vec_ref(struct cactus *cact, struct cact_vec *v, unsigned long index)
 	return v->items[index];
 }
 
-struct cact_val
-cact_builtin_vector_ref(struct cactus *cact, struct cact_val args)
+cact_value_t
+cact_builtin_vector_ref(cact_context_t *cact, cact_value_t args)
 {
-	struct cact_val v, idx;
+	cact_value_t v, idx;
 
     if (2 != cact_unpack_args(cact, args, "vi", &v, &idx)) {
         return cact_make_error(cact, "Did not get expected number of arguments", args);
@@ -134,7 +134,7 @@ cact_builtin_vector_ref(struct cactus *cact, struct cact_val args)
  * This is array assignment. Easy cheesy.
  */
 void
-cact_vec_set(struct cactus *cact, struct cact_vec *v, unsigned long index, struct cact_val new)
+cact_vec_set(cact_context_t *cact, cact_vec_t *v, unsigned long index, cact_value_t new)
 {
 	if (index >= v->length) {
 		// TODO: replace this with a raised exception
@@ -145,10 +145,10 @@ cact_vec_set(struct cactus *cact, struct cact_vec *v, unsigned long index, struc
 	v->items[index] = new;
 }
 
-struct cact_val
-cact_builtin_vector_set(struct cactus *cact, struct cact_val args)
+cact_value_t
+cact_builtin_vector_set(cact_context_t *cact, cact_value_t args)
 {
-	struct cact_val v, idx, val;
+	cact_value_t v, idx, val;
 
     if (3 != cact_unpack_args(cact, args, "vi.", &v, &idx, &val)) {
         return cact_make_error(cact, "Did not get expected number of arguments", args);
@@ -162,16 +162,16 @@ cact_builtin_vector_set(struct cactus *cact, struct cact_val args)
 /*
  * Access the length of this vector.
  */
-struct cact_val 
-cact_vec_len(struct cactus *cact, struct cact_vec *v)
+cact_value_t 
+cact_vec_len(cact_context_t *cact, cact_vec_t *v)
 {
 	return CACT_FIX_VAL(v->length);
 }
 
-struct cact_val
-cact_builtin_vector_length(struct cactus *cact, struct cact_val args)
+cact_value_t
+cact_builtin_vector_length(cact_context_t *cact, cact_value_t args)
 {
-	struct cact_val v;
+	cact_value_t v;
 
     if (1 != cact_unpack_args(cact, args, "v", &v)) {
         return cact_make_error(cact, "Did not get expected number of arguments", args);

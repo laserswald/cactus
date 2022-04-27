@@ -8,28 +8,30 @@
  * Check all the arguments in the argument list and
  */
 int
-cact_unpack_args(struct cactus *cact, struct cact_val arglist, const char *format, ...);
+cact_unpack_args(cact_context_t *cact, cact_value_t arglist, const char *format, ...);
 
 /*
  * A structure for quickly adding new native functions.
  */
 
-struct cact_builtin {
+typedef struct cact_builtin {
 	char* name;
-	cact_native_func fn;
-};
+	cact_native_func_t fn;
+} cact_builtin_t;
 
 /* Define a native procedure in the global default namespace */
-void cact_define_builtin(struct cactus *, const char *, cact_native_func);
+void 
+cact_define_builtin(cact_context_t *, const char *, cact_native_func_t);
 
 /* Define a set of procedures in the global default namespace */
-void cact_define_builtin_array(struct cactus *cact, struct cact_builtin *builtins, size_t len);
+void 
+cact_define_builtin_array(cact_context_t *cact, cact_builtin_t *builtins, size_t len);
 
 #define DEFINE_TYPE_PREDICATE_BUILTIN(name, fn) \
-struct cact_val \
-name(struct cactus *cact, struct cact_val args) \
+cact_value_t \
+name(cact_context_t *cact, cact_value_t args) \
 { \
-    struct cact_val x; \
+    cact_value_t x; \
     if (1 != cact_unpack_args(cact, args, ".", &x)) { \
         return cact_make_error(cact, "Did not get expected number of arguments", args); \
     } \
@@ -38,10 +40,10 @@ name(struct cactus *cact, struct cact_val args) \
 }
 
 #define DEFINE_COMPARISON_BUILTIN(name, fn) \
-struct cact_val \
-name(struct cactus *cact, struct cact_val args) \
+cact_value_t \
+name(cact_context_t *cact, cact_value_t args) \
 { \
-    struct cact_val x, y; \
+    cact_value_t x, y; \
     if (2 != cact_unpack_args(cact, args, "..", &x, &y)) { \
         return cact_make_error(cact, "Did not get expected number of arguments", args); \
     } \
@@ -51,46 +53,43 @@ name(struct cactus *cact, struct cact_val args) \
 }
 
 
-#define BUILTIN_FUNC(name) \
-	struct cact_val name(struct cactus *, struct cact_val)
+#define CACT_BUILTIN_FUNC(name) \
+	cact_value_t name(cact_context_t *, cact_value_t)
 
-BUILTIN_FUNC(cact_builtin_if);
-BUILTIN_FUNC(cact_builtin_car);
-BUILTIN_FUNC(cact_builtin_cdr);
-BUILTIN_FUNC(cact_builtin_cons);
-BUILTIN_FUNC(cact_builtin_is_nil);
-BUILTIN_FUNC(cact_builtin_is_pair);
-BUILTIN_FUNC(cact_builtin_is_boolean);
-BUILTIN_FUNC(cact_builtin_not);
-BUILTIN_FUNC(cact_builtin_eq);
-BUILTIN_FUNC(cact_builtin_eqv);
-BUILTIN_FUNC(cact_builtin_equal);
-BUILTIN_FUNC(cact_builtin_display);
-BUILTIN_FUNC(cact_builtin_newline);
-BUILTIN_FUNC(cact_builtin_exit);
-BUILTIN_FUNC(cact_builtin_load);
-BUILTIN_FUNC(cact_builtin_load);
-BUILTIN_FUNC(cact_builtin_interaction_environment);
-BUILTIN_FUNC(cact_builtin_is_bound);
-BUILTIN_FUNC(cact_builtin_collect_garbage);
+CACT_BUILTIN_FUNC(cact_builtin_car);
+CACT_BUILTIN_FUNC(cact_builtin_cdr);
+CACT_BUILTIN_FUNC(cact_builtin_cons);
+CACT_BUILTIN_FUNC(cact_builtin_is_nil);
+CACT_BUILTIN_FUNC(cact_builtin_is_pair);
+CACT_BUILTIN_FUNC(cact_builtin_is_boolean);
+CACT_BUILTIN_FUNC(cact_builtin_not);
+CACT_BUILTIN_FUNC(cact_builtin_eq);
+CACT_BUILTIN_FUNC(cact_builtin_eqv);
+CACT_BUILTIN_FUNC(cact_builtin_equal);
+CACT_BUILTIN_FUNC(cact_builtin_display);
+CACT_BUILTIN_FUNC(cact_builtin_newline);
+CACT_BUILTIN_FUNC(cact_builtin_exit);
+CACT_BUILTIN_FUNC(cact_builtin_load);
+CACT_BUILTIN_FUNC(cact_builtin_interaction_environment);
+CACT_BUILTIN_FUNC(cact_builtin_is_bound);
+CACT_BUILTIN_FUNC(cact_builtin_collect_garbage);
 
 // Control structures
-BUILTIN_FUNC(cact_builtin_is_procedure);
+CACT_BUILTIN_FUNC(cact_builtin_is_procedure);
 
 /* Errors. */
-BUILTIN_FUNC(cact_builtin_raise);
-BUILTIN_FUNC(cact_builtin_error);
-BUILTIN_FUNC(cact_builtin_is_error_object);
-BUILTIN_FUNC(cact_builtin_error_message);
-BUILTIN_FUNC(cact_builtin_error_irritants);
+CACT_BUILTIN_FUNC(cact_builtin_raise);
+CACT_BUILTIN_FUNC(cact_builtin_error);
+CACT_BUILTIN_FUNC(cact_builtin_is_error_object);
+CACT_BUILTIN_FUNC(cact_builtin_error_message);
+CACT_BUILTIN_FUNC(cact_builtin_error_irritants);
 
 /* Vectors. */
-BUILTIN_FUNC(cact_builtin_is_vector);
-BUILTIN_FUNC(cact_builtin_make_vector);
-BUILTIN_FUNC(cact_builtin_vector_ref);
-BUILTIN_FUNC(cact_builtin_vector_set);
-BUILTIN_FUNC(cact_builtin_vector_length);
-
+CACT_BUILTIN_FUNC(cact_builtin_is_vector);
+CACT_BUILTIN_FUNC(cact_builtin_make_vector);
+CACT_BUILTIN_FUNC(cact_builtin_vector_ref);
+CACT_BUILTIN_FUNC(cact_builtin_vector_set);
+CACT_BUILTIN_FUNC(cact_builtin_vector_length);
 
 #endif // cact_builtin_h_INCLUDED
 

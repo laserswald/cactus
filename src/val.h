@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "internal/array.h"
+
 /*
  * The possible types that a value can take on. 
  * 
@@ -31,7 +33,7 @@ enum cact_type {
  * Symbols are references to a table defined elsewhere, and objects are managed
  * by the garbage collector (see store.{h,c} for details).
  */
-struct cact_val {
+typedef struct cact_value {
 	enum cact_type type;
 	union {
 		long      fixnum;
@@ -39,27 +41,30 @@ struct cact_val {
 		bool      boolean;
 		char      character;
 		struct cact_symbol *symbol;
-		struct cact_obj *object;
+		struct cact_object *object;
 	} as;
-};
+} cact_value_t;
+
+ARRAY_DECL(cact_value_array, struct cact_value);
+typedef struct cact_value_array cact_value_array_t;
 
 /*
  * Helper macros that make encapsulating raw C values into Cactus values easier.
  */
-#define CACT_NULL_VAL    ((struct cact_val){.type=CACT_TYPE_NULL})
-#define CACT_UNDEF_VAL   ((struct cact_val){.type=CACT_TYPE_UNDEF})
-#define CACT_FIX_VAL(n)  ((struct cact_val){.type=CACT_TYPE_FIXNUM, .as.fixnum = (n)})
-#define CACT_FLO_VAL(n)  ((struct cact_val){.type=CACT_TYPE_FLONUM, .as.flonum = (n)})
-#define CACT_BOOL_VAL(p) ((struct cact_val){.type=CACT_TYPE_BOOL, .as.boolean = (p)})
-#define CACT_CHAR_VAL(p) ((struct cact_val){.type=CACT_TYPE_CHAR, .as.character = (p)})
-#define CACT_SYM_VAL(p)  ((struct cact_val){.type=CACT_TYPE_SYM, .as.symbol = (p)})
-#define CACT_OBJ_VAL(p)  ((struct cact_val){.type=CACT_TYPE_OBJ, .as.object = (struct cact_obj *)(p)})
+#define CACT_NULL_VAL    ((cact_value_t){.type=CACT_TYPE_NULL})
+#define CACT_UNDEF_VAL   ((cact_value_t){.type=CACT_TYPE_UNDEF})
+#define CACT_FIX_VAL(n)  ((cact_value_t){.type=CACT_TYPE_FIXNUM, .as.fixnum = (n)})
+#define CACT_FLO_VAL(n)  ((cact_value_t){.type=CACT_TYPE_FLONUM, .as.flonum = (n)})
+#define CACT_BOOL_VAL(p) ((cact_value_t){.type=CACT_TYPE_BOOL, .as.boolean = (p)})
+#define CACT_CHAR_VAL(p) ((cact_value_t){.type=CACT_TYPE_CHAR, .as.character = (p)})
+#define CACT_SYM_VAL(p)  ((cact_value_t){.type=CACT_TYPE_SYM, .as.symbol = (p)})
+#define CACT_OBJ_VAL(p)  ((cact_value_t){.type=CACT_TYPE_OBJ, .as.object = (struct cact_object *)(p)})
 
 /* Get a human-readable string showing what type this value is. */
-const char *cact_type_str(struct cact_val x);
+const char *cact_type_str(cact_value_t x);
 
 /* Get the human-readable string for the value type given. */
-const char *cact_val_show_type(enum cact_type t);
+const char *cact_value_show_type(enum cact_type t);
 
 /*
  * Define some helper macros that automatically create conversion and checking for a type.
@@ -69,10 +74,10 @@ const char *cact_val_show_type(enum cact_type t);
  */
 #define DEFINE_VALUE_CONV(typemarker, returntype, funcname, membername) \
 static inline returntype \
-funcname(struct cact_val x, char *extras) \
+funcname(cact_value_t x, char *extras) \
 { \
 	if (x.type != typemarker) { \
-		fprintf(stderr, "%s: Expected %s, but got %s.\n", extras, cact_val_show_type(typemarker), cact_type_str(x)); \
+		fprintf(stderr, "%s: Expected %s, but got %s.\n", extras, cact_value_show_type(typemarker), cact_type_str(x)); \
 		abort(); \
 	} \
 	return x.as.membername; \
@@ -80,13 +85,13 @@ funcname(struct cact_val x, char *extras) \
 
 #define DEFINE_VALUE_CHECK(funcname, typemarker) \
 static inline bool \
-funcname(struct cact_val x) { \
+funcname(cact_value_t x) { \
 	return x.type == typemarker; \
 }
 
-DEFINE_VALUE_CONV(CACT_TYPE_OBJ, struct cact_obj*, cact_to_obj,   object)
+DEFINE_VALUE_CONV(CACT_TYPE_OBJ, struct cact_object *, cact_to_obj,   object)
 
-bool cact_is_null(struct cact_val);
+bool cact_is_null(cact_value_t v);
 DEFINE_VALUE_CHECK(cact_is_undef, CACT_TYPE_UNDEF)
 DEFINE_VALUE_CHECK(cact_is_obj,   CACT_TYPE_OBJ)
 
@@ -109,7 +114,7 @@ DEFINE_VALUE_CHECK(cact_is_obj,   CACT_TYPE_OBJ)
  * NOTE: Comparing any value with the undefined value, INCLUDING the undefined value, results
  * in FALSE.
  */
-bool cact_val_eq(struct cact_val l, struct cact_val r);
+bool cact_value_eq(cact_value_t l, cact_value_t r);
 
 /* 
  * Compare two values for equivalence.
@@ -123,7 +128,7 @@ bool cact_val_eq(struct cact_val l, struct cact_val r);
  * - Flonums
  * - Characters
  */
-bool cact_val_eqv(struct cact_val l, struct cact_val r);
+bool cact_value_eqv(cact_value_t l, cact_value_t r);
 
 /* 
  * Compare two values for equality.
@@ -135,7 +140,7 @@ bool cact_val_eqv(struct cact_val l, struct cact_val r);
  * - Vectors, by comparing the corresponding elements of the vectors for `equal?`
  * - Strings, by comparing characters
  */
-bool cact_val_equal(struct cact_val l, struct cact_val r);
+bool cact_value_equal(cact_value_t l, cact_value_t r);
 
 /*
  * For completeness, marking and destroying arbitrary values is supported, though in most cases it 
@@ -143,8 +148,8 @@ bool cact_val_equal(struct cact_val l, struct cact_val r);
  * 
  * More info about marking and destroying can be found in the GC implementation in `sweep.h`.
  */
-void cact_mark_val(struct cact_val);
-void cact_destroy_val(struct cact_val);
+void cact_mark_value(cact_value_t v);
+void cact_destroy_value(cact_value_t v);
 
 #endif // CACT_VAL_H
 

@@ -7,7 +7,7 @@
 #include "proc.h"
 #include "internal/array.h"
 
-enum cact_cont_state {
+typedef enum cact_frame_state {
     CACT_JMP_START = 0,
 
     // This state will try to evaluate whatever is in the expr field and return it's 
@@ -46,85 +46,103 @@ enum cact_cont_state {
     // And here after we are done with everything. Once this is done, the continuation's 
     // retval field will have the final evaluated state.
     CACT_JMP_FINISH,
-};
+} cact_frame_state_t;
+
+const char * 
+cact_show_frame_state(cact_frame_state_t state);
 
 /*
- * A partial continuation. We allocate these on the heap and use a linked list in the 
- * interpreter to keep track of them.
+ * A stack frame. A full list of these is the current continuation.
  */
-struct cact_cont {
-	struct cact_obj obj;
+typedef struct cact_frame {
+	cact_object_t obj;
 
     // The evaluation environment.
-	struct cact_env *env;
+	cact_env_t *env;
 
 	// While we are applying the procedure, it is stored here.
-	struct cact_proc *proc;
+	cact_procedure_t *proc;
 
     // The list of arguments for the procedure (note: they must be evaluated!) 
     // will be here.
-	struct cact_val argl;
+	cact_value_t argl;
 
     // The expression to evaluate.
-	struct cact_val expr;
+	cact_value_t expr;
 
     // The list of expressions to evaluate.
-	struct cact_val unevaled;
+	cact_value_t unevaled;
 
     // The return value of the evaluation is stored here.
-	struct cact_val retval;
+	cact_value_t retval;
 
     // The state of the continuation is here. When resumed, this will be looked at
     // in order to perform the next actions while evaluating.
-    enum cact_cont_state state;
+    cact_frame_state_t state;
 
     // This is the jump context that each step of the evaluator will jump back to.
 	jmp_buf bounce;
 
-	struct cact_proc *exn_handler;
+	cact_procedure_t *exn_handler;
 
 	bool is_started;
 
-	SLIST_ENTRY(cact_cont) parent;
-};
+	SLIST_ENTRY(cact_frame) parent;
+} cact_frame_t;
 
-SLIST_HEAD(cact_cont_stack, cact_cont);
-
-/*
- * Initialize the continuation.
- */
-void cact_cont_init(struct cact_cont *cont, struct cact_env *parent_env, struct cact_proc *proc);
+SLIST_HEAD(cact_continuation, cact_frame);
+typedef struct cact_continuation cact_continuation_t;
 
 /*
- * Mark the continuation as being used.
+ * Initialize the frame.
  */
-void cact_mark_cont(struct cact_obj *);
+void 
+cact_init_frame(cact_frame_t *, cact_env_t *, cact_procedure_t *);
 
 /*
- * Destroy the continuation.
+ * Mark the frame as being used.
  */
-void cact_destroy_cont(struct cact_obj *);
+void 
+cact_mark_frame(cact_object_t *);
 
 /*
- * Either begin a newly created continuation or resume a previously started one
+ * Destroy the frame.
  */
-void cact_resume_cont(struct cactus *cact, struct cact_cont *cont);
+void 
+cact_destroy_frame(cact_object_t *);
+
+/*
+ * Either begin a newly created frame or resume a previously started one
+ */
+void 
+cact_resume_frame(cact_context_t *cact, cact_frame_t *cont);
 
 /*
  * Begin the continuation. After this, the continuation is enabled and ready to 
  * be continued later.
  */
-void cact_continue_cont(struct cact_cont *cc);
-void cact_cont_return(struct cact_cont *cont, struct cact_val value);
-void cact_cont_continue_step(struct cact_cont *cont, enum cact_cont_state state);
+void 
+cact_continue_frame(cact_frame_t *cc);
 
-void cact_call_stack_push(struct cactus *, struct cact_cont *cont);
-void cact_call_stack_pop(struct cactus *);
-void cact_show_call_stack(struct cactus *);
+void 
+cact_leave_frame(cact_frame_t *cont, cact_value_t value);
 
-const char* cact_cont_show_state(enum cact_cont_state state);
+void 
+cact_continue_frame_step(cact_frame_t *cont, cact_frame_state_t state);
 
-struct cact_cont *cact_current_cont(struct cactus *);
+cact_frame_t *
+cact_current_frame(cact_context_t *);
+
+void 
+cact_continuation_push(cact_context_t *, cact_frame_t *);
+
+void 
+cact_continuation_pop(cact_context_t *);
+
+void 
+cact_show_continuation(cact_context_t *);
+
+
 
 #endif // __CACTUS_CONT_H__
 

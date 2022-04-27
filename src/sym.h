@@ -5,24 +5,33 @@
 #include "internal/tree.h"
 #include "internal/array.h"
 
-struct cactus;
+typedef struct cact_context cact_context_t;
 
-struct cact_symbol {
+typedef struct cact_symbol {
 	const char *sym;
 	RB_ENTRY(cact_symbol) entry;
-};
+} cact_symbol_t;
+
+ARRAY_DECL(cact_symbol_array, struct cact_symbol);
+typedef struct cact_symbol_array cact_symbol_array_t;
 
 RB_HEAD(cact_symbol_table, cact_symbol);
-void cact_symbol_table_init(struct cact_symbol_table *);
+typedef struct cact_symbol_table cact_symbol_table_t;
 
-ARRAY_DECL(cact_symbol_arr, struct cact_symbol);
+void 
+cact_symbol_table_init(cact_symbol_table_t *);
 
-struct cact_symbol *cact_get_symbol(struct cactus *, const char *);
-struct cact_val cact_make_symbol(struct cactus *, const char *);
-int cact_symbol_cmp(const void *l, const void *r);
+cact_symbol_t *
+cact_get_symbol(cact_context_t *, const char *);
+
+cact_value_t
+cact_make_symbol(cact_context_t *, const char *);
+
+int 
+cact_symbol_cmp(const void *l, const void *r);
 
 DEFINE_VALUE_CHECK(cact_is_symbol, CACT_TYPE_SYM)
-DEFINE_VALUE_CONV(CACT_TYPE_SYM, struct cact_symbol*, cact_to_symbol, symbol)
+DEFINE_VALUE_CONV(CACT_TYPE_SYM, cact_symbol_t *, cact_to_symbol, symbol)
 
 #endif // sym_h_INCLUDED
 

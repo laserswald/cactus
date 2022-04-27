@@ -13,7 +13,7 @@
 #include "builtin.h"
 
 const char *
-cact_val_show_type(enum cact_type t)
+cact_value_show_type(enum cact_type t)
 {
 
     switch (t) {
@@ -38,18 +38,18 @@ cact_val_show_type(enum cact_type t)
 }
 
 const char*
-cact_type_str(struct cact_val x)
+cact_type_str(cact_value_t x)
 {
     if (cact_is_obj(x)) {
         return cact_obj_show_type(x.as.object->type);
     }
-    return cact_val_show_type(x.type);
+    return cact_value_show_type(x.type);
 }
 
 
 /* Is this sexp nil? */
 bool
-cact_is_null(struct cact_val x)
+cact_is_null(cact_value_t x)
 {
     return x.type == CACT_TYPE_NULL;
 }
@@ -62,7 +62,7 @@ cact_is_null(struct cact_val x)
  * Heap allocated objects will be compared by their pointers.
  */
 bool
-cact_val_eq(struct cact_val l, struct cact_val r)
+cact_value_eq(cact_value_t l, cact_value_t r)
 {
     /* Go ahead and bail if they are different types */
     if (l.type != r.type) {
@@ -84,12 +84,12 @@ cact_val_eq(struct cact_val l, struct cact_val r)
         return false;
     }
 }
-DEFINE_COMPARISON_BUILTIN(cact_builtin_eq, cact_val_eq)
+DEFINE_COMPARISON_BUILTIN(cact_builtin_eq, cact_value_eq)
 
 bool
-cact_val_eqv(struct cact_val l, struct cact_val r)
+cact_value_eqv(cact_value_t l, cact_value_t r)
 {
-    if (cact_val_eq(l, r)) {
+    if (cact_value_eq(l, r)) {
         return true;
     }
 
@@ -104,13 +104,13 @@ cact_val_eqv(struct cact_val l, struct cact_val r)
         return false;
     }
 }
-DEFINE_COMPARISON_BUILTIN(cact_builtin_eqv, cact_val_eqv)
+DEFINE_COMPARISON_BUILTIN(cact_builtin_eqv, cact_value_eqv)
 
 /* Deeply compare two values. */
 bool
-cact_val_equal(struct cact_val l, struct cact_val r)
+cact_value_equal(cact_value_t l, cact_value_t r)
 {
-    if (cact_val_eqv(l, r)) {
+    if (cact_value_eqv(l, r)) {
         return true;
     }
 
@@ -118,17 +118,17 @@ cact_val_equal(struct cact_val l, struct cact_val r)
         return false;
     }
 
-    struct cact_obj *lo = l.as.object;
-    struct cact_obj *ro = r.as.object;
+    cact_object_t *lo = l.as.object;
+    cact_object_t *ro = r.as.object;
 
     switch (lo->type) {
     case CACT_OBJ_STRING:
-        return strcmp(((struct cact_string *)lo)->str, ((struct cact_string *)ro)->str) == 0;
+        return strcmp(((cact_string_t *)lo)->str, ((cact_string_t *)ro)->str) == 0;
     case CACT_OBJ_PAIR: {
-        struct cact_pair *lp = (struct cact_pair *) lo;
-        struct cact_pair *rp = (struct cact_pair *) ro;
-        return (cact_val_equal(lp->car, rp->car))
-               && (cact_val_equal(lp->cdr, rp->cdr));
+        cact_pair_t *lp = (cact_pair_t *) lo;
+        cact_pair_t *rp = (cact_pair_t *) ro;
+        return (cact_value_equal(lp->car, rp->car))
+               && (cact_value_equal(lp->cdr, rp->cdr));
     }
     default:
         break;
@@ -137,21 +137,21 @@ cact_val_equal(struct cact_val l, struct cact_val r)
     return false;
 }
 
-DEFINE_COMPARISON_BUILTIN(cact_builtin_equal, cact_val_equal)
+DEFINE_COMPARISON_BUILTIN(cact_builtin_equal, cact_value_equal)
 void
-cact_mark_val(struct cact_val v)
+cact_mark_value(cact_value_t v)
 {
     if (! cact_is_obj(v)) {
         return;
     }
-    cact_obj_mark(v.as.object);
+    cact_mark_object(v.as.object);
 }
 
 void
-cact_destroy_val(struct cact_val v)
+cact_destroy_value(cact_value_t v)
 {
     if (cact_is_obj(v)) {
-        cact_obj_destroy(cact_to_obj(v, "cact-destroy-val"));
+        cact_destroy_object(cact_to_obj(v, "cact-destroy-val"));
     }
 }
 

@@ -5,15 +5,15 @@
 #include "num.h"
 #include "write.h"
 
-static struct cactus cact;
+static cact_context_t cact;
 
 TEST car_cdr_cons_test()
 {
     int li = rand();
-    struct cact_val l = CACT_FIX_VAL(li);
+    cact_value_t l = CACT_FIX_VAL(li);
     int ri = rand();
-    struct cact_val r = CACT_FIX_VAL(ri);
-    struct cact_val pair = cact_cons(&cact, l, r);
+    cact_value_t r = CACT_FIX_VAL(ri);
+    cact_value_t pair = cact_cons(&cact, l, r);
 
     ASSERTm("cons did not create a new pair", cact_is_pair(pair));
     ASSERTm("car of pair was not generated number", cact_to_long(cact_car(&cact, pair), "car_cdr_cons_test") == li);
@@ -24,11 +24,11 @@ TEST car_cdr_cons_test()
 
 TEST append_test()
 {
-    struct cact_val pair = CACT_NULL_VAL;
+    cact_value_t pair = CACT_NULL_VAL;
 
     // 0 case
     int first = rand();
-    struct cact_val fst = CACT_FIX_VAL(first);
+    cact_value_t fst = CACT_FIX_VAL(first);
 
     pair = cact_append(&cact, pair, fst);
 
@@ -39,7 +39,7 @@ TEST append_test()
 
     // 1 case
     int second = rand();
-    struct cact_val snd = CACT_FIX_VAL(second);
+    cact_value_t snd = CACT_FIX_VAL(second);
 
     pair = cact_append(&cact, pair, snd);
 
@@ -51,7 +51,7 @@ TEST append_test()
 
     // N case
     int third = rand();
-    struct cact_val thd = CACT_FIX_VAL(third);
+    cact_value_t thd = CACT_FIX_VAL(third);
 
     pair = cact_append(&cact, pair, thd);
 

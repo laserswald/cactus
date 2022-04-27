@@ -5,35 +5,33 @@
 #include "env.h"
 #include "storage/obj.h"
 
-struct cactus;
+typedef struct cact_context cact_context_t;
 
-typedef struct cact_val (*cact_native_func)(struct cactus *, struct cact_val);
+typedef cact_value_t (*cact_native_func_t)(cact_context_t *, cact_value_t);
 
 /* A procedure object. */
-struct cact_proc {
-	struct cact_obj obj;
-	struct cact_env *env;
-	struct cact_val argl;
-	struct cact_val body;
-	cact_native_func nativefn;
-};
+typedef struct cact_procedure {
+	cact_object_t obj;
+	cact_env_t *env;
+	cact_value_t argl;
+	cact_value_t body;
+	cact_native_func_t nativefn;
+} cact_procedure_t;
 
-DEFINE_OBJECT_CONVERSION(CACT_OBJ_PROCEDURE, struct cact_proc*, cact_to_procedure, proc)
+DEFINE_OBJECT_CONVERSION(CACT_OBJ_PROCEDURE, cact_procedure_t *, cact_to_procedure, proc)
 DEFINE_OBJECT_CHECK(cact_is_procedure, CACT_OBJ_PROCEDURE)
 
 /* Create a new user-defined procedure. */
-struct cact_val cact_make_procedure(struct cactus *, struct cact_env *e,
-                                    struct cact_val args, struct cact_val body);
+cact_value_t cact_make_procedure(cact_context_t *, cact_env_t *e, cact_value_t args, cact_value_t body);
 
 /* Create a new native C procedure. */
-struct cact_val cact_make_native_proc(struct cactus *, cact_native_func);
+cact_value_t cact_make_native_proc(cact_context_t *, cact_native_func_t);
 
 /* Apply the procedure with the given arguments. */
-struct cact_val cact_proc_apply(struct cactus *, struct cact_proc *, struct cact_val);
+cact_value_t cact_proc_apply(cact_context_t *, cact_procedure_t *, cact_value_t);
 
-void cact_mark_proc(struct cact_obj *);
-void cact_destroy_proc(struct cact_obj *);
-
+void cact_mark_proc(cact_object_t *);
+void cact_destroy_proc(cact_object_t *);
 
 #endif // CACT_PROC_H
 

@@ -4,29 +4,29 @@
 #include "internal/xmalloc.h"
 
 /* Create a string. */
-struct cact_val
-cact_make_string(struct cactus *cact, const char *str)
+cact_value_t
+cact_make_string(cact_context_t *cact, const char *str)
 {
-    struct cact_string *s;
+    cact_string_t *s;
 
-    s = (struct cact_string *)cact_store_allocate(&cact->store, CACT_OBJ_STRING);
+    s = (cact_string_t *)cact_store_allocate(&cact->store, CACT_OBJ_STRING);
     s->str = xstrdup(str);
 
     return CACT_OBJ_VAL(s);
 }
 
 void
-cact_mark_string(struct cact_obj *ignored)
+cact_mark_string(cact_object_t *ignored)
 {
     return;
 }
 
 void
-cact_destroy_string(struct cact_obj *o)
+cact_destroy_string(cact_object_t *o)
 {
-    struct cact_string *s;
+    cact_string_t *s;
 
-    s = (struct cact_string *) o;
+    s = (cact_string_t *) o;
 
     xfree(s->str);
 }

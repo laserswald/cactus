@@ -7,9 +7,9 @@
 
 /* Display a list to the given output file. */
 int
-cact_fdisplay_list(FILE *f, struct cact_val x)
+cact_fdisplay_list(FILE *f, cact_value_t x)
 {
-    struct cact_val p = x;
+    cact_value_t p = x;
     int chars = 0;
 
     chars += fprintf(f, "(");
@@ -32,20 +32,20 @@ cact_fdisplay_list(FILE *f, struct cact_val x)
 }
 
 int
-print_list(struct cact_val x)
+print_list(cact_value_t x)
 {
     return cact_fdisplay_list(stdout, x);
 }
 
 int
-fprint_obj(FILE *f, struct cact_obj *obj)
+fprint_obj(FILE *f, cact_object_t *obj)
 {
     int chars = 0;
 
     switch (obj->type) {
 
     case CACT_OBJ_STRING:
-        return fprintf(f, "%s", ((struct cact_string*)obj)->str);
+        return fprintf(f, "%s", ((cact_string_t*)obj)->str);
 
     case CACT_OBJ_PAIR:
         return cact_fdisplay_list(f, CACT_OBJ_VAL(obj));
@@ -63,7 +63,7 @@ fprint_obj(FILE *f, struct cact_obj *obj)
         return fprintf(f, "#<vector: %p>", (void*)obj);
 
     case CACT_OBJ_ERROR: {
-        struct cact_error *err = (struct cact_error *)obj;
+        cact_error_t *err = (cact_error_t *)obj;
         chars += fprintf(f, "; error '%s' : ", err->msg);
         chars += cact_fdisplay(f, err->ctx);
         break;
@@ -75,7 +75,7 @@ fprint_obj(FILE *f, struct cact_obj *obj)
 }
 
 int
-cact_fdisplay(FILE *f, struct cact_val x)
+cact_fdisplay(FILE *f, cact_value_t x)
 {
     switch (x.type) {
     case CACT_TYPE_UNDEF:
@@ -99,7 +99,7 @@ cact_fdisplay(FILE *f, struct cact_val x)
 }
 
 int
-cact_display(struct cact_val x)
+cact_display(cact_value_t x)
 {
     return cact_fdisplay(stdout, x);
 }

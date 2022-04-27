@@ -21,25 +21,25 @@
  */
 
 void
-cact_store_init(struct cact_store *store)
+cact_store_init(cact_store_t *store)
 {
     assert(store);
 
     struct {
-        enum cact_obj_type type;
+        cact_object_type_t type;
         size_t size;
     } set_defs[] = {
-        {CACT_OBJ_PAIR, sizeof(struct cact_pair)},
-        {CACT_OBJ_STRING, sizeof(struct cact_string)},
-        {CACT_OBJ_PROCEDURE, sizeof(struct cact_proc)},
-        {CACT_OBJ_ENVIRONMENT, sizeof(struct cact_env)},
-        {CACT_OBJ_CONT, sizeof(struct cact_cont)},
-        {CACT_OBJ_ERROR, sizeof(struct cact_error)},
-        {CACT_OBJ_VECTOR, sizeof(struct cact_vec)},
+        {CACT_OBJ_PAIR, sizeof(cact_pair_t)},
+        {CACT_OBJ_STRING, sizeof(cact_string_t)},
+        {CACT_OBJ_PROCEDURE, sizeof(cact_procedure_t)},
+        {CACT_OBJ_ENVIRONMENT, sizeof(cact_env_t)},
+        {CACT_OBJ_CONT, sizeof(cact_frame_t)},
+        {CACT_OBJ_ERROR, sizeof(cact_error_t)},
+        {CACT_OBJ_VECTOR, sizeof(cact_vec_t)},
     };
 
     store->sets_len = LENGTH(set_defs);
-    store->arena_sets = xcalloc(store->sets_len, sizeof(struct cact_arena_set));
+    store->arena_sets = xcalloc(store->sets_len, sizeof(cact_arena_set_t));
 
     int i;
     for (i = 0; i < store->sets_len; i++) {
@@ -48,7 +48,7 @@ cact_store_init(struct cact_store *store)
 }
 
 void
-cact_store_finish(struct cact_store *store)
+cact_store_finish(cact_store_t *store)
 {
     assert(store);
 
@@ -64,7 +64,7 @@ cact_store_finish(struct cact_store *store)
 }
 
 size_t
-cact_store_count(struct cact_store *store)
+cact_store_count(cact_store_t *store)
 {
     assert(store);
 
@@ -81,7 +81,7 @@ cact_store_count(struct cact_store *store)
 }
 
 void
-cact_store_show(struct cact_store *store)
+cact_store_show(cact_store_t *store)
 {
     assert(store);
 
@@ -98,7 +98,7 @@ cact_store_show(struct cact_store *store)
 }
 
 bool
-cact_store_needs_sweep(struct cact_store *store)
+cact_store_needs_sweep(cact_store_t *store)
 {
     assert(store);
 
@@ -121,7 +121,7 @@ cact_store_needs_sweep(struct cact_store *store)
 }
 
 int
-cact_store_sweep(struct cact_store *store)
+cact_store_sweep(cact_store_t *store)
 {
     assert(store);
 
@@ -134,12 +134,12 @@ cact_store_sweep(struct cact_store *store)
     return swept;
 }
 
-struct cact_obj *
-cact_store_allocate(struct cact_store *store, enum cact_obj_type type)
+cact_object_t *
+cact_store_allocate(cact_store_t *store, cact_object_type_t type)
 {
     assert(store);
 
-    struct cact_obj *object;
+    cact_object_t *object;
 
     object = cact_arena_set_allocate(&store->arena_sets[type]);
     object->type = type;

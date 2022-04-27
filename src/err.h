@@ -4,24 +4,29 @@
 #include "storage/obj.h"
 #include "val.h"
 
-struct cact_error {
-	struct cact_obj obj;
+typedef struct cact_error {
+	cact_object_t obj;
 	char *msg;
-	struct cact_val ctx;
-};
+	cact_value_t ctx;
+} cact_error_t;
 
 #define PROPAGATE_ERROR(err) if (cact_is_error(err)) return (err);
 
-DEFINE_OBJECT_CONVERSION(CACT_OBJ_ERROR,       struct cact_error*,  cact_to_error,     err)
+DEFINE_OBJECT_CONVERSION(CACT_OBJ_ERROR, cact_error_t*, cact_to_error, err)
 DEFINE_OBJECT_CHECK(cact_is_error, CACT_OBJ_ERROR)
 
-struct cact_val cact_make_error(struct cactus *, char *msg, struct cact_val irr);
-void cact_mark_error(struct cact_obj *);
-void cact_destroy_error(struct cact_obj *);
+cact_value_t 
+cact_make_error(cact_context_t *, char *, cact_value_t);
+
+void 
+cact_mark_error(cact_object_t *);
+
+void 
+cact_destroy_error(cact_object_t *);
 
 /* Raise an exception. */
-struct cact_val
-cact_raise(struct cactus *cact, struct cact_val exn);
+cact_value_t
+cact_raise(cact_context_t *, cact_value_t);
 
 #endif // __CACT_ERR_H__
 

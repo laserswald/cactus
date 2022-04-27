@@ -13,11 +13,11 @@ SUITE(boolean_tests);
 
 TEST not_test()
 {
-    struct cactus cact;
+    cact_context_t cact;
     cact_init(&cact);
 
     struct {
-        struct cact_val thing;
+        cact_value_t thing;
         bool expected;
     } cases[] = {
         {CACT_NULL_VAL, false},
@@ -42,7 +42,7 @@ TEST not_test()
 TEST is_boolean_test()
 {
     struct {
-        struct cact_val thing;
+        cact_value_t thing;
         bool expected;
     } cases[] = {
         {CACT_NULL_VAL, false},

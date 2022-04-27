@@ -13,12 +13,12 @@
 
 #include "builtin.h"
 
-struct cactus cact;
+cact_context_t cact;
 
 TEST cact_read_null_test()
 {
     int status = CACT_READ_OK;
-    struct cact_val x = CACT_NULL_VAL;
+    cact_value_t x = CACT_NULL_VAL;
     char* string = NULL;
     cact_init(&cact);
 
@@ -34,7 +34,7 @@ TEST cact_read_null_test()
 TEST cact_read_blank_test()
 {
     int status = CACT_READ_OK;
-    struct cact_val x = CACT_NULL_VAL;
+    cact_value_t x = CACT_NULL_VAL;
     char* string = NULL;
     cact_init(&cact);
 
@@ -52,7 +52,7 @@ TEST cact_read_blank_test()
 TEST cact_read_whitespace_test()
 {
     int status = CACT_READ_OK;
-    struct cact_val x = CACT_NULL_VAL;
+    cact_value_t x = CACT_NULL_VAL;
     char* string = NULL;
     cact_init(&cact);
 
@@ -68,7 +68,7 @@ TEST cact_read_whitespace_test()
 TEST cact_read_ident_test()
 {
     int status = CACT_READ_OK;
-    struct cact_val x = CACT_NULL_VAL;
+    cact_value_t x = CACT_NULL_VAL;
     char* string = NULL;
 
     // Identifier
@@ -84,7 +84,7 @@ TEST cact_read_ident_test()
 TEST cact_read_boolean_test()
 {
     int status = CACT_READ_OK;
-    struct cact_val x = CACT_NULL_VAL;
+    cact_value_t x = CACT_NULL_VAL;
     char* string = NULL;
 
     /* True */
@@ -109,7 +109,7 @@ TEST cact_read_boolean_test()
 TEST cact_read_int_test()
 {
     int status = CACT_READ_OK;
-    struct cact_val x = CACT_NULL_VAL;
+    cact_value_t x = CACT_NULL_VAL;
     char* string = NULL;
 
     // unsigned
@@ -132,7 +132,7 @@ TEST cact_read_int_test()
 TEST cact_read_float_test()
 {
     int status = CACT_READ_OK;
-    struct cact_val x = CACT_NULL_VAL;
+    cact_value_t x = CACT_NULL_VAL;
     char* string = NULL;
 
     // unsigned
@@ -155,7 +155,7 @@ TEST cact_read_float_test()
 TEST cact_read_string_test()
 {
     int status = CACT_READ_OK;
-    struct cact_val x = CACT_NULL_VAL;
+    cact_value_t x = CACT_NULL_VAL;
     char* string = NULL;
 
     // cact_string
@@ -172,7 +172,7 @@ TEST cact_read_string_test()
 TEST cact_read_list_test()
 {
     int status = CACT_READ_OK;
-    struct cact_val x = CACT_NULL_VAL;
+    cact_value_t x = CACT_NULL_VAL;
     char* string = NULL;
 
     // Null
@@ -218,7 +218,7 @@ TEST cact_read_list_test()
 TEST cact_read_quote_test()
 {
     int status = CACT_READ_OK;
-    struct cact_val x = CACT_NULL_VAL;
+    cact_value_t x = CACT_NULL_VAL;
     char* string = NULL;
 
     string = "'a";

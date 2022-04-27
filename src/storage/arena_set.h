@@ -10,30 +10,31 @@
  */
 
 ARRAY_DECL(cact_arena_set, struct cact_arena);
+typedef struct cact_arena_set cact_arena_set_t;
 
 /* Initialize a set of arenas. */
 void 
-cact_arena_set_init(struct cact_arena_set *, size_t);
+cact_arena_set_init(cact_arena_set_t *, size_t);
 
 /* Release a set of arenas. */
 void
-cact_arena_set_finish(struct cact_arena_set *set);
+cact_arena_set_finish(cact_arena_set_t *set);
 
 /* Return the amount of occupied slots in the entire set. */
 int
-cact_arena_set_count(struct cact_arena_set *set);
+cact_arena_set_count(cact_arena_set_t *set);
 
 /* Allocate an item from the set. */
-struct cact_obj *
-cact_arena_set_allocate(struct cact_arena_set *);
+cact_object_t *
+cact_arena_set_allocate(cact_arena_set_t *);
 
 /* Sweep each arena in the set. */
 size_t
-cact_arena_set_sweep(struct cact_arena_set *set);
+cact_arena_set_sweep(cact_arena_set_t *set);
 
 /* Remove any empty arenas in the set. */
 int
-cact_arena_set_clean(struct cact_arena_set *set);
+cact_arena_set_clean(cact_arena_set_t *set);
 
 #endif // arena_set_h_INCLUDED
 

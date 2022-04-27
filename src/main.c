@@ -27,10 +27,10 @@ int verbosity = 0;
 #define PROMPT ">()< "
 
 int
-repl(struct cactus *cact)
+repl(cact_context_t *cact)
 {
     char *line;
-    struct cact_val x;
+    cact_value_t x;
 
     while ((line = linenoise(PROMPT))!= NULL) {
         x = cact_eval_string(cact, line);
@@ -44,10 +44,10 @@ repl(struct cactus *cact)
     return 0;
 }
 
-struct cact_val
-load_file(struct cactus *cact, char *filename)
+cact_value_t
+load_file(cact_context_t *cact, char *filename)
 {
-    struct cact_val v;
+    cact_value_t v;
     FILE *f = NULL;
 
     f = fopen(filename, "r");
@@ -70,7 +70,7 @@ load_file(struct cactus *cact, char *filename)
 int
 main(int argc, char *argv[])
 {
-    struct cactus cact;
+    cact_context_t cact;
     int result = EXIT_SUCCESS;
 
     cact_init(&cact);

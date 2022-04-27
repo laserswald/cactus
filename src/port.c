@@ -3,8 +3,8 @@
 #include "core.h"
 #include "port.h"
 
-struct cact_val
-cact_make_port(struct cactus *cact)
+cact_value_t
+cact_make_port(cact_context_t *cact)
 {
     return CACT_NULL_VAL;
 }

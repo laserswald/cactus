@@ -6,15 +6,15 @@
 #include "core.h"
 #include "val.h"
 
-bool is_self_evaluating(struct cact_val x);
-bool is_variable(struct cactus *cact, struct cact_val x);
-bool is_quotation(struct cactus *cact, struct cact_val x);
-bool is_assignment(struct cactus *cact, struct cact_val x);
-bool is_definition(struct cactus *cact, struct cact_val x);
-bool is_conditional(struct cactus *cact, struct cact_val x);
-bool is_lambda(struct cactus *cact, struct cact_val x);
-bool is_sequence(struct cactus *cact, struct cact_val x);
-bool is_application(struct cactus *cact, struct cact_val x);
+bool is_self_evaluating(cact_value_t x);
+bool is_variable(cact_context_t *cact, cact_value_t x);
+bool is_quotation(cact_context_t *cact, cact_value_t x);
+bool is_assignment(cact_context_t *cact, cact_value_t x);
+bool is_definition(cact_context_t *cact, cact_value_t x);
+bool is_conditional(cact_context_t *cact, cact_value_t x);
+bool is_lambda(cact_context_t *cact, cact_value_t x);
+bool is_sequence(cact_context_t *cact, cact_value_t x);
+bool is_application(cact_context_t *cact, cact_value_t x);
 
 #endif // syn_h_INCLUDED
 

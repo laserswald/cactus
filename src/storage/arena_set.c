@@ -5,20 +5,20 @@
 #include "obj.h"
 
 void
-cact_arena_set_init(struct cact_arena_set *set, size_t elt_sz)
+cact_arena_set_init(cact_arena_set_t *set, size_t elt_sz)
 {
     assert(set);
     assert(elt_sz > 0);
 
     ARRAY_INIT(set);
 
-    struct cact_arena initial_arena = {0};
+    cact_arena_t initial_arena = {0};
     cact_arena_init(&initial_arena, elt_sz);
     ARRAY_ADD(set, initial_arena);
 }
 
 void
-cact_arena_set_finish(struct cact_arena_set *set)
+cact_arena_set_finish(cact_arena_set_t *set)
 {
     assert(set);
 
@@ -31,7 +31,7 @@ cact_arena_set_finish(struct cact_arena_set *set)
 }
 
 int
-cact_arena_set_count(struct cact_arena_set *set)
+cact_arena_set_count(cact_arena_set_t *set)
 {
     assert(set);
 
@@ -46,8 +46,8 @@ cact_arena_set_count(struct cact_arena_set *set)
     return count;
 }
 
-struct cact_obj *
-cact_arena_set_allocate(struct cact_arena_set *set)
+cact_object_t *
+cact_arena_set_allocate(cact_arena_set_t *set)
 {
     assert(set);
 
@@ -60,15 +60,15 @@ cact_arena_set_allocate(struct cact_arena_set *set)
 
     if (i == ARRAY_LENGTH(set)) {
         // Allocate new arena
-        struct cact_arena new_arena = {0};
+        cact_arena_t new_arena = {0};
         cact_arena_init(&new_arena, (ARRAY_ITEM(set, 0)).element_sz);
         ARRAY_ADD(set, new_arena);
     }
 
-    struct cact_arena *arena = &ARRAY_ITEM(set, i);
+    cact_arena_t *arena = &ARRAY_ITEM(set, i);
 
     size_t slot = cact_arena_next_open(arena);
-    struct cact_obj *object = cact_arena_get_next(arena);
+    cact_object_t *object = cact_arena_get_next(arena);
     object->store_data.arena = arena;
     object->store_data.place = slot;
     object->store_data.mark = CACT_STORE_MARK_OCCUPIED;
@@ -77,7 +77,7 @@ cact_arena_set_allocate(struct cact_arena_set *set)
 }
 
 size_t
-cact_arena_set_sweep(struct cact_arena_set *set)
+cact_arena_set_sweep(cact_arena_set_t *set)
 {
     assert(set);
 
@@ -89,7 +89,7 @@ cact_arena_set_sweep(struct cact_arena_set *set)
 }
 
 int
-cact_arena_set_clean(struct cact_arena_set *set)
+cact_arena_set_clean(cact_arena_set_t *set)
 {
     assert(set);
 

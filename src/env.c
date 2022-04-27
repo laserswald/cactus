@@ -14,24 +14,24 @@
 #include "internal/table.h"
 #include "internal/debug.h"
 
-TABLE_GENERATE(cact_env_entries, struct cact_symbol *, struct cact_val)
+TABLE_GENERATE(cact_env_entries, cact_symbol_t *, cact_value_t)
 
 /*
  * Create and initialize a new environment.
  */
-struct cact_val
-cact_make_env(struct cactus *cact, struct cact_env *parent)
+cact_value_t
+cact_make_env(cact_context_t *cact, cact_env_t *parent)
 {
-    struct cact_env *env = (struct cact_env *)cact_store_allocate(&cact->store, CACT_OBJ_ENVIRONMENT);
+    cact_env_t *env = (cact_env_t *)cact_store_allocate(&cact->store, CACT_OBJ_ENVIRONMENT);
     cact_env_init(env, parent);
-    return CACT_OBJ_VAL((struct cact_obj *) env);
+    return CACT_OBJ_VAL((cact_object_t *) env);
 }
 
 /*
  * Initialize a given environment to have no entries and set it's parent.
  */
 void
-cact_env_init(struct cact_env *e, struct cact_env *parent)
+cact_env_init(cact_env_t *e, cact_env_t *parent)
 {
     assert(e != parent);
 
@@ -43,21 +43,21 @@ cact_env_init(struct cact_env *e, struct cact_env *parent)
  * Mark the environment as reachable during garbage collection.
  */
 void
-cact_mark_env(struct cact_obj *o)
+cact_mark_env(cact_object_t *o)
 {
-    struct cact_env *e;
+    cact_env_t *e;
     struct TABLE_ENTRY(cact_env_entries) *bucket;
 
-    e = (struct cact_env *) o;
+    e = (cact_env_t *) o;
 
     TABLE_FOREACH_BUCKET(, bucket, &e->entries) {
         if (bucket->state == TABLE_ENTRY_FILLED) {
-            cact_mark_val(bucket->val);
+            cact_mark_value(bucket->val);
         }
     }
 
     if (e->parent) {
-        cact_mark_env((struct cact_obj *) e->parent);
+        cact_mark_env((cact_object_t *) e->parent);
     }
 }
 
@@ -65,11 +65,11 @@ cact_mark_env(struct cact_obj *o)
  * Destroy any data contained within this environment.
  */
 void
-cact_destroy_env(struct cact_obj *o)
+cact_destroy_env(cact_object_t *o)
 {
-    struct cact_env *e;
+    cact_env_t *e;
 
-    e = (struct cact_env *) o;
+    e = (cact_env_t *) o;
 
     TABLE_CLEAR(&e->entries);
 }
@@ -77,13 +77,13 @@ cact_destroy_env(struct cact_obj *o)
 /*
  * Look up the key in the environment and return it, or raise an error.
  */
-struct cact_val
-cact_env_lookup(struct cactus *cact, struct cact_env *e, struct cact_symbol *key)
+cact_value_t
+cact_env_lookup(cact_context_t *cact, cact_env_t *e, cact_symbol_t *key)
 {
     assert(e);
     assert(key);
 
-    struct cact_val *found = TABLE_FIND(cact_env_entries, &e->entries, key);
+    cact_value_t *found = TABLE_FIND(cact_env_entries, &e->entries, key);
 
     if (! found) {
         if (e->parent) {
@@ -100,9 +100,9 @@ cact_env_lookup(struct cactus *cact, struct cact_env *e, struct cact_symbol *key
  * Perform an environment definition, as opposed to an environment
  * assignment.
  */
-struct cact_val
-cact_env_define(struct cactus *cact, struct cact_env *e,
-                struct cact_symbol *key, struct cact_val val)
+cact_value_t
+cact_env_define(cact_context_t *cact, cact_env_t *e,
+                cact_symbol_t *key, cact_value_t val)
 {
     assert(e);
     assert(key);
@@ -117,14 +117,14 @@ cact_env_define(struct cactus *cact, struct cact_env *e,
 }
 
 /* Assign the key to the value, ensuring the key already exists. */
-struct cact_val
-cact_env_set(struct cactus *cact, struct cact_env *e,
-             struct cact_symbol *key, struct cact_val val)
+cact_value_t
+cact_env_set(cact_context_t *cact, cact_env_t *e,
+             cact_symbol_t *key, cact_value_t val)
 {
     assert(e);
     assert(key);
 
-    struct cact_env *cur = e;
+    cact_env_t *cur = e;
 
     do {
         if (TABLE_HAS(cact_env_entries, &cur->entries, key)) {
@@ -141,12 +141,12 @@ cact_env_set(struct cactus *cact, struct cact_env *e,
  * Does the given environment have the given symbol bound?
  */
 bool
-cact_env_is_bound(struct cact_env *e, struct cact_symbol *key)
+cact_env_is_bound(cact_env_t *e, cact_symbol_t *key)
 {
     assert(e);
     assert(key);
 
-    struct cact_env *cur = e;
+    cact_env_t *cur = e;
 
     do {
         if (TABLE_HAS(cact_env_entries, &cur->entries, key)) {
@@ -159,7 +159,7 @@ cact_env_is_bound(struct cact_env *e, struct cact_symbol *key)
 }
 
 int
-cact_env_num_bindings(struct cact_env *e) 
+cact_env_num_bindings(cact_env_t *e) 
 {
 	int count = e->entries.count;
 
@@ -174,7 +174,7 @@ cact_env_num_bindings(struct cact_env *e)
  * Display an environment to standard output.
  */
 void
-print_env(struct cact_env *e)
+print_env(cact_env_t *e)
 {
     if (!e) {
         return;

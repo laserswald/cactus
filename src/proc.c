@@ -12,19 +12,19 @@
 #include "internal/utils.h"
 
 /* Create a procedure. */
-struct cact_val
-cact_make_procedure(struct cactus *cact, struct cact_env *e, struct cact_val argl, struct cact_val body)
+cact_value_t
+cact_make_procedure(cact_context_t *cact, cact_env_t *e, cact_value_t argl, cact_value_t body)
 {
     assert(cact);
     assert(e);
 
-    struct cact_val envval = CACT_OBJ_VAL((struct cact_obj *)e);
+    cact_value_t envval = CACT_OBJ_VAL((cact_object_t *)e);
 
     cact_preserve(cact, envval);
     cact_preserve(cact, argl);
     cact_preserve(cact, body);
 
-    struct cact_proc *proc = (struct cact_proc *)cact_alloc(cact, CACT_OBJ_PROCEDURE);
+    cact_procedure_t *proc = (cact_procedure_t *)cact_alloc(cact, CACT_OBJ_PROCEDURE);
     proc->env = e;
     proc->argl = argl;
     proc->body = body;
@@ -33,56 +33,56 @@ cact_make_procedure(struct cactus *cact, struct cact_env *e, struct cact_val arg
     cact_unpreserve(cact, argl);
     cact_unpreserve(cact, envval);
 
-    return CACT_OBJ_VAL((struct cact_obj *) proc);
+    return CACT_OBJ_VAL((cact_object_t *) proc);
 }
 
-struct cact_val
-cact_make_native_proc(struct cactus *cact, cact_native_func fn)
+cact_value_t
+cact_make_native_proc(cact_context_t *cact, cact_native_func_t fn)
 {
     assert(cact);
     assert(fn != NULL);
 
-    struct cact_proc *nat = (struct cact_proc *)cact_alloc(cact, CACT_OBJ_PROCEDURE);
+    cact_procedure_t *nat = (cact_procedure_t *)cact_alloc(cact, CACT_OBJ_PROCEDURE);
     nat->env = NULL;
     nat->nativefn = fn;
 
-    return CACT_OBJ_VAL((struct cact_obj *) nat);
+    return CACT_OBJ_VAL((cact_object_t *) nat);
 }
 
 void
-cact_mark_proc(struct cact_obj *o)
+cact_mark_proc(cact_object_t *o)
 {
     assert(o);
 
-    struct cact_proc *p = (struct cact_proc *) o;
+    cact_procedure_t *p = (cact_procedure_t *) o;
 
     if (p->nativefn) {
         return;
     }
 
     if (p->env) {
-        cact_obj_mark((struct cact_obj *) p->env);
+        cact_mark_object((cact_object_t *) p->env);
     }
 
-    cact_mark_val(p->argl);
-    cact_mark_val(p->body);
+    cact_mark_value(p->argl);
+    cact_mark_value(p->body);
 }
 
 void
-cact_destroy_proc(struct cact_obj *o)
+cact_destroy_proc(cact_object_t *o)
 {
     return;
 }
 
 
 static void
-cact_proc_eval_args(struct cactus *cact, struct cact_env *params_env,
-                    struct cact_val params, struct cact_val args)
+cact_proc_eval_args(cact_context_t *cact, cact_env_t *params_env,
+                    cact_value_t params, cact_value_t args)
 {
     assert(cact);
     assert(params_env);
 
-    struct cact_val current_arg;
+    cact_value_t current_arg;
 
     current_arg = args;
 
@@ -92,7 +92,7 @@ cact_proc_eval_args(struct cactus *cact, struct cact_env *params_env,
         }
 
         cact_eval_single(cact, cact_car(cact, current_arg));
-        struct cact_val evaled_arg = cact_current_retval(cact);
+        cact_value_t evaled_arg = cact_current_retval(cact);
 
         cact_env_define(
             cact,
@@ -108,18 +108,18 @@ cact_proc_eval_args(struct cactus *cact, struct cact_env *params_env,
 /**
  * Apply a procedure given the arguments and the environment.
  */
-struct cact_val
-cact_proc_apply(struct cactus *cact, struct cact_proc *clo, struct cact_val args)
+cact_value_t
+cact_proc_apply(cact_context_t *cact, cact_procedure_t *clo, cact_value_t args)
 {
     assert(cact);
     assert(clo);
     assert(cact_is_pair(args) || cact_is_null(args));
     assert(clo->argl.as.object != args.as.object); // (in)sanity checking
 
-    struct cact_cont *cc = cact_current_cont(cact);
+    cact_frame_t *cc = cact_current_frame(cact);
 
     // Initialize the environment containing the parameters.
-    cc->env = (struct cact_env *) cact_alloc(cact, CACT_OBJ_ENVIRONMENT);
+    cc->env = (cact_env_t *) cact_alloc(cact, CACT_OBJ_ENVIRONMENT);
     cact_env_init(cc->env, clo->env);
 
     // Set the arguments list.
@@ -131,7 +131,7 @@ cact_proc_apply(struct cactus *cact, struct cact_proc *clo, struct cact_val args
     if (clo->nativefn != NULL) {
         return clo->nativefn(cact, args);
     } else {
-        struct cact_val ret = cact_eval_list(cact, clo->body);
+        cact_value_t ret = cact_eval_list(cact, clo->body);
         return ret;
     }
 }

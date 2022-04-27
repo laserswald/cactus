@@ -23,21 +23,21 @@
  * High-level evaluation.
  */
 
-struct cact_val cact_eval_single(struct cactus *cact, struct cact_val expr);
+cact_value_t cact_eval_single(cact_context_t *cact, cact_value_t expr);
 
 /* Evaluate a file using the interpreter. */
-struct cact_val
-cact_eval_file(struct cactus *cact, FILE *in)
+cact_value_t
+cact_eval_file(cact_context_t *cact, FILE *in)
 {
     return cact_eval_string(cact, slurp(in));
 }
 
 /* Evaluate a string using the interpreter. */
-struct cact_val
-cact_eval_string(struct cactus *cact, char *s)
+cact_value_t
+cact_eval_string(cact_context_t *cact, char *s)
 {
-    struct cact_val exp = CACT_NULL_VAL;
-    struct cact_val ret = CACT_UNDEF_VAL;
+    cact_value_t exp = CACT_NULL_VAL;
+    cact_value_t ret = CACT_UNDEF_VAL;
 
     cact_lexer_init(&cact->lexer, s);
 
@@ -68,10 +68,10 @@ STOP_RUNNING:
 }
 
 // TODO: evaluate last item as a tail call here.
-struct cact_val
-cact_eval_list(struct cactus *cact, struct cact_val lst)
+cact_value_t
+cact_eval_list(cact_context_t *cact, cact_value_t lst)
 {
-    struct cact_val ret = CACT_NULL_VAL;
+    cact_value_t ret = CACT_NULL_VAL;
 
     CACT_LIST_FOR_EACH_ITEM(cact, item, lst) {
         ret = cact_eval_single(cact, item);
@@ -83,12 +83,12 @@ cact_eval_list(struct cactus *cact, struct cact_val lst)
 /*
  * Evaluate a single expression.
  */
-struct cact_val
-cact_eval_single(struct cactus *cact, struct cact_val expr)
+cact_value_t
+cact_eval_single(cact_context_t *cact, cact_value_t expr)
 {
-    struct cact_cont *cc = cact_current_cont(cact);
+    cact_frame_t *cc = cact_current_frame(cact);
     cc->expr = expr;
-    cact_resume_cont(cact, cc);
+    cact_resume_frame(cact, cc);
     return cc->retval;
 }
 
@@ -96,14 +96,14 @@ cact_eval_single(struct cactus *cact, struct cact_val expr)
  * Primitive evaluation recognizers and helpers.
  */
 
-void special_quote(struct cactus *cact, struct cact_val args);
-void special_variable(struct cactus *cact, struct cact_val args);
-void special_set_bang(struct cactus *cact, struct cact_val args);
-void special_define(struct cactus *cact, struct cact_val args);
-void special_if(struct cactus *cact, struct cact_val args);
-void special_lambda(struct cactus *cact, struct cact_val args);
-void special_begin(struct cactus *cact, struct cact_val args);
-void special_call(struct cactus *cact, struct cact_val args);
+void special_quote(cact_context_t *cact, cact_value_t args);
+void special_variable(cact_context_t *cact, cact_value_t args);
+void special_set_bang(cact_context_t *cact, cact_value_t args);
+void special_define(cact_context_t *cact, cact_value_t args);
+void special_if(cact_context_t *cact, cact_value_t args);
+void special_lambda(cact_context_t *cact, cact_value_t args);
+void special_begin(cact_context_t *cact, cact_value_t args);
+void special_call(cact_context_t *cact, cact_value_t args);
 
 /**
  * Evaluate a primitive expression.
@@ -114,10 +114,10 @@ void special_call(struct cactus *cact, struct cact_val args);
  * go back to `cact_eval`.
  */
 void
-cact_eval_prim(struct cactus *cact, struct cact_cont *cc)
+cact_eval_prim(cact_context_t *cact, cact_frame_t *cc)
 {
     if (is_self_evaluating(cc->expr)) {
-        cact_cont_return(cc, cc->expr);
+        cact_leave_frame(cc, cc->expr);
     }
 
     if (is_quotation(cact, cc->expr)) {
@@ -149,7 +149,7 @@ cact_eval_prim(struct cactus *cact, struct cact_cont *cc)
 
     if (is_variable(cact, cc->expr)) {
 	    assert(cact_env_num_bindings(cc->env) != 0);
-        cact_cont_return(
+        cact_leave_frame(
             cc,
             cact_env_lookup(
                 cact,
@@ -168,12 +168,12 @@ cact_eval_prim(struct cactus *cact, struct cact_cont *cc)
     abort();
 }
 
-struct cact_cont*
-push_new_cont(struct cactus *cact, struct cact_cont *cc)
+cact_frame_t*
+push_new_frame(cact_context_t *cact, cact_frame_t *cc)
 {
-    struct cact_cont *nc = (struct cact_cont *) cact_alloc(cact, CACT_OBJ_CONT);
-    cact_cont_init(nc, cc->env, NULL);
-    cact_call_stack_push(cact, nc);
+    cact_frame_t *nc = (cact_frame_t *) cact_alloc(cact, CACT_OBJ_CONT);
+    cact_init_frame(nc, cc->env, NULL);
+    cact_continuation_push(cact, nc);
     return nc;
 }
 
@@ -181,10 +181,10 @@ push_new_cont(struct cactus *cact, struct cact_cont *cc)
  * Evaluate a quotation.
  */
 void
-special_quote(struct cactus *cact, struct cact_val args)
+special_quote(cact_context_t *cact, cact_value_t args)
 {
-    struct cact_cont *cc = cact_current_cont(cact);
-    cact_cont_return(cc, args);
+    cact_frame_t *cc = cact_current_frame(cact);
+    cact_leave_frame(cc, args);
 }
 
 /**
@@ -194,10 +194,10 @@ special_quote(struct cactus *cact, struct cact_val args)
  * item and the next expression to evaluate as the
  */
 void
-special_define(struct cactus *cact, struct cact_val args)
+special_define(cact_context_t *cact, cact_value_t args)
 {
-    struct cact_cont *cc = cact_current_cont(cact);
-    struct cact_val term, definition;
+    cact_frame_t *cc = cact_current_frame(cact);
+    cact_value_t term, definition;
 
     term = cact_car(cact, args);
     definition = cact_cadr(cact, args);
@@ -205,42 +205,42 @@ special_define(struct cactus *cact, struct cact_val args)
     cc->unevaled = term;
     cc->state = CACT_JMP_DEFINE;
 
-    struct cact_cont *nc = push_new_cont(cact, cc);
+    cact_frame_t *nc = push_new_frame(cact, cc);
     nc->expr = definition;
 
-    cact_resume_cont(cact, nc);
+    cact_resume_frame(cact, nc);
 }
 
 void
-special_lambda(struct cactus *cact, struct cact_val args)
+special_lambda(cact_context_t *cact, cact_value_t args)
 {
-    struct cact_cont *cc = cact_current_cont(cact);
-    struct cact_val lambda_args = cact_car(cact, args);
-    struct cact_val body = cact_cdr(cact, args);
+    cact_frame_t *cc = cact_current_frame(cact);
+    cact_value_t lambda_args = cact_car(cact, args);
+    cact_value_t body = cact_cdr(cact, args);
 
     assert(cact_env_num_bindings(cc->env) != 0);
     cc->retval = cact_make_procedure(cact, cc->env, lambda_args, body);
 
     cc->state = CACT_JMP_FINISH;
-    cact_continue_cont(cc);
+    cact_continue_frame(cc);
 }
 
 void
-special_begin(struct cactus *cact, struct cact_val args)
+special_begin(cact_context_t *cact, cact_value_t args)
 {
-    struct cact_cont *cc = cact_current_cont(cact);
+    cact_frame_t *cc = cact_current_frame(cact);
 
     cc->retval = CACT_UNDEF_VAL;
     cc->unevaled = args;
-    cact_cont_continue_step(cc, CACT_JMP_EVAL_SEQ);
+    cact_continue_frame_step(cc, CACT_JMP_EVAL_SEQ);
 }
 
 void
-special_set_bang(struct cactus *cact, struct cact_val args)
+special_set_bang(cact_context_t *cact, cact_value_t args)
 {
-    struct cact_cont *cc = cact_current_cont(cact);
+    cact_frame_t *cc = cact_current_frame(cact);
     assert(cact_env_num_bindings(cc->env) != 0);
-    struct cact_val term, defn;
+    cact_value_t term, defn;
 
     term = cact_car(cact, args);
     defn = cact_cadr(cact, args);
@@ -248,10 +248,10 @@ special_set_bang(struct cactus *cact, struct cact_val args)
     cc->state = CACT_JMP_ASSIGN;
     cc->unevaled = term;
 
-    struct cact_cont *nc = push_new_cont(cact, cc);
+    cact_frame_t *nc = push_new_frame(cact, cc);
     nc->expr = defn;
 
-    cact_resume_cont(cact, nc);
+    cact_resume_frame(cact, nc);
 }
 
 /**
@@ -261,22 +261,22 @@ special_set_bang(struct cactus *cact, struct cact_val args)
  * to be unevaluated.
  */
 void
-special_if(struct cactus *cact, struct cact_val args)
+special_if(cact_context_t *cact, cact_value_t args)
 {
-    struct cact_cont *cc = cact_current_cont(cact);
+    cact_frame_t *cc = cact_current_frame(cact);
     assert(cact_env_num_bindings(cc->env) != 0);
     DBG("Evaluating if statement #%lu\n", cc->obj.store_data.place);
 
-    struct cact_val condition = cact_car(cact, args);
+    cact_value_t condition = cact_car(cact, args);
 
     cc->unevaled = cact_cdr(cact, args);
     cc->state = CACT_JMP_IF_DECISION;
 
-    struct cact_cont *nc = push_new_cont(cact, cc);
+    cact_frame_t *nc = push_new_frame(cact, cc);
     nc->expr = condition;
     nc->state = CACT_JMP_EVAL_SINGLE;
 
-    cact_resume_cont(cact, nc);
+    cact_resume_frame(cact, nc);
 }
 
 /**
@@ -284,7 +284,7 @@ special_if(struct cactus *cact, struct cact_val args)
  * unevaluated expressions depending on that.
  */
 void
-cact_eval_branch(struct cactus *cact, struct cact_cont *cc)
+cact_eval_branch(cact_context_t *cact, cact_frame_t *cc)
 {
     DBG("Evaluating branch #%lu\n", cc->obj.store_data.place);
     assert(cact_env_num_bindings(cc->env) != 0);
@@ -293,26 +293,26 @@ cact_eval_branch(struct cactus *cact, struct cact_cont *cc)
         cc->expr = cact_car(cact, cc->unevaled);
         cc->state = CACT_JMP_EVAL_SINGLE;
         cact_show_call_stack(cact);
-        cact_cont_continue_step(cc, CACT_JMP_EVAL_SINGLE);
+        cact_continue_frame_step(cc, CACT_JMP_EVAL_SINGLE);
     }
 
     if (cact_is_null(cact_cdr(cact, cc->unevaled))) {
-        cact_cont_return(cc, CACT_UNDEF_VAL);
+        cact_leave_frame(cc, CACT_UNDEF_VAL);
     }
 
     cc->expr = cact_cadr(cact, cc->unevaled);
     cc->state = CACT_JMP_EVAL_SINGLE;
-    cact_show_call_stack(cact);
-    cact_continue_cont(cc);
+    cact_show_continuation(cact);
+    cact_continue_frame(cc);
 }
 
 /*
  * Finish evaluating a definition.
  */
 void
-cact_eval_definition(struct cactus *cact, struct cact_cont *cc)
+cact_eval_definition(cact_context_t *cact, cact_frame_t *cc)
 {
-    struct cact_val term, defn;
+    cact_value_t term, defn;
 
     term = cc->unevaled;
     defn = cc->retval;
@@ -322,7 +322,7 @@ cact_eval_definition(struct cactus *cact, struct cact_cont *cc)
     assert(cact_env_num_bindings(cc->env) != 0);
 
     cc->state = CACT_JMP_FINISH;
-    cact_continue_cont(cc);
+    cact_continue_frame(cc);
 }
 
 
@@ -335,31 +335,31 @@ cact_eval_definition(struct cactus *cact, struct cact_cont *cc)
  * are discarded.
  */
 void
-cact_eval_sequence(struct cactus *cact, struct cact_cont *cc)
+cact_eval_sequence(cact_context_t *cact, cact_frame_t *cc)
 {
     assert(cc->env->entries.count != 0);
     // If we have no more items to evaluate, then we are done.
     if (cact_is_null(cc->unevaled)) {
-	    cact_cont_continue_step(cc, CACT_JMP_FINISH);
+	    cact_continue_frame_step(cc, CACT_JMP_FINISH);
     }
 
     if (! cact_is_pair(cc->unevaled)) {
         // If we don't have a pair, then queue up this expression for evaluation, and
         // then return it after it's done evaluating.
         cc->expr = cc->unevaled;
-	    cact_cont_continue_step(cc, CACT_JMP_EVAL_SINGLE);
+	    cact_continue_frame_step(cc, CACT_JMP_EVAL_SINGLE);
     }
 
-    struct cact_cont *nc = push_new_cont(cact, cc);
+    cact_frame_t *nc = push_new_frame(cact, cc);
     nc->expr = cact_car(cact, cc->unevaled);
     cc->unevaled = cact_cdr(cact, cc->unevaled);
-    cact_resume_cont(cact, nc);
+    cact_resume_frame(cact, nc);
 }
 
 void
-cact_eval_assignment(struct cactus *cact, struct cact_cont *cc)
+cact_eval_assignment(cact_context_t *cact, cact_frame_t *cc)
 {
-    struct cact_val term, defn;
+    cact_value_t term, defn;
 
     term = cc->unevaled;
     defn = cc->retval;
@@ -370,7 +370,7 @@ cact_eval_assignment(struct cactus *cact, struct cact_cont *cc)
     cc->retval = CACT_UNDEF_VAL;
 
     cc->state = CACT_JMP_FINISH;
-    cact_continue_cont(cc);
+    cact_continue_frame(cc);
 }
 
 /*
@@ -378,28 +378,28 @@ cact_eval_assignment(struct cactus *cact, struct cact_cont *cc)
  */
 
 void
-special_call(struct cactus *cact, struct cact_val x)
+special_call(cact_context_t *cact, cact_value_t x)
 {
-    struct cact_cont *cc = cact_current_cont(cact);
+    cact_frame_t *cc = cact_current_frame(cact);
     cc->unevaled = cact_cdr(cact, x);
     cc->state = CACT_JMP_APPLY_DID_OP;
 
-    struct cact_cont *nc = push_new_cont(cact, cc);
+    cact_frame_t *nc = push_new_frame(cact, cc);
     nc->expr = cact_car(cact, x);
     nc->state = CACT_JMP_EVAL_SINGLE;
 
-    cact_resume_cont(cact, nc);
+    cact_resume_frame(cact, nc);
 }
 
 /**
  * Extract and evaluate the operator in this procedure application.
  */
 void
-cact_eval_apply_with_operator(struct cactus *cact, struct cact_cont *cc)
+cact_eval_apply_with_operator(cact_context_t *cact, cact_frame_t *cc)
 {
     cc->argl = CACT_NULL_VAL;
 
-    struct cact_val maybe_procedure = cc->retval;
+    cact_value_t maybe_procedure = cc->retval;
     if (! cact_is_procedure(maybe_procedure)) {
         cact_display(maybe_procedure);
         fprintf(stdout, "Cannot apply non-operation %s:\n", cact_type_str(maybe_procedure));
@@ -409,10 +409,10 @@ cact_eval_apply_with_operator(struct cactus *cact, struct cact_cont *cc)
 
     if (cact_is_null(cc->unevaled)) {
         cc->state = CACT_JMP_APPLY;
-        cact_continue_cont(cc);
+        cact_continue_frame(cc);
     } else {
         cc->state = CACT_JMP_ARG_POP;
-        cact_continue_cont(cc);
+        cact_continue_frame(cc);
     }
 }
 
@@ -420,36 +420,36 @@ cact_eval_apply_with_operator(struct cactus *cact, struct cact_cont *cc)
  * Loop over the argument list and evaluate each part.
  */
 void
-cact_eval_arg_pop(struct cactus *cact, struct cact_cont *cc)
+cact_eval_arg_pop(cact_context_t *cact, cact_frame_t *cc)
 {
     if (cact_is_null(cc->unevaled)) {
 	    if (cc->proc->nativefn) {
-	        cact_cont_continue_step(cc, CACT_JMP_APPLY);
+	        cact_continue_frame_step(cc, CACT_JMP_APPLY);
 	    }
-        cact_cont_continue_step(cc, CACT_JMP_EXTEND_ENV);
+        cact_continue_frame_step(cc, CACT_JMP_EXTEND_ENV);
     }
 
-    struct cact_cont *nc = push_new_cont(cact, cc);
+    cact_frame_t *nc = push_new_frame(cact, cc);
     nc->expr = cact_car(cact, cc->unevaled);
     nc->state = CACT_JMP_EVAL_SINGLE;
 
     cc->unevaled = cact_cdr(cact, cc->unevaled);
     cc->state = CACT_JMP_BIND_ARG;
 
-    cact_resume_cont(cact, nc);
+    cact_resume_frame(cact, nc);
 }
 
 void
-cact_eval_arg_bind(struct cactus *cact, struct cact_cont *cc)
+cact_eval_arg_bind(cact_context_t *cact, cact_frame_t *cc)
 {
     cc->argl = cact_append(cact, cc->argl, cc->retval);
-    cact_cont_continue_step(cc, CACT_JMP_ARG_POP);
+    cact_continue_frame_step(cc, CACT_JMP_ARG_POP);
 }
 
 void
-cact_eval_extend_env(struct cactus *cact, struct cact_cont *cc)
+cact_eval_extend_env(cact_context_t *cact, cact_frame_t *cc)
 {
-    struct cact_env *extended = (struct cact_env *) cact_alloc(cact, CACT_OBJ_ENVIRONMENT);
+    cact_env_t *extended = (cact_env_t *) cact_alloc(cact, CACT_OBJ_ENVIRONMENT);
     cact_env_init(extended, cc->proc->env);
     assert(cact_env_num_bindings(extended) != 0);
 
@@ -476,19 +476,19 @@ cact_eval_extend_env(struct cactus *cact, struct cact_cont *cc)
     cact_unpreserve(cact, CACT_OBJ_VAL(extended));
     assert(cact_env_num_bindings(cc->env) != 0);
 
-    cact_cont_continue_step(cc, CACT_JMP_APPLY);
+    cact_continue_frame_step(cc, CACT_JMP_APPLY);
 }
 
 void
-cact_eval_apply(struct cactus *cact, struct cact_cont *cc)
+cact_eval_apply(cact_context_t *cact, cact_frame_t *cc)
 {
-    struct cact_proc *clo = cc->proc;
+    cact_procedure_t *clo = cc->proc;
 
     if (clo->nativefn != NULL) {
-        cact_cont_return(cc, clo->nativefn(cact, cc->argl));
+        cact_leave_frame(cc, clo->nativefn(cact, cc->argl));
     } else {
         cc->unevaled = cc->proc->body;
-        cact_cont_continue_step(cc, CACT_JMP_EVAL_SEQ);
+        cact_continue_frame_step(cc, CACT_JMP_EVAL_SEQ);
     }
 }
 

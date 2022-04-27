@@ -7,32 +7,47 @@
 
 #include "internal/table.h"
 
-TABLE_DECL(cact_env_entries, struct cact_symbol *, struct cact_val)
+TABLE_DECL(cact_env_entries, cact_symbol_t *, cact_value_t)
+typedef struct cact_env_entries cact_env_entries_t;
 
-struct cact_env {
-	struct cact_obj obj;
+typedef struct cact_env {
+	cact_object_t obj;
 	struct cact_env *parent;
-	struct cact_env_entries entries;
-};
+	cact_env_entries_t entries;
+} cact_env_t;
 
-DEFINE_OBJECT_CONVERSION(CACT_OBJ_ENVIRONMENT, struct cact_env*, cact_to_env, env)
+DEFINE_OBJECT_CONVERSION(CACT_OBJ_ENVIRONMENT, cact_env_t *, cact_to_env, env)
 DEFINE_OBJECT_CHECK(cact_is_env, CACT_OBJ_ENVIRONMENT)
 
-struct cact_val cact_make_env(struct cactus *, struct cact_env *parent);
-void            cact_env_init(struct cact_env *e, struct cact_env *parent);
+cact_value_t 
+cact_make_env(cact_context_t *, cact_env_t *parent);
 
-void            cact_mark_env(struct cact_obj *);
-void            cact_destroy_env(struct cact_obj *);
+void 
+cact_env_init(cact_env_t *e, cact_env_t *parent);
 
-struct cact_val cact_env_define(struct cactus *, struct cact_env *e, struct cact_symbol *k, struct cact_val v);
-struct cact_val cact_env_set(struct cactus *, struct cact_env *e, struct cact_symbol *k, struct cact_val v);
-struct cact_val cact_env_lookup(struct cactus *, struct cact_env *e, struct cact_symbol *k);
-bool cact_env_is_bound(struct cact_env *e, struct cact_symbol *k);
+void 
+cact_mark_env(cact_object_t *);
 
-void            print_env(struct cact_env *e);
+void 
+cact_destroy_env(cact_object_t *);
+
+cact_value_t 
+cact_env_define(cact_context_t *, cact_env_t *e, cact_symbol_t *k, cact_value_t v);
+
+cact_value_t 
+cact_env_set(cact_context_t *, cact_env_t *e, cact_symbol_t *k, cact_value_t v);
+
+cact_value_t 
+cact_env_lookup(cact_context_t *, cact_env_t *e, cact_symbol_t *k);
+
+bool 
+cact_env_is_bound(cact_env_t *e, cact_symbol_t *k);
+
+void 
+print_env(cact_env_t *e);
+
 int
-cact_env_num_bindings(struct cact_env *e);
-
+cact_env_num_bindings(cact_env_t *e);
 
 #endif // env_h_INCLUDED
 

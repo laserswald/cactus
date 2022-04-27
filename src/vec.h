@@ -6,21 +6,34 @@
 #include "storage/obj.h"
 #include "val.h"
 
-struct cact_vec {
-	struct cact_obj obj;
+typedef struct cact_vec {
+	cact_object_t obj;
 	unsigned long length;
-	struct cact_val *items;
-};
+	cact_value_t *items;
+} cact_vec_t;
 
-struct cact_val cact_make_vec_filled(struct cactus *cact, unsigned long length, struct cact_val fill);
-struct cact_val cact_make_vec_empty(struct cactus *, unsigned long);
-void cact_mark_vec(struct cact_obj *v);
-void cact_destroy_vec(struct cact_obj *v);
-struct cact_val cact_vec_ref(struct cactus *cact, struct cact_vec *v, unsigned long index);
-void cact_vec_set(struct cactus *cact, struct cact_vec *v, unsigned long index, struct cact_val new);
-struct cact_val cact_vec_len(struct cactus *cact, struct cact_vec *v);
+cact_value_t 
+cact_make_vec_filled(cact_context_t *cact, unsigned long length, cact_value_t fill);
 
-DEFINE_OBJECT_CONVERSION(CACT_OBJ_VECTOR, struct cact_vec*, cact_to_vec, vec)
+cact_value_t 
+cact_make_vec_empty(cact_context_t *, unsigned long);
+
+void 
+cact_mark_vec(cact_object_t *v);
+
+void 
+cact_destroy_vec(cact_object_t *v);
+
+cact_value_t 
+cact_vec_ref(cact_context_t *cact, cact_vec_t *v, unsigned long index);
+
+void 
+cact_vec_set(cact_context_t *cact, cact_vec_t *v, unsigned long index, cact_value_t new);
+
+cact_value_t 
+cact_vec_len(cact_context_t *cact, cact_vec_t *v);
+
+DEFINE_OBJECT_CONVERSION(CACT_OBJ_VECTOR, cact_vec_t *, cact_to_vec, vec)
 DEFINE_OBJECT_CHECK(cact_is_vector, CACT_OBJ_VECTOR)
 
 #endif

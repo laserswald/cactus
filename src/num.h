@@ -10,55 +10,55 @@ DEFINE_VALUE_CHECK(cact_is_flonum, CACT_TYPE_FLONUM)
 DEFINE_VALUE_CHECK(cact_is_fixnum, CACT_TYPE_FIXNUM)
 
 bool 
-cact_is_number(struct cact_val);
-BUILTIN_FUNC(cact_builtin_is_number);
+cact_is_number(cact_value_t);
+CACT_BUILTIN_FUNC(cact_builtin_is_number);
 
 bool 
-cact_is_zero(struct cact_val);
-BUILTIN_FUNC(cact_builtin_is_zero);
+cact_is_zero(cact_value_t);
+CACT_BUILTIN_FUNC(cact_builtin_is_zero);
 
 /*
  * Numeric comparisons.
  */
 
 bool
-cact_less_than(struct cactus *cact, struct cact_val a, struct cact_val b);
-BUILTIN_FUNC(cact_builtin_less_than);
+cact_less_than(cact_context_t *cact, cact_value_t a, cact_value_t b);
+CACT_BUILTIN_FUNC(cact_builtin_less_than);
 
 bool
-cact_greater_than(struct cactus *cact, struct cact_val a, struct cact_val b);
-BUILTIN_FUNC(cact_builtin_greater_than);
+cact_greater_than(cact_context_t *cact, cact_value_t a, cact_value_t b);
+CACT_BUILTIN_FUNC(cact_builtin_greater_than);
 
 bool
-cact_less_or_equal(struct cactus *cact, struct cact_val a, struct cact_val b);
-BUILTIN_FUNC(cact_builtin_less_or_equal);
+cact_less_or_equal(cact_context_t *cact, cact_value_t a, cact_value_t b);
+CACT_BUILTIN_FUNC(cact_builtin_less_or_equal);
 
 bool
-cact_greater_or_equal(struct cactus *cact, struct cact_val a, struct cact_val b);
-BUILTIN_FUNC(cact_builtin_greater_or_equal);
+cact_greater_or_equal(cact_context_t *cact, cact_value_t a, cact_value_t b);
+CACT_BUILTIN_FUNC(cact_builtin_greater_or_equal);
 
 bool
-cact_num_equal(struct cactus *cact, struct cact_val a, struct cact_val b);
-BUILTIN_FUNC(cact_builtin_num_equal);
+cact_num_equal(cact_context_t *cact, cact_value_t a, cact_value_t b);
+CACT_BUILTIN_FUNC(cact_builtin_num_equal);
 
 /*
  * Arithmetic.
  */
 
-struct cact_val
-cact_add(struct cactus *cact, struct cact_val a, struct cact_val b);
-BUILTIN_FUNC(cact_builtin_plus);
+cact_value_t
+cact_add(cact_context_t *cact, cact_value_t a, cact_value_t b);
+CACT_BUILTIN_FUNC(cact_builtin_plus);
 
-struct cact_val
-cact_multiply(struct cactus *cact, struct cact_val a, struct cact_val b);
-BUILTIN_FUNC(cact_builtin_times);
+cact_value_t
+cact_multiply(cact_context_t *cact, cact_value_t a, cact_value_t b);
+CACT_BUILTIN_FUNC(cact_builtin_times);
 
-struct cact_val
-cact_subtract(struct cactus *cact, struct cact_val a, struct cact_val b);
-BUILTIN_FUNC(cact_builtin_minus);
+cact_value_t
+cact_subtract(cact_context_t *cact, cact_value_t a, cact_value_t b);
+CACT_BUILTIN_FUNC(cact_builtin_minus);
 
-struct cact_val
-cact_divide(struct cactus *cact, struct cact_val a, struct cact_val b);
-BUILTIN_FUNC(cact_builtin_divide);
+cact_value_t
+cact_divide(cact_context_t *cact, cact_value_t a, cact_value_t b);
+CACT_BUILTIN_FUNC(cact_builtin_divide);
 
-#endif /* NUMBER_H */
+#endif /* NUMBER_*/

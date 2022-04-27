@@ -16,13 +16,13 @@
 #include "internal/utils.h"
 
 void
-cact_str_coords_init(struct cact_str_coords *cds)
+cact_str_coords_init(cact_str_coords_t *cds)
 {
-    memset(cds, 0, sizeof(struct cact_str_coords));
+    memset(cds, 0, sizeof(cact_str_coords_t));
 }
 
 void
-cact_str_coords_push(struct cact_str_coords *cds, int c)
+cact_str_coords_push(cact_str_coords_t *cds, int c)
 {
     cds->bytes++;
     if (c == '\n') {
@@ -62,7 +62,7 @@ notnl(int c)
 
 /* Initialize a lexer with a string to parse. */
 void
-cact_lexer_init(struct cact_lexer* l, const char* s)
+cact_lexer_init(cact_lexer_t* l, const char* s)
 {
     l->st = s;
     l->cur = (char*) s;
@@ -71,7 +71,7 @@ cact_lexer_init(struct cact_lexer* l, const char* s)
 }
 
 static int
-cact_lexer_getc(struct cact_lexer* l)
+cact_lexer_getc(cact_lexer_t* l)
 {
     if (! l->cur) {
         return -1;
@@ -87,7 +87,7 @@ cact_lexer_getc(struct cact_lexer* l)
 }
 
 static int
-cact_lexer_peekc(struct cact_lexer* l)
+cact_lexer_peekc(cact_lexer_t* l)
 {
     if (! l->cur) {
         return -1;
@@ -97,7 +97,7 @@ cact_lexer_peekc(struct cact_lexer* l)
 
 /* Consume characters from the string until the function returns 0. */
 static int
-cact_lexer_charspan(struct cact_lexer* l, int (*fn)(int))
+cact_lexer_charspan(cact_lexer_t* l, int (*fn)(int))
 {
     int len = 0;
     while (cact_lexer_peekc(l) && fn(cact_lexer_peekc(l))) {
@@ -109,7 +109,7 @@ cact_lexer_charspan(struct cact_lexer* l, int (*fn)(int))
 
 /* Print a lexeme to stdout. */
 void
-printlex(struct cact_lexeme lx)
+printlex(cact_lexeme_t lx)
 {
     switch (lx.t) {
     case CACT_TOKEN_ERROR:
@@ -164,7 +164,7 @@ printlex(struct cact_lexeme lx)
 }
 
 void
-cact_lexer_decimal(struct cact_lexer *l, struct cact_lexeme *le)
+cact_lexer_decimal(cact_lexer_t *l, cact_lexeme_t *le)
 {
 	le->t = CACT_TOKEN_FLOAT;
     cact_lexer_getc(l);
@@ -172,7 +172,7 @@ cact_lexer_decimal(struct cact_lexer *l, struct cact_lexeme *le)
 }
 
 void
-cact_lexer_unsigned_number(struct cact_lexer *l, struct cact_lexeme *le)
+cact_lexer_unsigned_number(cact_lexer_t *l, cact_lexeme_t *le)
 {
 	le->t = CACT_TOKEN_INTEGER;
     cact_lexer_charspan(l, isdigit);
@@ -183,7 +183,7 @@ cact_lexer_unsigned_number(struct cact_lexer *l, struct cact_lexeme *le)
 }
 
 void
-cact_lexer_minus_and_plus(struct cact_lexer *l, struct cact_lexeme *le)
+cact_lexer_minus_and_plus(cact_lexer_t *l, cact_lexeme_t *le)
 {
 	cact_lexer_getc(l);
     int c = cact_lexer_peekc(l);
@@ -191,15 +191,15 @@ cact_lexer_minus_and_plus(struct cact_lexer *l, struct cact_lexeme *le)
 		cact_lexer_unsigned_number(l, le);
     } else {
         le->t = CACT_TOKEN_IDENTIFIER;
-        cact_lexer_charspan(l, is_ident);
+        cact_lexer_charspan(l, is_subsequent_identifier);
     }
 }
 
 /* Return the next lexeme available from the lexer. */
-struct cact_lexeme
-nextlex(struct cact_lexer* l)
+cact_lexeme_t
+nextlex(cact_lexer_t* l)
 {
-    struct cact_lexeme le = {
+    cact_lexeme_t le = {
         .st = l->cur,
         .coords = l->coords
     };
@@ -211,9 +211,9 @@ nextlex(struct cact_lexer* l)
     } else if (isspace(c)) {
         le.t = CACT_TOKEN_WHITESPACE;
         cact_lexer_charspan(l, isspace);
-    } else if (is_ident(c)) {
+    } else if (is_initial_identifier(c)) {
         le.t = CACT_TOKEN_IDENTIFIER;
-        cact_lexer_charspan(l, is_ident);
+        cact_lexer_charspan(l, is_subsequent_identifier);
     } else if (isdigit(c)) {
 	    cact_lexer_unsigned_number(l, &le);
     } else if (c == '-' || c == '+') {
@@ -260,8 +260,8 @@ nextlex(struct cact_lexer* l)
 }
 
 /* Peek at the current lexeme. */
-struct cact_lexeme
-peeklex(struct cact_lexer *l)
+cact_lexeme_t
+peeklex(cact_lexer_t *l)
 {
     if (l->buf.t == CACT_TOKEN_NOTHING) {
         nextlex(l);
@@ -274,15 +274,15 @@ peeklex(struct cact_lexer *l)
  * token, or 0 otherwise.
  */
 int
-peekistok(struct cact_lexer *l, enum cact_token t)
+peekistok(cact_lexer_t *l, enum cact_token t)
 {
-    struct cact_lexeme e = peeklex(l);
+    cact_lexeme_t e = peeklex(l);
     return e.t == t;
 }
 
 /* If the current lexeme is of the specified token, consume it. */
 int
-expecttok(struct cact_lexer *l, enum cact_token t)
+expecttok(cact_lexer_t *l, enum cact_token t)
 {
     int istok = peekistok(l, t);
     if (istok) {
@@ -293,7 +293,7 @@ expecttok(struct cact_lexer *l, enum cact_token t)
 
 /* Print the entire stream of tokens from the lexer. */
 void
-printtokstream(struct cact_lexer *l)
+printtokstream(cact_lexer_t *l)
 {
     while (! peekistok(l, CACT_TOKEN_END)) {
         printlex(peeklex(l));
@@ -303,16 +303,16 @@ printtokstream(struct cact_lexer *l)
 }
 
 /* Convert a lexeme to a symbol. */
-struct cact_val
-lextosym(struct cactus *cact, struct cact_lexeme lx)
+cact_value_t
+lextosym(cact_context_t *cact, cact_lexeme_t lx)
 {
     char* sym = strslice(lx.st, &lx.st[lx.sz]);
     return cact_make_symbol(cact, sym);
 }
 
 /* Convert a lexeme to an integer. */
-struct cact_val
-lextoint(struct cactus *cact, struct cact_lexeme lx)
+cact_value_t
+lextoint(cact_context_t *cact, cact_lexeme_t lx)
 {
     char *end = lx.st;
     long i = strtol(lx.st, &end, 10);
@@ -320,8 +320,8 @@ lextoint(struct cactus *cact, struct cact_lexeme lx)
 }
 
 /* Convert a lexeme to a floating point. */
-struct cact_val
-lextofloat(struct cactus *cact, struct cact_lexeme lx)
+cact_value_t
+lextofloat(cact_context_t *cact, cact_lexeme_t lx)
 {
     char *end = lx.st;
     double d = strtod(lx.st, &end);
@@ -329,15 +329,15 @@ lextofloat(struct cactus *cact, struct cact_lexeme lx)
 }
 
 /* Convert a lexeme to a string. */
-struct cact_val
-lextostr(struct cactus *cact, struct cact_lexeme lx)
+cact_value_t
+lextostr(cact_context_t *cact, cact_lexeme_t lx)
 {
     return cact_make_string(cact, strslice(lx.st + 1, &lx.st[lx.sz - 1]));
 }
 
 /* Convert a lexeme to a boolean. */
-struct cact_val
-lextobool(struct cactus *cact, struct cact_lexeme lx)
+cact_value_t
+lextobool(cact_context_t *cact, cact_lexeme_t lx)
 {
     if (strncmp(lx.st, "#t", 2) == 0 || strncmp(lx.st, "#true", 5) == 0) {
         return CACT_BOOL_VAL(true);
@@ -349,17 +349,17 @@ lextobool(struct cactus *cact, struct cact_lexeme lx)
 
 /* Read a list from the given lexer and fill the cact_val with it. */
 int
-readlist(struct cactus *cact, struct cact_val *r)
+readlist(cact_context_t *cact, cact_value_t *r)
 {
     assert(cact);
     assert(r);
 
-    struct cact_lexer *l = &cact->lexer;
+    cact_lexer_t *l = &cact->lexer;
     int status;
 
     *r = CACT_NULL_VAL;
 
-    struct cact_lexeme open_paren = peeklex(l);
+    cact_lexeme_t open_paren = peeklex(l);
 
     if (open_paren.t != CACT_TOKEN_OPEN_PAREN) {
         *r = cact_make_error(cact, "readlist: somehow didn't get open paren", CACT_NULL_VAL);
@@ -369,7 +369,7 @@ readlist(struct cactus *cact, struct cact_val *r)
     nextlex(l);
 
     while (! peekistok(l, CACT_TOKEN_CLOSE_PAREN) && peeklex(l).t > 0) {
-        struct cact_val e;
+        cact_value_t e;
         status = cact_read(cact, &e);
         cact_preserve(cact, e);
         if (status != CACT_READ_OK) {
@@ -407,12 +407,12 @@ readlist(struct cactus *cact, struct cact_val *r)
 
 /* Read the next valid s-expression from the lexer. */
 enum cact_read_status
-cact_read(struct cactus* cact, struct cact_val* ret) {
+cact_read(cact_context_t* cact, cact_value_t* ret) {
     int status = CACT_READ_IN_PROGRESS;
     *ret = CACT_NULL_VAL;
-    struct cact_lexer *l = &cact->lexer;
+    cact_lexer_t *l = &cact->lexer;
 
-    struct cact_lexeme lx;
+    cact_lexeme_t lx;
 
     do
     {
@@ -465,9 +465,9 @@ cact_read(struct cactus* cact, struct cact_val* ret) {
 
         case CACT_TOKEN_SINGLE_QUOTE:
             nextlex(l);
-            struct cact_val quoted;
+            cact_value_t quoted;
             status = cact_read(cact, &quoted);
-            struct cact_val q = cact_make_symbol(cact, "quote");
+            cact_value_t q = cact_make_symbol(cact, "quote");
             *ret = cact_cons(cact, q, quoted);
             status = CACT_READ_OK;
             break;

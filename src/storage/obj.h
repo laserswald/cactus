@@ -1,10 +1,12 @@
 #ifndef CACT_OBJ_H
 #define CACT_OBJ_H
 
+typedef struct cact_object cact_object_t;
+
 #include "val.h"
 
 /* Types of heap-allocated objects. */
-enum cact_obj_type {
+typedef enum cact_object_type {
 	CACT_OBJ_PAIR,
 	CACT_OBJ_STRING,
 	CACT_OBJ_PROCEDURE,
@@ -22,27 +24,38 @@ enum cact_obj_type {
 	/* CACT_OBJ_RECORD_INST, */
 
 	/* TODO: Symbols*/
-};
+} cact_object_type_t;
+
+const char * 
+cact_obj_show_type(enum cact_object_type);
 
 #include "store.h"
 
 /* A value that has an associated heap component. */
-struct cact_obj {
-	enum cact_obj_type type;
-	struct cact_store_data store_data;
-};
+typedef struct cact_object {
+	cact_object_type_t type;
+	cact_store_data_t store_data;
+} cact_object_t;
 
-void cact_obj_mark(struct cact_obj *);
-void cact_obj_destroy(struct cact_obj *);
+ARRAY_DECL(cact_object_array, struct cact_object *);
+typedef struct cact_object_array cact_object_array_t;
 
-const char* cact_obj_show_type(enum cact_obj_type);
+void 
+cact_mark_object(cact_object_t *);
+
+typedef void (*cact_object_mark_fn)(cact_object_t *);
+
+void 
+cact_destroy_object(cact_object_t *);
+
+typedef void (*cact_object_destroy_fn)(cact_object_t *);
 
 #define DEFINE_OBJECT_CONVERSION(typemarker, returntype, funcname, membername) \
 static inline returntype \
-funcname(struct cact_val x, char *extras) \
+funcname(cact_value_t x, char *extras) \
 { \
 	if (x.type != CACT_TYPE_OBJ) { \
-		fprintf(stderr, "%s: Expected object, but got %s.\n", extras, cact_val_show_type(x.type)); \
+		fprintf(stderr, "%s: Expected object, but got %s.\n", extras, cact_value_show_type(x.type)); \
 		abort(); \
 	} \
 	if (x.as.object->type != typemarker) { \
@@ -54,7 +67,7 @@ funcname(struct cact_val x, char *extras) \
 
 #define DEFINE_OBJECT_CHECK(funcname, typemarker) \
 static inline bool \
-funcname(struct cact_val x) { \
+funcname(cact_value_t x) { \
 	return x.type == CACT_TYPE_OBJ && x.as.object->type == typemarker; \
 }
 

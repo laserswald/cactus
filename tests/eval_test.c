@@ -8,12 +8,12 @@
 #include "write.h"
 #include "builtin.h"
 
-static struct cactus cact;
+static cact_context_t cact;
 
 TEST
 eval_selfeval_test()
 {
-    struct cact_val v;
+    cact_value_t v;
 
     v = cact_eval_string(&cact, "1");
     ASSERTm("expected x to be int", cact_is_fixnum(v));
@@ -25,7 +25,7 @@ eval_selfeval_test()
 TEST
 eval_quote_test()
 {
-    struct cact_val v;
+    cact_value_t v;
 
     v = cact_eval_string(&cact, "'abc");
     ASSERTm("expected value to be a symbol", cact_is_symbol(v));
@@ -36,7 +36,7 @@ eval_quote_test()
 TEST
 eval_define_var_test()
 {
-    struct cact_val v;
+    cact_value_t v;
 
     v = cact_eval_string(&cact, "(define x 1) x");
     ASSERTm("expected x to be int", cact_is_fixnum(v));
@@ -48,7 +48,7 @@ eval_define_var_test()
 TEST
 eval_if_test()
 {
-    struct cact_val v;
+    cact_value_t v;
 
     v = cact_eval_string(&cact, "(if #t 1 2)");
     ASSERTm("expected x to be int", cact_is_fixnum(v));
@@ -60,7 +60,7 @@ eval_if_test()
 TEST
 eval_if_false_test()
 {
-    struct cact_val v;
+    cact_value_t v;
 
     v = cact_eval_string(&cact, "(if #f 1 2)");
     cact_display(v);
@@ -72,7 +72,7 @@ eval_if_false_test()
 TEST
 eval_setbang_test()
 {
-    struct cact_val v;
+    cact_value_t v;
 
     v = cact_eval_string(&cact, "(define x 2) (set! x 4) x");
 
@@ -85,7 +85,7 @@ eval_setbang_test()
 TEST
 eval_apply_builtin_test()
 {
-    struct cact_val v;
+    cact_value_t v;
 
     v = cact_eval_string(&cact, "(cons 1 2)");
     ASSERTm("cons did not return pair as expected", cact_is_pair(v));
@@ -97,7 +97,7 @@ eval_apply_builtin_test()
 TEST
 eval_apply_test()
 {
-    struct cact_val v;
+    cact_value_t v;
 
     v = cact_eval_string(&cact, "(define square (lambda (x) (* x x))) (square 8)");
     ASSERTm("lambda did not return int as expected", cact_is_fixnum(v));

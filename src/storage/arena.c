@@ -9,7 +9,7 @@
  */
 
 void
-cact_arena_init(struct cact_arena *arena, const size_t element_sz)
+cact_arena_init(cact_arena_t *arena, const size_t element_sz)
 {
     assert(arena);
     assert(element_sz > 0);
@@ -20,7 +20,7 @@ cact_arena_init(struct cact_arena *arena, const size_t element_sz)
 }
 
 void
-cact_arena_finish(struct cact_arena *arena)
+cact_arena_finish(cact_arena_t *arena)
 {
     if (! arena) {
         return;
@@ -30,24 +30,24 @@ cact_arena_finish(struct cact_arena *arena)
 }
 
 bool
-cact_arena_is_full(const struct cact_arena *arena)
+cact_arena_is_full(const cact_arena_t *arena)
 {
     assert(arena);
 
     return 0 == ~arena->occupied_set;
 }
 
-struct cact_obj *
-cact_arena_get(struct cact_arena * const arena, const size_t nth)
+cact_object_t *
+cact_arena_get(cact_arena_t * const arena, const size_t nth)
 {
     assert(arena);
     assert(nth < 64);
 
-    return (struct cact_obj *) (((char*)arena->data) + (nth * arena->element_sz));
+    return (cact_object_t *) (((char*)arena->data) + (nth * arena->element_sz));
 }
 
 bool
-cact_arena_slot_occupied(struct cact_arena *arena, size_t nth)
+cact_arena_slot_occupied(cact_arena_t *arena, size_t nth)
 {
     assert(arena);
     assert(nth < 64);
@@ -56,7 +56,7 @@ cact_arena_slot_occupied(struct cact_arena *arena, size_t nth)
 }
 
 void
-cact_arena_mark_open(struct cact_arena *arena, size_t nth)
+cact_arena_mark_open(cact_arena_t *arena, size_t nth)
 {
     assert(arena);
     assert(nth < 64);
@@ -65,7 +65,7 @@ cact_arena_mark_open(struct cact_arena *arena, size_t nth)
 }
 
 bool
-cact_arena_has(struct cact_arena *arena, void *thing)
+cact_arena_has(cact_arena_t *arena, void *thing)
 {
     assert(arena);
     assert(thing);
@@ -77,7 +77,7 @@ cact_arena_has(struct cact_arena *arena, void *thing)
 }
 
 size_t
-cact_arena_next_open(struct cact_arena *arena)
+cact_arena_next_open(cact_arena_t *arena)
 {
     size_t	i;
 
@@ -93,7 +93,7 @@ cact_arena_next_open(struct cact_arena *arena)
 }
 
 int
-cact_arena_count(struct cact_arena *arena)
+cact_arena_count(cact_arena_t *arena)
 {
     assert(arena);
 
@@ -112,11 +112,11 @@ cact_arena_count(struct cact_arena *arena)
 }
 
 size_t
-cact_arena_sweep(struct cact_arena *arena)
+cact_arena_sweep(cact_arena_t *arena)
 {
     assert(arena);
 
-    struct cact_obj *obj;
+    cact_object_t *obj;
     size_t i, swept;
 
     obj = NULL;
@@ -127,7 +127,7 @@ cact_arena_sweep(struct cact_arena *arena)
             obj = cact_arena_get(arena, i);
             if (obj->store_data.mark != CACT_STORE_MARK_REACHABLE) {
                 obj->store_data.mark = CACT_STORE_MARK_FREE;
-                cact_obj_destroy(obj);
+                cact_destroy_object(obj);
                 cact_arena_mark_open(arena, i);
                 swept++;
             } else {
@@ -139,8 +139,8 @@ cact_arena_sweep(struct cact_arena *arena)
     return swept;
 }
 
-struct cact_obj *
-cact_arena_get_next(struct cact_arena *arena)
+cact_object_t *
+cact_arena_get_next(cact_arena_t *arena)
 {
     assert(arena);
 

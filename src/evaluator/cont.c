@@ -16,52 +16,54 @@
  * Initialize a continuation frame.
  */
 void
-cact_cont_init(struct cact_cont *cont, struct cact_env *env, struct cact_proc *proc)
+cact_init_frame(cact_frame_t *frame, cact_env_t *env, cact_procedure_t *proc)
 {
-    assert(cont);
+    assert(frame);
 
-    cont->env = env;
-    cont->exn_handler = NULL;
+    frame->env = env;
+    frame->exn_handler = NULL;
 
-    cont->proc = proc;
-    cont->argl = CACT_UNDEF_VAL;
-    cont->expr = CACT_UNDEF_VAL;
-    cont->unevaled = CACT_NULL_VAL;
-    cont->retval = CACT_UNDEF_VAL;
-    cont->state = CACT_JMP_FINISH;
+    frame->proc = proc;
+    frame->argl = CACT_UNDEF_VAL;
+    frame->expr = CACT_UNDEF_VAL;
+    frame->unevaled = CACT_NULL_VAL;
+    frame->retval = CACT_UNDEF_VAL;
+    frame->state = CACT_JMP_FINISH;
 }
 
 /*
  * Mark a continuation to be protected from garbage collection.
  */
 void
-cact_mark_cont(struct cact_obj *o)
+cact_mark_frame(cact_object_t *o)
 {
     assert(o);
 
-    struct cact_cont *c = (struct cact_cont *) o;
+    cact_frame_t *c = (cact_frame_t *) o;
 
-    cact_obj_mark((struct cact_obj *)c->env);
-    cact_obj_mark((struct cact_obj *)c->exn_handler);
-    cact_obj_mark((struct cact_obj *)c->proc);
-    cact_obj_mark((struct cact_obj *) SLIST_NEXT(c, parent));
+    cact_mark_object((cact_object_t *)c->env);
+    cact_mark_object((cact_object_t *)c->exn_handler);
+    cact_mark_object((cact_object_t *)c->proc);
+    cact_mark_object((cact_object_t *) SLIST_NEXT(c, parent));
 
-    cact_mark_val(c->argl);
-    cact_mark_val(c->expr);
-    cact_mark_val(c->retval);
+    cact_mark_value(c->argl);
+    cact_mark_value(c->expr);
+    cact_mark_value(c->retval);
 }
 
 /* Destroy any data that this continuation points to. */
 void
-cact_destroy_cont(struct cact_obj *o)
+cact_destroy_frame(cact_object_t *o)
 {
 	return;
 }
 
 const char *
-cact_cont_show_state(enum cact_cont_state state)
+cact_show_frame_state(cact_frame_state_t state)
 {
     switch (state) {
+    case CACT_JMP_START:
+        return "start";
     case CACT_JMP_EVAL_SINGLE:
         return "eval_single";
     case CACT_JMP_EVAL_SEQ:
@@ -70,6 +72,12 @@ cact_cont_show_state(enum cact_cont_state state)
         return "apply_did_op";
     case CACT_JMP_APPLY:
         return "apply";
+    case CACT_JMP_ARG_POP:
+        return "arg_pop";
+    case CACT_JMP_BIND_ARG:
+        return "bind_arg";
+    case CACT_JMP_EXTEND_ENV:
+        return "extend_env";
     case CACT_JMP_IF_DECISION:
         return "if_decision";
     case CACT_JMP_ASSIGN:
@@ -79,6 +87,8 @@ cact_cont_show_state(enum cact_cont_state state)
     case CACT_JMP_FINISH:
         return "finish";
     }
+
+    return "UNKNOWN";
 }
 
 
@@ -86,9 +96,9 @@ cact_cont_show_state(enum cact_cont_state state)
  * Finish the evaluation of the given continuation.
  */
 void
-cact_finish_cont(struct cactus *cact, struct cact_cont *cont)
+cact_finish_frame(cact_context_t *cact, cact_frame_t *cont)
 {
-    struct cact_cont *parent = SLIST_NEXT(cont, parent);
+    cact_frame_t *parent = SLIST_NEXT(cont, parent);
 
     if (! parent) {
         return;
@@ -98,10 +108,10 @@ cact_finish_cont(struct cactus *cact, struct cact_cont *cont)
     parent->retval = cont->retval;
 
     // Pop this continuation off the stack
-    cact_call_stack_pop(cact);
+    cact_continuation_pop(cact);
 
     // Resume the parent continuation
-    cact_continue_cont(parent);
+    cact_continue_frame(parent);
 }
 
 /**
@@ -110,7 +120,7 @@ cact_finish_cont(struct cactus *cact, struct cact_cont *cont)
  * Starting from the current state, this will perform each action needed to continue evaluation.
  */
 void
-cact_resume_cont(struct cactus *cact, struct cact_cont *cont)
+cact_resume_frame(cact_context_t *cact, cact_frame_t *cont)
 {
     switch (setjmp(cont->bounce)) {
     case CACT_JMP_START:
@@ -155,7 +165,7 @@ cact_resume_cont(struct cactus *cact, struct cact_cont *cont)
         break;
 
     case CACT_JMP_FINISH:
-        cact_finish_cont(cact, cont);
+        cact_finish_frame(cact, cont);
         break;
 
     default:
@@ -164,22 +174,22 @@ cact_resume_cont(struct cactus *cact, struct cact_cont *cont)
 }
 
 void
-cact_continue_cont(struct cact_cont *cont)
+cact_continue_frame(cact_frame_t *cont)
 {
     longjmp(cont->bounce, cont->state);
 }
 
 void
-cact_cont_continue_step(struct cact_cont *cont, enum cact_cont_state state)
+cact_continue_frame_step(cact_frame_t *cont, cact_frame_state_t state)
 {
     cont->state = state;
-    cact_continue_cont(cont);
+    cact_continue_frame(cont);
 }
 
 void
-cact_cont_return(struct cact_cont *cont, struct cact_val value)
+cact_leave_frame(cact_frame_t *cont, cact_value_t value)
 {
     cont->retval = value;
-    cact_cont_continue_step(cont, CACT_JMP_FINISH);
+    cact_continue_frame_step(cont, CACT_JMP_FINISH);
 }
 

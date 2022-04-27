@@ -23,7 +23,7 @@
  * Check the argument with the type character.
  */
 static bool
-unpack_typecheck(const struct cact_val arg, const char c)
+unpack_typecheck(const cact_value_t arg, const char c)
 {
     switch (c) {
     case '.':
@@ -45,7 +45,7 @@ unpack_typecheck(const struct cact_val arg, const char c)
  * Check all the arguments in the argument list and
  */
 int
-cact_unpack_args(struct cactus *cact, struct cact_val arglist, const char *format, ...)
+cact_unpack_args(cact_context_t *cact, cact_value_t arglist, const char *format, ...)
 {
     va_list slots;
     const char *c;
@@ -55,15 +55,15 @@ cact_unpack_args(struct cactus *cact, struct cact_val arglist, const char *forma
         fprintf(stdout, "cactus: fatal error: expected pair for argument list");
         abort();
     }
-    struct cact_val current_pair = arglist;
+    cact_value_t current_pair = arglist;
 
     c = format;
     va_start(slots, format);
 
     while (*c != '\0') {
         if (! cact_is_null(current_pair)) {
-            struct cact_val current_val = cact_car(cact, current_pair);
-            struct cact_val *slot = va_arg(slots, struct cact_val*);
+            cact_value_t current_val = cact_car(cact, current_pair);
+            cact_value_t *slot = va_arg(slots, cact_value_t*);
 
             if (unpack_typecheck(current_val, *c)) {
                 *slot = current_val;
@@ -72,7 +72,7 @@ cact_unpack_args(struct cactus *cact, struct cact_val arglist, const char *forma
             }
 
         } else {
-            struct cact_val *slot = va_arg(slots, struct cact_val*);
+            cact_value_t *slot = va_arg(slots, cact_value_t*);
             *slot = CACT_NULL_VAL;
         }
 
@@ -97,10 +97,10 @@ DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_boolean, cact_is_bool)
 DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_char, cact_is_char)
 DEFINE_TYPE_PREDICATE_BUILTIN(cact_builtin_is_procedure, cact_is_procedure)
 
-struct cact_val
-cact_builtin_display(struct cactus *cact, struct cact_val args)
+cact_value_t
+cact_builtin_display(cact_context_t *cact, cact_value_t args)
 {
-    struct cact_val x;
+    cact_value_t x;
 
     if (1 != cact_unpack_args(cact, args, ".", &x)) {
         return cact_make_error(cact, "Did not get expected number of arguments", args);
@@ -112,16 +112,16 @@ cact_builtin_display(struct cactus *cact, struct cact_val args)
     return CACT_UNDEF_VAL;
 }
 
-struct cact_val
-cact_builtin_newline(struct cactus *cact, struct cact_val args)
+cact_value_t
+cact_builtin_newline(cact_context_t *cact, cact_value_t args)
 {
     puts("");
 
     return CACT_UNDEF_VAL;
 }
 
-struct cact_val
-cact_builtin_exit(struct cactus *cact, struct cact_val x)
+cact_value_t
+cact_builtin_exit(cact_context_t *cact, cact_value_t x)
 {
     // Invoke any ending things from dynamic-wind
     // Exit
@@ -129,10 +129,10 @@ cact_builtin_exit(struct cactus *cact, struct cact_val x)
     return CACT_UNDEF_VAL;
 }
 
-struct cact_val
-cact_builtin_load(struct cactus *cact, struct cact_val x)
+cact_value_t
+cact_builtin_load(cact_context_t *cact, cact_value_t x)
 {
-    struct cact_val fname = cact_car(cact, x);
+    cact_value_t fname = cact_car(cact, x);
     if (! cact_is_string(fname)) {
         return cact_make_error(cact, "`load` expects a string", x);
     }
@@ -143,71 +143,71 @@ cact_builtin_load(struct cactus *cact, struct cact_val x)
     }
 
     // Need to save the current reader state
-    struct cact_lexer prev_lexer = cact->lexer;
+    cact_lexer_t prev_lexer = cact->lexer;
 
-    struct cact_cont *nc = (struct cact_cont*)cact_alloc(cact, CACT_OBJ_CONT);
-    cact_cont_init(nc, cact_current_env(cact), NULL);
-    cact_call_stack_push(cact, nc);
+    cact_frame_t *nc = (cact_frame_t*)cact_alloc(cact, CACT_OBJ_CONT);
+    cact_init_frame(nc, cact_current_env(cact), NULL);
+    cact_continuation_push(cact, nc);
 
-    struct cact_val result = cact_eval_file(cact, f);
+    cact_value_t result = cact_eval_file(cact, f);
     if (cact_is_error(result)) {
         cact_fdisplay(stderr, result);
         return cact_make_error(cact, "load: could not read file", fname);
     }
 
-    cact_call_stack_pop(cact);
+    cact_continuation_pop(cact);
     cact->lexer = prev_lexer;
 
     return CACT_UNDEF_VAL;
 }
 
-struct cact_val
-cact_builtin_not(struct cactus *cact, struct cact_val x)
+cact_value_t
+cact_builtin_not(cact_context_t *cact, cact_value_t x)
 {
-    struct cact_val arg = cact_car(cact, x);
+    cact_value_t arg = cact_car(cact, x);
 
     PROPAGATE_ERROR(arg);
 
     return cact_bool_not(arg);
 }
 
-struct cact_val
-cact_builtin_interaction_environment(struct cactus *cact, struct cact_val x)
+cact_value_t
+cact_builtin_interaction_environment(cact_context_t *cact, cact_value_t x)
 {
-    return CACT_OBJ_VAL((struct cact_obj *) cact->root_env);
+    return CACT_OBJ_VAL((cact_object_t *) cact->root_env);
 }
 
-struct cact_val
-cact_builtin_collect_garbage(struct cactus *cact, struct cact_val x)
+cact_value_t
+cact_builtin_collect_garbage(cact_context_t *cact, cact_value_t x)
 {
     cact_collect_garbage(cact);
     return CACT_UNDEF_VAL;
 }
 
-struct cact_val
-cact_builtin_error(struct cactus *cact, struct cact_val x)
+cact_value_t
+cact_builtin_error(cact_context_t *cact, cact_value_t x)
 {
     return cact_make_error(cact, cact_to_string(cact_car(cact, x), "error")->str, cact_cdr(cact, x));
 }
 
-struct cact_val
-cact_builtin_is_bound(struct cactus *cact, struct cact_val x)
+cact_value_t
+cact_builtin_is_bound(cact_context_t *cact, cact_value_t x)
 {
-    struct cact_val arg = cact_car(cact, x);
+    cact_value_t arg = cact_car(cact, x);
 
     return CACT_BOOL_VAL(cact_env_is_bound(cact_current_env(cact), cact_to_symbol(arg, "bound?")));
 }
 
-struct cact_val
-cact_builtin_with_exception_handler(struct cactus *cact, struct cact_val args)
+cact_value_t
+cact_builtin_with_exception_handler(cact_context_t *cact, cact_value_t args)
 {
-    struct cact_val handler, thunk;
+    cact_value_t handler, thunk;
 
     if (2 != cact_unpack_args(cact, args, "cc", &handler, &thunk)) {
         return cact_make_error(cact, "Did not get expected number of arguments", args);
     }
 
-    cact_current_cont(cact)->exn_handler = cact_to_procedure(
+    cact_current_frame(cact)->exn_handler = cact_to_procedure(
             handler, "with-exception-handler"
                                            );
 
@@ -217,4 +217,5 @@ cact_builtin_with_exception_handler(struct cactus *cact, struct cact_val args)
                CACT_NULL_VAL
            );
 }
+
 

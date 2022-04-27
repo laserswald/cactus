@@ -1,4 +1,8 @@
-CFLAGS = -g -Isrc -Ilib -Wall -pedantic
+.POSIX:
+
+CBASEFLAGS = -Isrc -Ilib -Wall -pedantic
+CDEBUGFLAGS = -g
+CRELEASEFLAGS = -g -Ofast -march=native
 LIBRARY = libcact.a
 BINARY = cactus
 TESTBIN = cactus-test
@@ -16,7 +20,13 @@ LIBRARY_OBJS = $(LIBRARY_SRCS:.c=.o)
 BINARY_OBJS = $(BINARY_SRCS:.c=.o)
 TESTBIN_OBJS = $(TESTBIN_SRCS:.c=.o)
 
-all: $(BINARY) test
+all: release
+
+release: CFLAGS = $(CBASEFLAGS) $(CRELEASEFLAGS)
+release: $(BINARY) test
+	
+debug: CFLAGS = $(CBASEFLAGS) $(CDEBUGFLAGS)
+debug: $(BINARY) test
 
 test: $(TESTBIN) $(BINARY)
 	exec ./$(TESTBIN) -v
@@ -45,4 +55,3 @@ $(LIBRARY): $(LIBRARY_OBJS)
 -include $(LIBRARY_SRCS:.c=.d)
 -include $(BINARY_SRCS:.c=.d)
 
-.PHONY: all test clean format
