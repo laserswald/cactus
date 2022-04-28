@@ -8,62 +8,63 @@
 #include "sym.h"
 #include "proc.h"
 #include "evaluator/cont.h"
+
 #include "internal/queue.h"
+
+
 #include "storage/store.h"
 
-ARRAY_DECL(cact_obj_vec, struct cact_obj *);
-typedef struct cact_obj_vec Cact_Object_Array;
 
 /**
  * The core structure for a Cactus interpreter.
  */
-typedef struct cact_context {
-	cact_env_t          *root_env;
-	cact_continuation_t conts;
-	cact_lexer_t        lexer;
-	cact_symbol_table_t interned_syms;
-	cact_store_t        store;
-	cact_object_array_t preserved;
-	bool                gc_enabled;
-} cact_context_t;
+typedef struct cactus {
+	struct cact_env         *root_env;
+	struct cact_cont_stack   conts;
+	struct cact_lexer        lexer;
+	struct cact_symbol_table interned_syms;
+	struct cact_store        store;
+	struct cact_obj_vec      preserved;
+	bool                     gc_enabled;
+} cactus_s;
 
 /* Initialize a cactus interpreter. */
 void 
-cact_init(cact_context_t *);
+cact_init(struct cactus *cact);
 
 /* Finalize a cactus interpreter. */
 void 
-cact_finish(cact_context_t *);
+cact_finish(struct cactus *cact);
 
 /* Define any value in the global default namespace */
 void 
-cact_define(cact_context_t *, const char *, cact_value_t);
+cact_define(struct cactus *, const char *, struct cact_val);
 
 /* Allocate a new object from the heap. */
-cact_object_t *
-cact_alloc(cact_context_t *, cact_object_type_t);
+struct cact_obj *
+cact_alloc(struct cactus *, enum cact_obj_type);
 
 /* Collect the garbage from the heap. */
 int 
-cact_collect_garbage(cact_context_t *);
+cact_collect_garbage(struct cactus *);
 
-cact_env_t *
-cact_current_env(cact_context_t *);
+struct cact_env *
+cact_current_env(struct cactus *);
 
-cact_procedure_t *
-cact_current_exception_handler(cact_context_t *);
+struct cact_proc *
+cact_current_exception_handler(struct cactus *);
 
-cact_value_t
-cact_current_retval(cact_context_t *);
-
-bool 
-cact_preserve(cact_context_t *, cact_value_t);
+struct cact_val 
+cact_current_retval(struct cactus *);
 
 bool 
-cact_unpreserve(cact_context_t *, cact_value_t);
+cact_preserve(struct cactus *, struct cact_val);
+
+bool 
+cact_unpreserve(struct cactus *, struct cact_val);
 
 void 
-cact_continue(cact_context_t *);
+cact_continue(struct cactus *cact);
 
 #endif // __CACT_CORE_H__
 
