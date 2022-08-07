@@ -174,7 +174,7 @@ cact_env_num_bindings(cact_env_t *e)
  * Display an environment to standard output.
  */
 void
-print_env(cact_env_t *e)
+cact_show_env(struct cact_env *e)
 {
     if (!e) {
         return;
@@ -192,7 +192,7 @@ print_env(cact_env_t *e)
 
     if (e->parent) {
         printf("parent:\n");
-        print_env(e->parent);
+        cact_show_env(e->parent);
     }
 }
 

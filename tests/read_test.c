@@ -78,6 +78,28 @@ TEST cact_read_ident_test()
     ASSERTm("cact_read not ok when reading identifier", status == CACT_READ_OK);
     ASSERTm("cact_read did not read an identifier", cact_is_symbol(x));
 
+    // Identifier with dash
+    string = "ident-ifier";
+    cact_lexer_init(&cact.lexer, string);
+    status = cact_read(&cact, &x);
+    ASSERTm("cact_read not ok when reading identifier", status == CACT_READ_OK);
+    ASSERTm("cact_read did not read an identifier", cact_is_symbol(x));
+
+    cact_value_t real_sym = cact_make_symbol(&cact, string);
+
+#ifdef CACT_DEBUG
+    cact_display(real_sym);
+    puts("");
+    cact_display(x);
+    puts("");
+#endif
+
+    ASSERTm(
+	    "cact_read did not read the correct identifier", 
+	    cact_value_eq(x, real_sym)
+    );
+
+
     PASS();
 }
 

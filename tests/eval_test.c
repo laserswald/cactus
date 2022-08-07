@@ -42,6 +42,7 @@ eval_define_var_test()
     ASSERTm("expected x to be int", cact_is_fixnum(v));
     ASSERTm("expected x to be 1", cact_to_long(v, "eval_define_test") == 1);
 
+
     PASS();
 }
 

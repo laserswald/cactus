@@ -43,8 +43,8 @@ cact_env_lookup(cact_context_t *, cact_env_t *e, cact_symbol_t *k);
 bool 
 cact_env_is_bound(cact_env_t *e, cact_symbol_t *k);
 
-void 
-print_env(cact_env_t *e);
+void            
+cact_show_env(struct cact_env *e);
 
 int
 cact_env_num_bindings(cact_env_t *e);

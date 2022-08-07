@@ -292,7 +292,6 @@ cact_eval_branch(cact_context_t *cact, cact_frame_t *cc)
         cc->retval = CACT_UNDEF_VAL;
         cc->expr = cact_car(cact, cc->unevaled);
         cc->state = CACT_JMP_EVAL_SINGLE;
-        cact_show_continuation(cact);
         cact_continue_frame_step(cc, CACT_JMP_EVAL_SINGLE);
     }
 
@@ -302,7 +301,6 @@ cact_eval_branch(cact_context_t *cact, cact_frame_t *cc)
 
     cc->expr = cact_cadr(cact, cc->unevaled);
     cc->state = CACT_JMP_EVAL_SINGLE;
-    cact_show_continuation(cact);
     cact_continue_frame(cc);
 }
 
@@ -470,7 +468,7 @@ cact_eval_extend_env(cact_context_t *cact, cact_frame_t *cc)
 
         cc->argl = cact_cdr(cact, cc->argl);
     }
-    print_env(extended);
+    cact_show_env(extended);
     cc->env = extended;
 
     cact_unpreserve(cact, CACT_OBJ_VAL(extended));

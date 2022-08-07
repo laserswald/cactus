@@ -254,7 +254,7 @@ cact_show_continuation(cact_context_t *cact)
         DBG("; === call stack entry === :\n");
         printf("%s\n", cact_show_frame_state(c->state));
         DBG("; === environment === :\n");
-        print_env(c->env);
+        cact_show_env(c->env);
         DBG("; === retval === :\n");
         cact_display(c->retval);
         puts("");

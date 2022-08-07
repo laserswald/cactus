@@ -43,7 +43,7 @@ is_initial_identifier(int i)
 static int
 is_subsequent_identifier(int i)
 {
-    return i != 0 && (isalpha(i) || isdigit(i) || strchr("!$%&*./:<=>?@^_~", i) != NULL);
+    return i != 0 && (isalpha(i) || isdigit(i) || strchr("!$%&*./:<=>?@^_~-", i) != NULL);
 }
 
 /* Return 0 if the character is double quote, 1 otherwise. */
