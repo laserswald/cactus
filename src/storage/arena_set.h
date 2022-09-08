@@ -1,8 +1,11 @@
 #ifndef arena_set_h_INCLUDED
 #define arena_set_h_INCLUDED
 
-#include "storage/arena.h"
 #include "internal/array.h"
+
+typedef struct cact_arena_set cact_arena_set_t;
+
+#include "storage/arena.h"
 
 /*
  * A set of arenas that provide automatic growth and 
@@ -10,7 +13,6 @@
  */
 
 ARRAY_DECL(cact_arena_set, struct cact_arena);
-typedef struct cact_arena_set cact_arena_set_t;
 
 /* Initialize a set of arenas. */
 void 

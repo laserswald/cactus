@@ -1,8 +1,8 @@
 #ifndef CACT_READ_H
 #define CACT_READ_H
 
-typedef struct cact_value cact_value_t;
 typedef struct cact_context cact_context_t;
+typedef struct cact_value cact_value_t;
 
 typedef enum cact_read_status {
 	CACT_READ_IN_PROGRESS,
@@ -61,6 +61,7 @@ typedef struct cact_lexer {
 	cact_str_coords_t coords;
 	cact_lexeme_t buf;
 } cact_lexer_t;
+
 
 void cact_lexer_init(cact_lexer_t *l, const char* data);
 void printtokstream(cact_lexer_t *l);

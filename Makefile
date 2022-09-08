@@ -1,5 +1,6 @@
 .POSIX:
 
+CC = clang --std=c17
 CBASEFLAGS = -Isrc -Ilib -Wall -pedantic
 CDEBUGFLAGS = -g
 CRELEASEFLAGS = -g -Ofast -march=native

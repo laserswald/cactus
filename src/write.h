@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "val.h"
+#include "storage/obj.h"
 
 int fprint_obj(FILE *f, cact_object_t *);
 int fprint_list(FILE *f, cact_value_t x);

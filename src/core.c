@@ -243,7 +243,7 @@ cact_continuation_pop(cact_context_t *cact)
 
 /* Show the current call stack. */
 void
-cact_show_call_stack(cact_context_t *cact)
+cact_show_continuation(cact_context_t *cact)
 {
     cact_frame_t *c;
 
@@ -317,7 +317,7 @@ cact_default_exception_handler(cact_context_t *cact, cact_value_t args)
 {
     fprintf(stderr, "Error!\n");
     cact_fdisplay(stderr, args);
-    cact_show_call_stack(cact);
+    cact_show_continuation(cact);
     abort();
 }
 

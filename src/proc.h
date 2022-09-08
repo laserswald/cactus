@@ -5,8 +5,6 @@
 #include "env.h"
 #include "storage/obj.h"
 
-typedef struct cact_context cact_context_t;
-
 typedef cact_value_t (*cact_native_func_t)(cact_context_t *, cact_value_t);
 
 /* A procedure object. */

@@ -5,11 +5,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "internal/array.h"
-#include "internal/queue.h"
-
-typedef struct cact_arena_set cact_arena_set_t;
-
 typedef enum cact_store_marking {
 	CACT_STORE_MARK_FREE,
 	CACT_STORE_MARK_OCCUPIED,
@@ -23,7 +18,7 @@ typedef struct cact_store_data {
 	cact_store_marking_t mark;
 } cact_store_data_t;
 
-#include "obj.h"
+#include "storage/arena_set.h"
 
 /* The 'free store' of heap-allocated objects. */
 typedef struct cact_store {

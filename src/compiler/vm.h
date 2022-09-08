@@ -18,11 +18,11 @@ struct cact_vm_instr_info {
 
 ARRAY_DECL(cact_bytecode, uint8_t)
 
-struct cact_vm {
+typedef struct cact_vm {
 	struct cact_bytecode *running;
 	unsigned int ip;
 	unsigned int sp;
-};
+} cact_vm_t;
 
 void cact_vm_init(struct cact_vm *);
 void cact_vm_finish(struct cact_vm *);

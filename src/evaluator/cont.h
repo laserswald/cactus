@@ -5,7 +5,9 @@
 
 #include "env.h"
 #include "proc.h"
+
 #include "internal/array.h"
+#include "internal/queue.h"
 
 typedef enum cact_frame_state {
     CACT_JMP_START = 0,

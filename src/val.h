@@ -145,8 +145,6 @@ bool cact_value_equal(cact_value_t l, cact_value_t r);
 /*
  * For completeness, marking and destroying arbitrary values is supported, though in most cases it 
  * does nothing.
- * 
- * More info about marking and destroying can be found in the GC implementation in `sweep.h`.
  */
 void cact_mark_value(cact_value_t v);
 void cact_destroy_value(cact_value_t v);
