@@ -159,15 +159,15 @@ cact_env_is_bound(cact_env_t *e, cact_symbol_t *key)
 }
 
 int
-cact_env_num_bindings(cact_env_t *e) 
+cact_env_num_bindings(cact_env_t *e)
 {
-	int count = e->entries.count;
+    int count = e->entries.count;
 
-	if (e->parent) {
-		return count + cact_env_num_bindings(e->parent);
-	}
+    if (e->parent) {
+        return count + cact_env_num_bindings(e->parent);
+    }
 
-	return count;
+    return count;
 }
 
 /*

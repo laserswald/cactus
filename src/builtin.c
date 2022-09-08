@@ -209,7 +209,7 @@ cact_builtin_with_exception_handler(cact_context_t *cact, cact_value_t args)
 
     cact_current_frame(cact)->exn_handler = cact_to_procedure(
             handler, "with-exception-handler"
-                                           );
+                                            );
 
     return cact_proc_apply(
                cact,

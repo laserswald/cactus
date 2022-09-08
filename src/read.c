@@ -166,7 +166,7 @@ printlex(cact_lexeme_t lx)
 void
 cact_lexer_decimal(cact_lexer_t *l, cact_lexeme_t *le)
 {
-	le->t = CACT_TOKEN_FLOAT;
+    le->t = CACT_TOKEN_FLOAT;
     cact_lexer_getc(l);
     cact_lexer_charspan(l, isdigit);
 }
@@ -174,21 +174,21 @@ cact_lexer_decimal(cact_lexer_t *l, cact_lexeme_t *le)
 void
 cact_lexer_unsigned_number(cact_lexer_t *l, cact_lexeme_t *le)
 {
-	le->t = CACT_TOKEN_INTEGER;
+    le->t = CACT_TOKEN_INTEGER;
     cact_lexer_charspan(l, isdigit);
     int c = cact_lexer_peekc(l);
     if (c == '.') {
-	    cact_lexer_decimal(l, le);
+        cact_lexer_decimal(l, le);
     }
 }
 
 void
 cact_lexer_minus_and_plus(cact_lexer_t *l, cact_lexeme_t *le)
 {
-	cact_lexer_getc(l);
+    cact_lexer_getc(l);
     int c = cact_lexer_peekc(l);
     if (isdigit(c)) {
-		cact_lexer_unsigned_number(l, le);
+        cact_lexer_unsigned_number(l, le);
     } else {
         le->t = CACT_TOKEN_IDENTIFIER;
         cact_lexer_charspan(l, is_subsequent_identifier);
@@ -215,9 +215,9 @@ nextlex(cact_lexer_t* l)
         le.t = CACT_TOKEN_IDENTIFIER;
         cact_lexer_charspan(l, is_subsequent_identifier);
     } else if (isdigit(c)) {
-	    cact_lexer_unsigned_number(l, &le);
+        cact_lexer_unsigned_number(l, &le);
     } else if (c == '-' || c == '+') {
-	    cact_lexer_minus_and_plus(l, &le);
+        cact_lexer_minus_and_plus(l, &le);
     } else if (c == '(') {
         le.t = CACT_TOKEN_OPEN_PAREN;
         cact_lexer_getc(l);

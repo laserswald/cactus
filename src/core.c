@@ -65,9 +65,9 @@ cact_init(cact_context_t *cact)
     cact_init_frame(nc, cact->root_env, NULL);
 
     cact_procedure_t *default_exception_handler = cact_to_procedure(
-        cact_make_native_proc(cact, cact_default_exception_handler),
-        "initialization"
-    );
+                cact_make_native_proc(cact, cact_default_exception_handler),
+                "initialization"
+            );
 
     nc->exn_handler = default_exception_handler;
 
@@ -215,8 +215,8 @@ cact_collect_garbage(cact_context_t *cact)
     return swept;
 }
 
-/* 
- * Allocate a new object of a given type. 
+/*
+ * Allocate a new object of a given type.
  */
 cact_object_t *
 cact_alloc(cact_context_t *cact, cact_object_type_t t)
@@ -230,8 +230,8 @@ cact_alloc(cact_context_t *cact, cact_object_type_t t)
     return cact_store_allocate(&cact->store, t);
 }
 
-/* 
- * Finish a function call or macro expansion. 
+/*
+ * Finish a function call or macro expansion.
  */
 void
 cact_continuation_pop(cact_context_t *cact)

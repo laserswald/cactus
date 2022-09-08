@@ -125,17 +125,17 @@ cact_eval_prim(cact_context_t *cact, cact_frame_t *cc)
     }
 
     if (is_assignment(cact, cc->expr)) {
-	    DBG("assignment \n");
+        DBG("assignment \n");
         special_set_bang(cact, cact_cdr(cact, cc->expr));
     }
 
     if (is_definition(cact, cc->expr)) {
-	    DBG("definition \n");
+        DBG("definition \n");
         special_define(cact, cact_cdr(cact, cc->expr));
     }
 
     if (is_conditional(cact, cc->expr)) {
-	    DBG("conditional \n");
+        DBG("conditional \n");
         special_if(cact, cact_cdr(cact, cc->expr));
     }
 
@@ -148,7 +148,7 @@ cact_eval_prim(cact_context_t *cact, cact_frame_t *cc)
     }
 
     if (is_variable(cact, cc->expr)) {
-	    assert(cact_env_num_bindings(cc->env) != 0);
+        assert(cact_env_num_bindings(cc->env) != 0);
         cact_leave_frame(
             cc,
             cact_env_lookup(
@@ -340,14 +340,14 @@ cact_eval_sequence(cact_context_t *cact, cact_frame_t *cc)
     assert(cc->env->entries.count != 0);
     // If we have no more items to evaluate, then we are done.
     if (cact_is_null(cc->unevaled)) {
-	    cact_continue_frame_step(cc, CACT_JMP_FINISH);
+        cact_continue_frame_step(cc, CACT_JMP_FINISH);
     }
 
     if (! cact_is_pair(cc->unevaled)) {
         // If we don't have a pair, then queue up this expression for evaluation, and
         // then return it after it's done evaluating.
         cc->expr = cc->unevaled;
-	    cact_continue_frame_step(cc, CACT_JMP_EVAL_SINGLE);
+        cact_continue_frame_step(cc, CACT_JMP_EVAL_SINGLE);
     }
 
     cact_frame_t *nc = push_new_frame(cact, cc);
@@ -423,9 +423,9 @@ void
 cact_eval_arg_pop(cact_context_t *cact, cact_frame_t *cc)
 {
     if (cact_is_null(cc->unevaled)) {
-	    if (cc->proc->nativefn) {
-	        cact_continue_frame_step(cc, CACT_JMP_APPLY);
-	    }
+        if (cc->proc->nativefn) {
+            cact_continue_frame_step(cc, CACT_JMP_APPLY);
+        }
         cact_continue_frame_step(cc, CACT_JMP_EXTEND_ENV);
     }
 

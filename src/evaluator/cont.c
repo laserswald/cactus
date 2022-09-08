@@ -55,7 +55,7 @@ cact_mark_frame(cact_object_t *o)
 void
 cact_destroy_frame(cact_object_t *o)
 {
-	return;
+    return;
 }
 
 const char *
