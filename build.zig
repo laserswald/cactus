@@ -13,6 +13,7 @@ pub fn build(b: *std.build.Builder) void {
     
     const lib = b.addStaticLibrary("cactus", "src/core.c");
     lib.addIncludePath("src");
+    lib.linkLibC();
     lib.addCSourceFiles(&[_][]const u8{
         "src/evaluator/eval.c",
         "src/evaluator/cont.c",

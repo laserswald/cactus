@@ -11,7 +11,6 @@ typedef struct cact_context cact_context_t;
 #include "proc.h"
 
 #include "evaluator/cont.h"
-#include "internal/queue.h"
 #include "storage/store.h"
 
 /**

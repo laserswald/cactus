@@ -27,11 +27,9 @@ const cactus = struct {
     pub const isError = c.cact_is_error;
 };
 
-const PROMPT = ">()< | ";
+const PROMPT = "<()> ";
 
 var verbosity: c_int = 0;
-
-
 
 pub export fn repl(arg_cact: [*c]c.cact_context) c_int {
     var cact = arg_cact;

@@ -22,6 +22,8 @@ cact_expand_macro(cact_context_t *cact, cact_macro_t *mac, cact_value_t expr)
 			abort();
 		}
 	}
+
+	return transformed;
 }
 
 /*

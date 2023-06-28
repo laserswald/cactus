@@ -21,7 +21,8 @@ LIBRARY_OBJS = $(LIBRARY_SRCS:.c=.o)
 BINARY_OBJS = $(BINARY_SRCS:.c=.o)
 TESTBIN_OBJS = $(TESTBIN_SRCS:.c=.o)
 
-all: release
+all:
+	zig build
 
 release: CFLAGS = $(CBASEFLAGS) $(CRELEASEFLAGS)
 release: $(BINARY) test

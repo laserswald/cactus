@@ -25,6 +25,7 @@ $CC $CFLAGS -MD -MF "$dependency_file" -o "$3" -c "$2.c"
 
 # Read the generated dependency files, and ensure the object file depends
 # on them.
+
 read DEPS <"$dependency_file"
 
 redo-ifchange ${DEPS#*:}

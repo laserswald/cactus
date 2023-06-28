@@ -21,9 +21,9 @@ cact_init_frame(cact_frame_t *frame, cact_env_t *env, cact_procedure_t *proc)
     assert(frame);
 
     frame->env = env;
-    frame->exn_handler = NULL;
-
     frame->proc = proc;
+
+    frame->exn_handler = NULL;
     frame->argl = CACT_UNDEF_VAL;
     frame->expr = CACT_UNDEF_VAL;
     frame->unevaled = CACT_NULL_VAL;

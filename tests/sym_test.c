@@ -8,13 +8,12 @@
 #include "write.h"
 #include "builtin.h"
 
-static struct cactus cact;
+// static cact_context_t cact;
 
 SUITE(symbol_tests);
 
 TEST symbol_cmp_test()
 {
-	char *name = "simplesym"
 	PASS();
 }
 

@@ -5,4 +5,4 @@ CACT_DEBUG=1
 CACT_COVERAGE=0
 
 CC=gcc
-CFLAGS="-Wall -Werror -pedantic -Iinclude -DNDEBUG"
+CFLAGS="-Wall -Werror -pedantic -Isrc -Ilib -DNDEBUG"
